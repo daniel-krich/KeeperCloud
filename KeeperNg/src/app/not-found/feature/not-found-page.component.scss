@@ -1,0 +1,37 @@
+.not-found {
+  transform: rotate(-5deg);
+  background-color: #21212110;
+  border-radius: 10px;
+  padding: 10px 50px 10px 50px;
+  margin: 100px;
+  display: flex;
+  flex-direction: row;
+  color: #212121ac;
+
+  h3, h5{
+    font-weight: 400;
+    opacity: 0.7;
+  }
+
+  .not-found-code {
+    text-align: center;
+    font-size: 10rem;
+  }
+}
+
+@media (max-width: 689px) {
+  .not-found {
+    padding: 10px;
+    flex-direction: column;
+
+    h3, h5{
+      font-size: 1.2rem;
+      font-weight: 400;
+      opacity: 0.7;
+    }
+
+    .not-found-code {
+      font-size: 5rem;
+    }
+  }
+}
