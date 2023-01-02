@@ -1,0 +1,57 @@
+<mat-toolbar class="toolbar-header" color="primary">
+    <mat-toolbar-row>
+      <span class="d-flex align-items-center" routerLink="/home" role="button">
+          {{navData.menuTitle}}
+          <mat-icon class="ms-2">cloud_queue</mat-icon>
+      </span>
+  
+      <ng-container>
+          <a  *ngFor="let link of navData.commonLinks"
+              [routerLink]="link.path"
+              routerLinkActive="nav-link-active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              mat-button
+              class="ms-5">
+  
+              {{ link.label }}
+  
+          </a>
+      </ng-container>
+  
+      <span class="header-spacer"></span>
+      
+
+      <ng-container *ngIf="authUser$ | async as authUser">
+        <ng-container *ngIf="authUser.isUserLoggedIn; else spinnerTemplate;">
+            <button mat-button [matMenuTriggerFor]="menu" aria-label="Menu">
+                {{authUser.user?.username}}
+                <mat-icon>person_filled</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item routerLink="/client/settings">
+                <mat-icon>settings</mat-icon>
+                <span>Settings</span>
+                </button>
+                <button mat-menu-item routerLink="/client">
+                <mat-icon>person</mat-icon>
+                <span>Client Area</span>
+                </button>
+                <button mat-menu-item (click)="logout()">
+                <mat-icon>exit_to_app</mat-icon>
+                <span>Logout</span>
+                </button>
+            </mat-menu>
+        </ng-container>
+
+        <ng-template #spinnerTemplate>
+            <mat-spinner mode="indeterminate" diameter="30" style="--mdc-circular-progress-active-indicator-color: azure;"></mat-spinner>
+        </ng-template>
+
+      </ng-container>
+
+      
+
+    </mat-toolbar-row>
+  </mat-toolbar>
+  
+  

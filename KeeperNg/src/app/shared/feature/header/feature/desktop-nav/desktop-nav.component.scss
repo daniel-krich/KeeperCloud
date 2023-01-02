@@ -1,0 +1,14 @@
+.toolbar-header {
+    position: relative;
+    z-index: 2;
+}
+
+.header-spacer {
+    flex: 1 1 auto;
+}
+
+.nav-link-active {
+    border-bottom: #ffffff70 solid 2px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}

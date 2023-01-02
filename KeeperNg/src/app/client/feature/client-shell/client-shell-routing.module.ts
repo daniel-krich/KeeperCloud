@@ -3,12 +3,16 @@ import { Route, RouterModule } from "@angular/router";
 
 const routes: Route[] = [
     {
-        'path': '',
-        loadChildren: () => import('../client-files-page/client-files-page.module').then(m => m.ClientFilesPageModule),
+        path: '',
+        loadChildren: () => import('../client-main-page/client-main-page.module').then(m => m.ClientMainPageModule),
         pathMatch: 'full'
     },
     {
-        'path': 'settings',
+        path: 'files',
+        loadChildren: () => import('../client-files-page/client-files-page.module').then(m => m.ClientFilesPageModule),
+    },
+    {
+        path: 'settings',
         loadChildren: () => import('../client-settings-page/client-settings-page.module').then(m => m.ClientSettingsPageModule)
     }
 ];

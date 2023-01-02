@@ -3,41 +3,24 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+  templateUrl: './header.component.html'
 })
 export class HeaderComponent {
-    public smDeviceWidth: number = 900; 
-    public links: { path: string, label: string }[] = [
-        {
-            path: '/home',
-            label: 'Home'
-        },
-        {
-            path: '/pricing',
-            label: 'Pricing'
-        },
-        {
-            path: '/developers',
-            label: 'Developers'
-        },
-        {
-            path: '/contact',
-            label: 'Contact'
-        },
-    ];
 
-    public toggleMenu: boolean = false;
-    public innerWidth: number = window.innerWidth;
+    public static readonly MOBILE_DEVICE_WIDTH: number = 900;
+
+    public currentInnerWidth: number = window.innerWidth;
 
     constructor(public router: Router) { }
 
     @HostListener('window:resize', ['$event'])
     private onResize(event: any): void {
-        this.innerWidth = window.innerWidth;
+        this.currentInnerWidth = window.innerWidth;
     }
 
-    public toggleResponsiveMenu(): void {
-        this.toggleMenu = !this.toggleMenu;
+    public get mobileDeviceWidth() : number {
+        return HeaderComponent.MOBILE_DEVICE_WIDTH;
     }
+
+    
 }

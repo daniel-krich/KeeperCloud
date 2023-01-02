@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthenticationGuard } from './shared/guards/authentication.guard';
 
 const routes: Routes = [
     { 
@@ -20,7 +21,8 @@ const routes: Routes = [
     },
     {
         path: 'client',
-        loadChildren: () => import('./client/feature/client-shell/client-shell.module').then(m => m.ClientShellModule)
+        loadChildren: () => import('./client/feature/client-shell/client-shell.module').then(m => m.ClientShellModule),
+        canActivate: [AuthenticationGuard]
     },
     { path: '', redirectTo: 'home', pathMatch: 'full' },
     { path: '**', loadChildren: () => import('./not-found/feature/not-found-page.module').then(m => m.NotFoundPageModule) }
@@ -28,6 +30,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
+  providers: [AuthenticationGuard],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

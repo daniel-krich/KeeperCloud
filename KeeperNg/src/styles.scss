@@ -44,3 +44,29 @@ body {
         font-weight: 300;
     }
 }
+
+
+  
+.success-snackbar {
+
+    >.mdc-snackbar__surface {
+        background: #11832ac0 !important;
+    }
+
+    .mat-mdc-snack-bar-label, .mdc-button__label {
+        color: #ffffff !important;
+    }
+    
+}
+
+.primary-snackbar {
+
+    >.mdc-snackbar__surface {
+        background: #3b7aff !important;
+    }
+
+    .mat-mdc-snack-bar-label, .mdc-button__label {
+        color: #ffffff !important;
+    }
+    
+}

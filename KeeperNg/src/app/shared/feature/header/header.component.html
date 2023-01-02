@@ -1,36 +1,4 @@
-<mat-toolbar class="toolbar-header" color="primary">
-  <mat-toolbar-row>
-    <span class="d-flex align-items-center" routerLink="/home" role="button" style="position: relative;">
-        KeeperCloud
-        <mat-icon class="ms-2">cloud_queue</mat-icon>
-    </span>
-
-    <ng-container *ngIf="this.innerWidth > smDeviceWidth">
-        <a  *ngFor="let link of links"
-            [routerLink]="link.path"
-            routerLinkActive="nav-link-active"
-            [routerLinkActiveOptions]="{ exact: true }"
-            mat-button
-            class="ms-5">
-
-            {{ link.label }}
-
-        </a>
-    </ng-container>
-
-    <span class="header-spacer"></span>
-    <button mat-icon-button *ngIf="this.innerWidth <= smDeviceWidth" (click)="toggleResponsiveMenu()">
-      <mat-icon [innerText]="toggleMenu ? 'close' : 'menu'"></mat-icon>
-    </button>
-  </mat-toolbar-row>
-</mat-toolbar>
-
-<div *ngIf="this.innerWidth <= smDeviceWidth" class="responsive-column-menu" [class.show]="toggleMenu">
-    <a  *ngFor="let link of links"
-        [routerLink]="link.path"
-        routerLinkActive="nav-link-active"
-        [routerLinkActiveOptions]="{ exact: true }">
-        {{ link.label }}
-    </a>
-</div>
-
+<app-desktop-nav *ngIf="currentInnerWidth > mobileDeviceWidth; else mobileNavTemplate;"></app-desktop-nav>
+<ng-template #mobileNavTemplate>
+    <app-mobile-nav></app-mobile-nav>
+</ng-template>

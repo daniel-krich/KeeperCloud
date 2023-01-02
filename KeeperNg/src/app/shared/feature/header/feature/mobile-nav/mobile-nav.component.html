@@ -1,0 +1,28 @@
+<mat-toolbar class="toolbar-header" color="primary">
+  <mat-toolbar-row>
+    <span class="d-flex align-items-center" routerLink="/home" role="button">
+      {{navData.menuTitle}}
+      <mat-icon class="ms-2">cloud_queue</mat-icon>
+    </span>
+
+    <span class="header-spacer"></span>
+
+    <button
+      mat-icon-button
+      (click)="toggleResponsiveMenu()">
+      <mat-icon [innerText]="toggleMenu ? 'close' : 'menu'"></mat-icon>
+    </button>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<div class="responsive-column-menu"
+     [class.show]="toggleMenu">
+        <a *ngFor="let link of navData.commonLinks"
+           [routerLink]="link.path"
+           routerLinkActive="nav-link-active"
+           [routerLinkActiveOptions]="{ exact: true }">
+
+    {{ link.label }}
+
+  </a>
+</div>
