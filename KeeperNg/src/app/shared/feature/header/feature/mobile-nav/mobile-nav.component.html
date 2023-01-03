@@ -1,28 +1,62 @@
 <mat-toolbar class="toolbar-header" color="primary">
-  <mat-toolbar-row>
-    <span class="d-flex align-items-center" routerLink="/home" role="button">
-      {{navData.menuTitle}}
-      <mat-icon class="ms-2">cloud_queue</mat-icon>
-    </span>
-
-    <span class="header-spacer"></span>
-
-    <button
-      mat-icon-button
-      (click)="toggleResponsiveMenu()">
-      <mat-icon [innerText]="toggleMenu ? 'close' : 'menu'"></mat-icon>
-    </button>
-  </mat-toolbar-row>
+    <mat-toolbar-row>
+        <span class="d-flex align-items-center" routerLink="/home" role="button">
+          {{navData.menuTitle}}
+          <mat-icon class="ms-2">cloud_queue</mat-icon>
+        </span>
+    
+        <span class="header-spacer"></span>
+    
+        <button
+          mat-icon-button
+          (click)="toggleResponsiveMenu()">
+          <mat-icon [innerText]="menuBoolState ? 'close' : 'menu'"></mat-icon>
+        </button>
+      </mat-toolbar-row>
 </mat-toolbar>
+  
+<div class="responsive-column-menu" [@expand]="menuState">
+    <a *ngFor="let link of navData.commonLinks"
+            [routerLink]="link.path"
+            routerLinkActive="nav-link-active"
+            [routerLinkActiveOptions]="{ exact: true }">
 
-<div class="responsive-column-menu"
-     [class.show]="toggleMenu">
-        <a *ngFor="let link of navData.commonLinks"
-           [routerLink]="link.path"
-           routerLinkActive="nav-link-active"
-           [routerLinkActiveOptions]="{ exact: true }">
+            <mat-icon>{{link.icon}}</mat-icon>
+            <span>{{ link.label }}</span>
 
-    {{ link.label }}
+    </a>
 
-  </a>
+    <ng-container *ngIf="authUser$ | async as authUser">
+        <ng-container *ngIf="authUser.isUserLoggedIn; else conditionSpinnerTemplate;">
+            <mat-expansion-panel class="custom-mat-panel" [(expanded)]="accountMenuState">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    <mat-spinner class="white-spinner" *ngIf="false"></mat-spinner>
+                    <span *ngIf="true" class="d-flex align-items-center">
+                        <mat-icon class="me-3">person_filled</mat-icon>
+                        <span>{{authUser.user?.email}}</span>
+                    </span>
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <a *ngFor="let clientLink of navData.clientLinks" [routerLink]="clientLink.path">
+                  <mat-icon>{{clientLink.icon}}</mat-icon>
+                  <span>{{clientLink.label}}</span>
+                </a>
+                <a role="button" (click)="logout()">
+                  <mat-icon>exit_to_app</mat-icon>
+                  <span>Logout</span>
+                </a>
+              </mat-expansion-panel>
+        </ng-container>
+
+        <ng-template #conditionSpinnerTemplate>
+            <ng-container *ngIf="authUser.stateStatus == 'loading'">
+                <mat-spinner class="ms-3 white-spinner" mode="indeterminate" diameter="30"></mat-spinner>
+            </ng-container>
+            
+        </ng-template>
+
+      </ng-container>
+
+    
 </div>

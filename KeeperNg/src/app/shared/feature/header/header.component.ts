@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, ElementRef, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -10,7 +10,7 @@ export class HeaderComponent {
     public static readonly MOBILE_DEVICE_WIDTH: number = 900;
 
     public currentInnerWidth: number = window.innerWidth;
-
+    
     constructor(public router: Router) { }
 
     @HostListener('window:resize', ['$event'])

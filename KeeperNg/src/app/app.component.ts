@@ -1,16 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, RouterEvent, Event as NavigationEvent } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { interval } from 'rxjs';
 import { AppStateInterface } from './shared/data-access/state/app.state';
 import { authenticate, changeAuthStateToError, changeAuthStateToLoading, unauthenticate } from './shared/data-access/state/authentication/authentication.actions';
+import { LoadingScreenComponent } from './shared/ui/loading-screen/loading-screen.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html'
 })
 export class AppComponent {
+    @ViewChild('loading') loading!: LoadingScreenComponent;
+    constructor(store: Store<AppStateInterface>,
+                private router: Router) {
 
-    constructor(store: Store<AppStateInterface>) {
+
         store.dispatch(changeAuthStateToLoading());
         //store.dispatch(changeAuthStateToError());
         setTimeout(() => {
@@ -18,6 +23,26 @@ export class AppComponent {
             //store.dispatch(unauthenticate());
             store.dispatch(authenticate({ email: 'danek228@gmail.com', password: '228228' }));
         }, 500);
+
+
+        this.router.events.subscribe((event: NavigationEvent) => {
+
+            switch (true) {
+                case event instanceof NavigationStart: {
+                    this.loading.isLoading = true;
+                    break;
+                }
+      
+                case event instanceof NavigationEnd:
+                case event instanceof NavigationCancel:
+                case event instanceof NavigationError: {
+                    this.loading.isLoading = false;
+                    break;
+                }
+
+                default: break;
+            }
+        });
         
     }
 
