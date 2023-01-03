@@ -2,10 +2,10 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { Component } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Store } from '@ngrx/store';
+import { NavigationDataService } from 'src/app/shared/data-access/navigation-data.service';
 import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
 import { unauthenticate } from 'src/app/shared/data-access/state/authentication/authentication.actions';
 import { selectAuthUser } from 'src/app/shared/data-access/state/authentication/authentication.selectors';
-import { NavigationDataService } from '../../data-access/navigation-data.service';
 
 @Component({
   selector: 'app-mobile-nav',

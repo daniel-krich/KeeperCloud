@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class NavigationDataService {
 
     public menuTitle: string = 'KeeperCloud';
@@ -38,6 +40,34 @@ export class NavigationDataService {
             path: '/client/settings',
             icon: 'settings',
             label: 'Settings'
+        }
+    ];
+
+    //
+
+    public clientSideNavLinks: { path: string, icon: string, label: string }[] = [
+        {
+            path: '/client',
+            icon: 'person',
+            label: 'Client'
+        },
+        {
+            path: '/client/files',
+            icon: 'folder_open',
+            label: 'Files'
+        },
+        {
+            path: '/client/settings',
+            icon: 'settings',
+            label: 'Settings'
+        }
+    ];
+
+    public clientSideNavBottomLinks: { path: string, icon: string, label: string }[] = [
+        {
+            path: '/home',
+            icon: 'keyboard_return',
+            label: 'Main'
         }
     ];
 

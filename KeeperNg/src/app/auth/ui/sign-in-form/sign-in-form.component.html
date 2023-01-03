@@ -1,0 +1,17 @@
+<form [formGroup]="signInForm" (ngSubmit)="onSubmit()">
+    <mat-form-field>
+      <input matInput placeholder="Email" formControlName="email" required>
+    </mat-form-field>
+    <br>
+    <mat-form-field>
+      <input matInput type="password" placeholder="Password" formControlName="password" required>
+    </mat-form-field>
+    <br>
+    <mat-form-field>
+      <input matInput type="password" placeholder="Confirm Password" formControlName="confirmPassword" required>
+    </mat-form-field>
+    <br>
+    <mat-checkbox formControlName="rememberMe">Remember me</mat-checkbox>
+    <br>
+    <button mat-flat-button color="primary" type="submit">Sign In</button>
+</form>

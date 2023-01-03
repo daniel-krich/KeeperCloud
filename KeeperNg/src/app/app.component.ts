@@ -18,11 +18,12 @@ export class AppComponent {
 
         store.dispatch(changeAuthStateToLoading());
         //store.dispatch(changeAuthStateToError());
+        //store.dispatch(authenticate({ email: 'danek228@gmail.com', password: '228228' }));
         setTimeout(() => {
-
+            //store.dispatch(changeAuthStateToError());
             //store.dispatch(unauthenticate());
             store.dispatch(authenticate({ email: 'danek228@gmail.com', password: '228228' }));
-        }, 500);
+        }, 1000);
 
 
         this.router.events.subscribe((event: NavigationEvent) => {

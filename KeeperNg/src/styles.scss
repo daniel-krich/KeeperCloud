@@ -107,6 +107,18 @@ body {
     
 }
 
+.error-snackbar {
+
+    >.mdc-snackbar__surface {
+        background: #e65050 !important;
+    }
+
+    .mat-mdc-snack-bar-label, .mdc-button__label {
+        color: #ffffff !important;
+    }
+    
+}
+
 .primary-snackbar {
 
     >.mdc-snackbar__surface {

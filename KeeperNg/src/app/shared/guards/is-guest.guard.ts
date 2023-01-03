@@ -5,8 +5,10 @@ import { combineLatest, takeWhile, map, Observable, of, switchMap, defer, tap, t
 import { AppStateInterface } from "../data-access/state/app.state";
 import { selectIsUserLoggedIn, selectAuthStateStatus, selectAuthUser } from "../data-access/state/authentication/authentication.selectors";
 
-@Injectable()
-export class AuthenticationGuard implements CanActivate {
+@Injectable({
+    providedIn: 'root'
+})
+export class IsGuestGuard implements CanActivate {
 
     constructor(private store: Store<AppStateInterface>, private router: Router) { }
 
@@ -14,13 +16,14 @@ export class AuthenticationGuard implements CanActivate {
         return this.store.select(selectIsUserLoggedIn).pipe(
             switchMap(loggedIn => {
                 if (loggedIn) {
-                    return of(true);
+                    this.router.navigate(['/']);
+                    return of(false);
                 }
                 return defer(() =>
                     this.store.select(selectAuthStateStatus).pipe(
                         skipWhile(auth => auth == 'loading'),
                         map(auth => {
-                            if(auth !== 'success') {
+                            if(auth == 'success') {
                                 this.router.navigate(['/']);
                                 return false;
                             }

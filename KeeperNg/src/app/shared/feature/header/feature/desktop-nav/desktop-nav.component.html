@@ -44,9 +44,16 @@
         </ng-container>
 
         <ng-template #conditionSpinnerTemplate>
-            <ng-container *ngIf="authUser.stateStatus == 'loading'">
+            <ng-container *ngIf="authUser.stateStatus == 'loading'; else gotoAuthTemplate">
                 <mat-spinner class="me-3 white-spinner" mode="indeterminate" diameter="30"></mat-spinner>
             </ng-container>
+
+            <ng-template #gotoAuthTemplate>
+                <a mat-flat-button class="auth-btn" routerLink="/auth">
+                    <mat-icon>login</mat-icon>
+                    <span>Sign-in</span>
+                </a>
+            </ng-template>
             
         </ng-template>
 

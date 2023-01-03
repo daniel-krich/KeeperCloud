@@ -1,0 +1,32 @@
+.client-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex-grow: 1;
+}
+
+.header-spacer {
+    flex: 1 1 auto;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+
+    padding-right: 60px;
+
+    mat-icon {
+        margin-right: 15px;
+    }
+
+    span {
+        opacity: 0.8;
+    }
+}
+
+.nav-link-active {
+    background-color: #21212120;
+}
