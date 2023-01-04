@@ -15,21 +15,10 @@ export const signinError = createAction(
     '[Auto authentication] End authentication with error'
 );
 
-
-
-export const authenticate = createAction(
-    '[Authentication] Send authentication',
-    props<{ email: string, password: string }>()
+export const signoutBegin = createAction(
+    '[Sign-out] Begin Sign-out'
 );
 
-export const unauthenticate = createAction(
-    '[Authentication] Send logout or unauthenticate'
-);
-
-export const changeAuthStateToError = createAction(
-    '[Authentication] Change Auth State To Error'
-);
-
-export const changeAuthStateToLoading = createAction(
-    '[Authentication] Change Auth State To Loading'
+export const signoutFinished = createAction(
+    '[Sign-out] Finished Sign-out'
 );

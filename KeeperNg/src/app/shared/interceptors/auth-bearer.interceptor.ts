@@ -6,16 +6,17 @@ import {
   HttpInterceptor
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AuthLogicService } from '../data-access/auth-logic.service';
+import { AuthService } from '../data-access/auth.service';
 
 @Injectable()
 export class AuthBearerInterceptor implements HttpInterceptor {
 
-  constructor(private authLogic: AuthLogicService) {}
+  constructor(private authService: AuthService) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     
-    const token = this.authLogic.jwtFromLocalStorage?.token;
+    let token = this.authService.getJwtFromStorage()?.token;
+
     request = request.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`

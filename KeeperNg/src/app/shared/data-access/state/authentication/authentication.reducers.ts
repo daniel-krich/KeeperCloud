@@ -1,4 +1,4 @@
-import { authenticate, changeAuthStateToError, changeAuthStateToLoading, signinBegin, signinError, signinSuccess, unauthenticate } from './authentication.actions';
+import { signinBegin, signinError, signinSuccess, signoutFinished } from './authentication.actions';
 import { createReducer, on } from '@ngrx/store';
 import { AuthenticationStateInterface } from '../interfaces/authentication-state.interface';
 
@@ -32,4 +32,11 @@ export const authenticationReducer = createReducer(
         user: null,
         stateStatus: 'error'
     })),
+
+    on(signoutFinished, (state) => ({
+        ...state,
+        isUserLoggedIn: false,
+        user: null,
+        stateStatus: 'pending'
+    }))
 );

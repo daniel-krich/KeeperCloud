@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl, AbstractControl } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl, AbstractControl, NgForm } from '@angular/forms';
 import { SigninInterface } from '../../interfaces/sign-in.interface';
 
 @Component({
@@ -10,35 +10,14 @@ import { SigninInterface } from '../../interfaces/sign-in.interface';
 export class SignInFormComponent {
 
     @Output() public signInFormSubmit: EventEmitter<SigninInterface | null> = new EventEmitter<SigninInterface | null>();
-    signInForm: FormGroup;
 
-    constructor(private formBuilder: FormBuilder) {
-        this.signInForm = new FormGroup({
-            email: new FormControl('', [Validators.required, Validators.email]),
-            password: new FormControl('', Validators.required),
-            confirmPassword: new FormControl('', Validators.required),
-            rememberMe: new FormControl(false)
-          }, { validators: this.checkPasswords });
-      }
-
-      
-    
-      checkPasswords(form: AbstractControl) {
-        const password = form.get('password')?.value;
-        const confirmPassword = form.get('confirmPassword')?.value;
-        return password === confirmPassword ? null : { error: 'passwords are not the same' };
-      }
-    
-      onSubmit() {
-        if (this.signInForm.valid) {
+    onSubmit(form: NgForm, email: string, password: string) {
+        if (form.valid) {
             this.signInFormSubmit.emit({
-                email: this.signInForm.controls['email']?.value,
-                password: this.signInForm.controls['password']?.value,
-                remember: this.signInForm.controls['rememberMe']?.value
+                email: email,
+                password: password,
+                remember: false
             });
-        }
-        else {
-            this.signInFormSubmit.emit(null);
         }
       }
 }

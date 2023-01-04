@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { NavigationDataService } from 'src/app/shared/data-access/navigation-data.service';
 import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
-import { unauthenticate } from 'src/app/shared/data-access/state/authentication/authentication.actions';
+import { signoutBegin } from 'src/app/shared/data-access/state/authentication/authentication.actions';
 
 @Component({
   selector: 'app-client-layout-with-nav',
@@ -19,7 +19,7 @@ export class ClientLayoutWithNavComponent {
                 private snackBar: MatSnackBar) { }
 
     logout(): void {
-        this.store.dispatch(unauthenticate());
+        this.store.dispatch(signoutBegin());
         this.router.navigate(['/home']);
         this.snackBar.open('Logged out...', '', {
             duration: 2000,

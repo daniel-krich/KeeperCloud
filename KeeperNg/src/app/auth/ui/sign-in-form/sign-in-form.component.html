@@ -1,17 +1,16 @@
-<form [formGroup]="signInForm" (ngSubmit)="onSubmit()">
+<form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm, email.value, password.value)">
     <mat-form-field>
-      <input matInput placeholder="Email" formControlName="email" required>
+      <input matInput placeholder="email address" type="email" name="email" #email ngModel required>
+      <mat-error *ngIf="loginForm.controls['email'].invalid">Please enter a valid email</mat-error>
     </mat-form-field>
     <br>
     <mat-form-field>
-      <input matInput type="password" placeholder="Password" formControlName="password" required>
+      <input matInput placeholder="password" type="password" name="password" #password ngModel required>
+      <mat-error *ngIf="loginForm.controls['password'].invalid">Please enter a password</mat-error>
     </mat-form-field>
     <br>
-    <mat-form-field>
-      <input matInput type="password" placeholder="Confirm Password" formControlName="confirmPassword" required>
-    </mat-form-field>
+    <mat-checkbox name="rememberMe" ngModel>Remember me</mat-checkbox>
     <br>
-    <mat-checkbox formControlName="rememberMe">Remember me</mat-checkbox>
-    <br>
-    <button mat-flat-button color="primary" type="submit">Sign In</button>
-</form>
+    <button mat-raised-button type="submit">Login</button>
+  </form>
+  

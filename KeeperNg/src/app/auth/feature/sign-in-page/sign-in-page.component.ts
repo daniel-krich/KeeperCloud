@@ -1,7 +1,11 @@
 import { Component } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { AuthLogicService } from 'src/app/shared/data-access/auth-logic.service';
+import { Store } from '@ngrx/store';
+import { map } from 'rxjs';
+import { AuthService } from 'src/app/shared/data-access/auth.service';
+import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
+import { signinSuccess } from 'src/app/shared/data-access/state/authentication/authentication.actions';
 import { SigninInterface } from '../../interfaces/sign-in.interface';
 
 @Component({
@@ -12,7 +16,8 @@ import { SigninInterface } from '../../interfaces/sign-in.interface';
 export class SignInPageComponent {
 
     constructor(private snackbar: MatSnackBar,
-                private authService: AuthLogicService,
+                private authService: AuthService,
+                private store: Store<AppStateInterface>,
                 private router: Router
                 ) { }
 
@@ -25,8 +30,14 @@ export class SignInPageComponent {
               });
         }
         else {
-            this.authService.authenticateViaCredentials(payload.email, payload.password).subscribe(x => {
-                this.router.navigate(['/client']);
+            this.authService.authenticateViaCredentials(payload.email, payload.password).pipe(
+                map(jwt => jwt ? this.authService.transformTokenToUser(jwt.token) : null)
+            ).subscribe(user => {
+                if(user) {
+                    this.store.dispatch(signinSuccess({ user: user }));
+                    this.router.navigate(['/client']);
+                }
+                
             });
             
         }

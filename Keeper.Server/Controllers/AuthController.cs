@@ -68,6 +68,13 @@ namespace Keeper.Server.Controllers
             return Ok();
         }
 
+        [HttpGet("exit")]
+        [Authorize]
+        public IActionResult Exit()
+        {
+            return Ok();
+        }
+
         [HttpPost("refresh")]
         public async Task<IActionResult> RefreshJwt([FromBody] TokenRefreshRequestDTO tokenRefreshRequest)
         {

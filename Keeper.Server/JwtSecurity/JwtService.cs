@@ -100,7 +100,7 @@ namespace Keeper.Server.JwtSecurity
             var token = new JwtSecurityToken(
                 issuer: JwtSettings.Issuer,
                 audience: JwtSettings.Audience,
-                expires: DateTime.UtcNow.AddMinutes(15),
+                expires: DateTime.UtcNow.AddMinutes(10),
                 signingCredentials: creds);
 
             token.Payload["user"] = new

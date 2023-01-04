@@ -3,7 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Store } from '@ngrx/store';
 import { NavigationDataService } from 'src/app/shared/data-access/navigation-data.service';
 import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
-import { unauthenticate } from 'src/app/shared/data-access/state/authentication/authentication.actions';
+import { signoutBegin } from 'src/app/shared/data-access/state/authentication/authentication.actions';
 import { selectAuthUser } from 'src/app/shared/data-access/state/authentication/authentication.selectors';
 
 @Component({
@@ -18,7 +18,7 @@ export class DesktopNavComponent {
                 private snackBar: MatSnackBar) { }
 
     public logout(): void {
-        this.store.dispatch(unauthenticate());
+        this.store.dispatch(signoutBegin());
 
         this.snackBar.open('Logged out...', '', {
             duration: 2000,
