@@ -1,4 +1,4 @@
-import { authenticate, changeAuthStateToError, changeAuthStateToLoading, unauthenticate } from './authentication.actions';
+import { authenticate, changeAuthStateToError, changeAuthStateToLoading, signinBegin, signinError, signinSuccess, unauthenticate } from './authentication.actions';
 import { createReducer, on } from '@ngrx/store';
 import { AuthenticationStateInterface } from '../interfaces/authentication-state.interface';
 
@@ -12,29 +12,24 @@ const authInitialState : AuthenticationStateInterface = {
 export const authenticationReducer = createReducer(
     authInitialState,
 
-    on(authenticate, (state, { email, password }) => ({
-        ...state,
-        isUserLoggedIn: true,
-        user: { username: email, email: email, firstname: 'first', lastname: 'last' },
-        stateStatus: 'success'
-    })),
-
-    on(unauthenticate, (state) => ({
+    on(signinBegin, (state) => ({
         ...state,
         isUserLoggedIn: false,
         user: null,
-        stateStatus: 'pending'
+        stateStatus: 'loading'
     })),
 
-    on(changeAuthStateToError, (state) => ({
+    on(signinSuccess, (state, { user }) => ({
+        ...state,
+        isUserLoggedIn: true,
+        user: {...user},
+        stateStatus: 'success'
+    })),
+
+    on(signinError, (state) => ({
         ...state,
         isUserLoggedIn: false,
+        user: null,
         stateStatus: 'error'
     })),
-
-    on(changeAuthStateToLoading, (state) => ({
-        ...state,
-        isUserLoggedIn: false,
-        stateStatus: 'loading'
-    }))
 );

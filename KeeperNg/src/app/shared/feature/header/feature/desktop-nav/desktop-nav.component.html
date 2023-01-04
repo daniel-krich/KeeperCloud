@@ -25,7 +25,7 @@
       <ng-container *ngIf="authUser$ | async as authUser">
         <ng-container *ngIf="authUser.isUserLoggedIn; else conditionSpinnerTemplate;">
             <button mat-button [matMenuTriggerFor]="menu" aria-label="Menu">
-                {{authUser.user?.username}}
+                {{authUser.user?.email}}
                 <mat-icon>person_filled</mat-icon>
             </button>
             <mat-menu #menu="matMenu">

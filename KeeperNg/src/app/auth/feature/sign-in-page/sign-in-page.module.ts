@@ -6,6 +6,7 @@ import { SignInPageComponent } from './sign-in-page.component';
 import { DefaultLayoutModule } from 'src/app/shared/feature/default-layout/default-layout.module';
 import { SignInFormModule } from '../../ui/sign-in-form/sign-in-form.module';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { RouterModule } from '@angular/router';
 
 
 @NgModule({
@@ -14,6 +15,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
   ],
   imports: [
     CommonModule,
+    RouterModule,
     DefaultLayoutModule,
     SignInFormModule,
     MatSnackBarModule,

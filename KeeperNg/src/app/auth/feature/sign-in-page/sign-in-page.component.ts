@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
+import { AuthLogicService } from 'src/app/shared/data-access/auth-logic.service';
 import { SigninInterface } from '../../interfaces/sign-in.interface';
 
 @Component({
@@ -9,7 +11,10 @@ import { SigninInterface } from '../../interfaces/sign-in.interface';
 })
 export class SignInPageComponent {
 
-    constructor(private snackbar: MatSnackBar) { }
+    constructor(private snackbar: MatSnackBar,
+                private authService: AuthLogicService,
+                private router: Router
+                ) { }
 
     public onSigninSubmit(payload: SigninInterface | null): void {
         if(payload == null) {
@@ -20,7 +25,9 @@ export class SignInPageComponent {
               });
         }
         else {
-            console.log(payload);
+            this.authService.authenticateViaCredentials(payload.email, payload.password).subscribe(x => {
+                this.router.navigate(['/client']);
+            });
             
         }
         
