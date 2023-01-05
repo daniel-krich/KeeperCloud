@@ -1,9 +1,23 @@
 <app-default-layout>
-  <div class="not-found">
-    <p class="not-found-code">404</p>
-    <div class="d-flex flex-column justify-content-center ms-3">
-      <h3>Hmm... route is invalid</h3>
-      <h5>You'll be navigated home in {{ countDown }}</h5>
+  <div class="container mt-5 mb-5">
+    <h1 class="mb-4">Page Not Found</h1>
+    <h5 class="mb-5">Sorry, the page you are looking for could not be found.</h5>
+    <mat-card>
+      <mat-card-content>
+        <p>Here are some options:</p>
+        <ul>
+          <li>Double-check the URL</li>
+          <li>Go to the <a routerLink="/">home page</a></li>
+          <li>Contact us for help</li>
+        </ul>
+      </mat-card-content>
+    </mat-card>
+
+    <div class="mt-5">
+      <p>Or, you can wait for the countdown timer to expire:</p>
+      <p>
+        Redirecting to home page in <b>{{ countDown }}</b> seconds...
+      </p>
     </div>
   </div>
 </app-default-layout>

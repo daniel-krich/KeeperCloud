@@ -10,13 +10,15 @@ import { selectIsUserLoggedIn, selectAuthStateStatus, selectAuthUser } from "../
 })
 export class IsGuestGuard implements CanActivate {
 
+    private redirectIfNotAGuest: string = '/client';
+
     constructor(private store: Store<AppStateInterface>, private router: Router) { }
 
     canActivate() {
         return this.store.select(selectIsUserLoggedIn).pipe(
             switchMap(loggedIn => {
                 if (loggedIn) {
-                    this.router.navigate(['/']);
+                    this.router.navigate([this.redirectIfNotAGuest]);
                     return of(false);
                 }
                 return defer(() =>
@@ -24,7 +26,7 @@ export class IsGuestGuard implements CanActivate {
                         skipWhile(auth => auth == 'loading'),
                         map(auth => {
                             if(auth == 'success') {
-                                this.router.navigate(['/']);
+                                this.router.navigate([this.redirectIfNotAGuest]);
                                 return false;
                             }
                             return true;

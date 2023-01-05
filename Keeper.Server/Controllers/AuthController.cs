@@ -31,7 +31,7 @@ namespace Keeper.Server.Controllers
                 return Ok(jwtAccess);
             }
 
-            return Unauthorized();
+            return BadRequest();
         }
 
         [HttpPost("sign-up")]
@@ -55,7 +55,7 @@ namespace Keeper.Server.Controllers
 
                     });
                     await context.SaveChangesAsync();
-                    return Ok();
+                    return NoContent();
                 }
                 return BadRequest();
             }
@@ -65,14 +65,14 @@ namespace Keeper.Server.Controllers
         [Authorize]
         public IActionResult ValidateJwt()
         {
-            return Ok();
+            return NoContent();
         }
 
         [HttpGet("exit")]
         [Authorize]
         public IActionResult Exit()
         {
-            return Ok();
+            return NoContent();
         }
 
         [HttpPost("refresh")]

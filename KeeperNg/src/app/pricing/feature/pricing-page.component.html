@@ -1,34 +1,88 @@
 <app-default-layout>
-  <section id="pricing">
-    <h3>Pricing</h3>
+  <div class="container mt-5 mb-5">
+    <h1 class="mb-5">Pricing</h1>
     <p>
-      KeeperCloud offers flexible pricing plans to suit your needs. We have a
-      free plan that includes basic storage and sharing features, as well as
-      paid plans with additional features and storage space.
+      Welcome to the KeeperCloud pricing page. We offer three plans to fit the
+      needs of different types of users. All plans include unlimited file
+      transfers and 24/7 customer support. Choose the plan that best fits your
+      needs:
     </p>
-    <h4>Free Plan</h4>
-    <ul>
-      <li>5GB storage space</li>
-      <li>Basic file sharing and collaboration</li>
-      <li>Access from any device</li>
-    </ul>
-    <h4>Standard Plan</h4>
-    <ul>
-      <li>50GB storage space</li>
-      <li>Advanced file sharing and collaboration</li>
-      <li>Secure file encryption</li>
-      <li>Integration with popular productivity tools</li>
-      <li>Pricing: $9.99/month or $99/year</li>
-    </ul>
-    <h4>Premium Plan</h4>
-    <ul>
-      <li>500GB storage space</li>
-      <li>All Standard Plan features, plus:</li>
-      <li>Unlimited file versioning</li>
-      <li>Custom branding options</li>
-      <li>Advanced support options</li>
-      <li>Pricing: $29.99/month or $299/year</li>
-    </ul>
-    <p>Contact us for more information on enterprise pricing.</p>
-  </section>
+
+    <!-- Basic plan -->
+    <div class="row mt-5 align-items-stretch">
+      <div class="position-relative col-12 col-md-4 mb-3">
+        <mat-card class="h-100 p-4">
+          <mat-card-title class="mb-4">Basic</mat-card-title>
+          <mat-card-content>
+            <h2>$5/month</h2>
+            <ul>
+              <li>10GB storage</li>
+              <li>20GB bandwidth</li>
+              <li>1 user</li>
+            </ul>
+          </mat-card-content>
+          <mat-card-actions>
+            <button
+              mat-raised-button
+              class="position-absolute top-0 end-0 m-3"
+              color="primary"
+            >
+              Join
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+
+      <!-- Pro plan -->
+      <div class="position-relative col-12 col-md-4 mb-3">
+        <mat-card class="h-100 p-4">
+          <mat-card-title class="mb-4">Pro</mat-card-title>
+          <mat-card-content>
+            <h2>$10/month</h2>
+            <ul>
+              <li>50GB storage</li>
+              <li>100GB bandwidth</li>
+              <li>5 users</li>
+              <li>Priority support</li>
+            </ul>
+          </mat-card-content>
+          <mat-card-actions>
+            <button
+              mat-raised-button
+              class="position-absolute top-0 end-0 m-3"
+              color="primary"
+            >
+              Join
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+
+      <!-- Business plan -->
+      <div class="position-relative col-12 col-md-4 mb-3">
+        <mat-card class="h-100 p-4">
+          <mat-card-title class="mb-4">Business</mat-card-title>
+          <mat-card-content>
+            <h2>$20/month</h2>
+            <ul>
+              <li>100GB storage</li>
+              <li>500GB bandwidth</li>
+              <li>25 users</li>
+              <li>Priority support</li>
+              <li>Custom branding</li>
+            </ul>
+          </mat-card-content>
+          <mat-card-actions>
+            <button
+              mat-raised-button
+              class="position-absolute top-0 end-0 m-3"
+              color="primary"
+            >
+              Join
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+  </div>
 </app-default-layout>

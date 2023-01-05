@@ -10,6 +10,8 @@ import { selectIsUserLoggedIn, selectAuthStateStatus, selectAuthUser } from "../
 })
 export class IsAuthenticatedGuard implements CanActivate {
 
+    private redirectIfNotAuthenticated: string = '/auth';
+
     constructor(private store: Store<AppStateInterface>, private router: Router) { }
 
     canActivate() {
@@ -23,7 +25,7 @@ export class IsAuthenticatedGuard implements CanActivate {
                         skipWhile(auth => auth == 'loading'),
                         map(auth => {
                             if(auth !== 'success') {
-                                this.router.navigate(['/']);
+                                this.router.navigate([this.redirectIfNotAuthenticated]);
                                 return false;
                             }
                             return true;
@@ -33,5 +35,4 @@ export class IsAuthenticatedGuard implements CanActivate {
             }),
         );
     }
-
 }

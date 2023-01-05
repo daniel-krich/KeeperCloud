@@ -5,6 +5,7 @@ import { DevelopersPageRoutingModule } from './developers-page-routing.module';
 import { DevelopersPageComponent } from './developers-page.component';
 import { CodeHighlighterModule } from 'src/app/shared/ui/code-highlighter/code-highlighter.module';
 import { DefaultLayoutModule } from 'src/app/shared/feature/default-layout/default-layout.module';
+import { MatCardModule } from '@angular/material/card';
 
 @NgModule({
   declarations: [
@@ -14,6 +15,7 @@ import { DefaultLayoutModule } from 'src/app/shared/feature/default-layout/defau
     CommonModule,
     CodeHighlighterModule,
     DefaultLayoutModule,
+    MatCardModule,
     DevelopersPageRoutingModule
   ]
 })

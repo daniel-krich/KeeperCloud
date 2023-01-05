@@ -1,28 +1,25 @@
-import { Injectable } from '@angular/core';
-import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor
-} from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from '../data-access/auth.service';
+import { BASE_URL } from 'src/app/app.module';
 
 @Injectable()
 export class AuthBearerInterceptor implements HttpInterceptor {
 
-  constructor(private authService: AuthService) {}
+  constructor(@Inject(BASE_URL) private baseUrl: string,
+              private authService: AuthService) {}
 
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    
-    let token = this.authService.getJwtFromStorage()?.token;
+    intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        if(request.url.startsWith(this.baseUrl)) { // check domain to prevent token leak.
 
-    request = request.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-
-    return next.handle(request);
-  }
+            let token = this.authService.getJwtFromStorage()?.token;
+            request = request.clone({
+                setHeaders: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+        }
+        return next.handle(request);
+    }
 }

@@ -10,12 +10,10 @@ import { LoadingScreenComponent } from './shared/ui/loading-screen/loading-scree
   templateUrl: './app.component.html'
 })
 export class AppComponent {
+
     @ViewChild('loading') loading!: LoadingScreenComponent;
-    constructor(private store: Store<AppStateInterface>,
-                private router: Router) {
 
-        store.dispatch(signinBegin());
-
+    constructor(private router: Router) {
         this.router.events.subscribe((event: NavigationEvent) => {
 
             switch (true) {

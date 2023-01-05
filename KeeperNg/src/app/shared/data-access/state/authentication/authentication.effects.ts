@@ -1,24 +1,20 @@
 import { Injectable } from "@angular/core";
-import { Actions, createEffect, ofType } from "@ngrx/effects";
-import { catchError, map, switchMap, of, throwIfEmpty, tap, throwError } from "rxjs";
+import { Actions, createEffect, ofType, OnInitEffects } from "@ngrx/effects";
+import { Action } from "@ngrx/store";
+import { catchError, map, switchMap, of, throwIfEmpty, tap, throwError, defer } from "rxjs";
 import { AuthService } from "../../auth.service";
 import { signinBegin, signinError, signinSuccess, signoutBegin, signoutFinished } from "./authentication.actions";
 
 
 @Injectable()
-export class AuthenticationEffects {
+export class AuthenticationEffects implements OnInitEffects {
 
     signinBegin$ = createEffect(() =>
         this.actions$.pipe(
             ofType(signinBegin),
             switchMap(() =>
                 this.authLogic.authenticateViaBearer().pipe(
-                    tap(user => {
-                        if(!user) {
-                            throwError(() => new Error('User is empty'))
-                        }
-                    }),
-                    map(user => signinSuccess({ user: user! })),
+                    map(user => signinSuccess({ user: user })),
                     catchError(err => of(signinError()))
                 )
             )
@@ -39,5 +35,9 @@ export class AuthenticationEffects {
 
 
     constructor(private actions$: Actions, private authLogic: AuthService) {}
+
+    ngrxOnInitEffects(): Action {
+        return signinBegin();
+    }
     
 }

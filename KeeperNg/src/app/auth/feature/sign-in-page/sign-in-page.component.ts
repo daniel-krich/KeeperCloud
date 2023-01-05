@@ -6,7 +6,7 @@ import { map } from 'rxjs';
 import { AuthService } from 'src/app/shared/data-access/auth.service';
 import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
 import { signinSuccess } from 'src/app/shared/data-access/state/authentication/authentication.actions';
-import { SigninInterface } from '../../interfaces/sign-in.interface';
+import { SignInModel } from '../../models/sign-in.model';
 
 @Component({
   selector: 'app-sign-in-page',
@@ -21,26 +21,22 @@ export class SignInPageComponent {
                 private router: Router
                 ) { }
 
-    public onSigninSubmit(payload: SigninInterface | null): void {
-        if(payload == null) {
-
-            this.snackbar.open("There's some errors in that form...", '', {
-                duration: 2000,
-                panelClass: ['error-snackbar']
-              });
-        }
-        else {
-            this.authService.authenticateViaCredentials(payload.email, payload.password).pipe(
-                map(jwt => jwt ? this.authService.transformTokenToUser(jwt.token) : null)
-            ).subscribe(user => {
+    public onSigninSubmit(signIn: SignInModel): void {
+        this.authService.authenticateViaCredentials(signIn).pipe(
+            map(jwt => this.authService.transformTokenToUser(jwt.token))
+        ).subscribe({
+            next: (user) => {
                 if(user) {
                     this.store.dispatch(signinSuccess({ user: user }));
                     this.router.navigate(['/client']);
                 }
-                
-            });
-            
-        }
-        
+            },
+            error: () => {
+                this.snackbar.open("Invalid email or password", 'Close', {
+                    duration: 2000,
+                    panelClass: ['error-snackbar']
+                });
+            }
+        });
     }
 }

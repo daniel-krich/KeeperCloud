@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl, AbstractControl, NgForm } from '@angular/forms';
-import { SigninInterface } from '../../interfaces/sign-in.interface';
+import { SignInModel } from '../../models/sign-in.model';
 
 @Component({
   selector: 'app-sign-in-form',
@@ -9,15 +8,13 @@ import { SigninInterface } from '../../interfaces/sign-in.interface';
 })
 export class SignInFormComponent {
 
-    @Output() public signInFormSubmit: EventEmitter<SigninInterface | null> = new EventEmitter<SigninInterface | null>();
+    @Output() public signInFormSubmit: EventEmitter<SignInModel> = new EventEmitter<SignInModel>();
 
-    onSubmit(form: NgForm, email: string, password: string) {
-        if (form.valid) {
-            this.signInFormSubmit.emit({
-                email: email,
-                password: password,
-                remember: false
-            });
-        }
-      }
+    public isLoading: boolean = false;
+
+    public signInForm:  SignInModel = new SignInModel();
+
+    onSubmit() {
+        this.signInFormSubmit.emit(this.signInForm);
+    }
 }

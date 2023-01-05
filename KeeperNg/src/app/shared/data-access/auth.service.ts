@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { catchError, map, Observable, tap, throwError } from 'rxjs';
+import { catchError, map, Observable, of, switchMap, tap, throwError, throwIfEmpty } from 'rxjs';
 import { BASE_URL } from 'src/app/app.module';
+import { SignInModel } from 'src/app/auth/models/sign-in.model';
 import { JwtTokenDTOInterface } from '../interfaces/jwt-token-dto.interface';
 import { SigninDTOInterface } from '../interfaces/sign-in-dto.interface';
 import { UserInterface } from '../interfaces/user.interface';
@@ -17,9 +18,13 @@ export class AuthService {
                 private httpClient: HttpClient,
                 private localService: LocalStorageService) { }
 
-    public authenticateViaCredentials(username: string, password: string): Observable<JwtTokenDTOInterface | null> {
-        return this.httpClient.post<JwtTokenDTOInterface | null>(this.baseUrl + '/api/auth/sign-in', <SigninDTOInterface>{ email: username, password: password }).pipe(
-            tap(jwt => jwt ? this.setJwtToStorage(jwt) : this.removeJwtFromStorage())
+    public authenticateViaCredentials(signin: SignInModel): Observable<JwtTokenDTOInterface> {
+        return this.httpClient.post<JwtTokenDTOInterface>(this.baseUrl + '/api/auth/sign-in', <SigninDTOInterface>{ email: signin.email, password: signin.password }).pipe(
+            throwIfEmpty(() => new Error('Error while getting Jwt token')),
+            tap(jwt =>this.setJwtToStorage(jwt)),
+            catchError(_ => {
+                return throwError(() => new Error('Error while getting Jwt token'));
+            })
         );
     }
 
@@ -29,18 +34,24 @@ export class AuthService {
         );
     }
 
-    public refreshTokens(): Observable<JwtTokenDTOInterface | null> {
+    public refreshTokens(): Observable<JwtTokenDTOInterface> {
         let refreshToken = this.getJwtFromStorage()?.refreshToken;
         if(refreshToken) {
-            return this.httpClient.post<JwtTokenDTOInterface>(this.baseUrl + '/api/auth/refresh', { RefreshToken: refreshToken });
+            return this.httpClient.post<JwtTokenDTOInterface>(this.baseUrl + '/api/auth/refresh', { RefreshToken: refreshToken }).pipe(
+                throwIfEmpty(() => new Error('Refresh token is missing'))
+            );
         }
         return throwError(() => new Error('Refresh token is missing'));
     }
 
-    public authenticateViaBearer(): Observable<UserInterface | null> {
+    public authenticateViaBearer(): Observable<UserInterface> {
         if(!this.getJwtFromStorage()) return throwError(() => new Error('Jwt is missing'));
         return this.httpClient.get(this.baseUrl + '/api/auth/validate').pipe(
-            map(_ => this.getUserFromStorage())
+            switchMap(_ => {
+                let user = this.getUserFromStorage();
+                if(user) return of(user);
+                else return throwError(() => new Error('Unable to retreive user'))
+            })
         );
     }
 

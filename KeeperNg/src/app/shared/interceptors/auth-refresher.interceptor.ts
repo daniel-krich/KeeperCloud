@@ -1,46 +1,39 @@
-import { Injectable } from '@angular/core';
-import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor,
-} from '@angular/common/http';
-import { catchError, Observable, switchMap, tap, throwError } from 'rxjs';
+import { Inject, Injectable } from '@angular/core';
+import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
+import { catchError, Observable, of, switchMap, tap, throwError, throwIfEmpty } from 'rxjs';
 import { AuthService } from '../data-access/auth.service';
+import { BASE_URL } from 'src/app/app.module';
 
 @Injectable()
 export class AuthRefresherInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService) {}
+  constructor(@Inject(BASE_URL) private baseUrl: string,
+              private authService: AuthService) { }
 
-  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    return next.handle(request).pipe(
-      catchError((error) => {
-        if (error.status === 401) {
-          // Send a request to the refresh endpoint to get a new JWT
-          return this.authService.refreshTokens().pipe(
-            tap(token => {
-                if(!token) {
-                    throwError(() => new Error('Refresh tokens failed'));
-                }
-            }),
-            switchMap((newToken) => {
+    intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+        if(request.url.startsWith(this.baseUrl)) { // check domain to prevent token leak.
 
-              this.authService.setJwtToStorage(newToken!);
+            return next.handle(request).pipe(
+                catchError((error) => {
 
-              const newRequest = request.clone({
-                setHeaders: {
-                  Authorization: `Bearer ${newToken?.token}`,
-                },
-              });
-              // Re-send the original request with the new JWT
-              return next.handle(newRequest);
-            })
-          );
+                    if (error.status === 401) {
+                        return this.authService.refreshTokens().pipe(
+                            switchMap((newToken) => {
+                                this.authService.setJwtToStorage(newToken);
+                                const newRequest = request.clone({
+                                    setHeaders: {
+                                    Authorization: `Bearer ${newToken.token}`,
+                                    },
+                                });
+                                return next.handle(newRequest);
+                            })
+                        );
+                    }
+                    else if(error.status.toString().startsWith('4')) return throwError(() => of(this.authService.removeJwtFromStorage()));
+                    else return throwError(() => error);
+                    
+                })
+            );
         }
-        return throwError(() => {
-            this.authService.removeJwtFromStorage();
-        });
-      })
-    );
-  }
+        else return next.handle(request);
+    }
 }
