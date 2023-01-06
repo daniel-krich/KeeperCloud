@@ -28,7 +28,7 @@ namespace Keeper.Server.Utils
             return destination;
         }
 
-        public static IDictionary<string, object?>? MapToDictionary(object source, CaseType propCaseType)
+        public static IDictionary<string, object?>? MapObjectToDictionary(object source, CaseType propCaseType)
         {
             if (source == null)
                 return null;

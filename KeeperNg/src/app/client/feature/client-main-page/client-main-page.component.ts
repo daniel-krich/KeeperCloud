@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
+import { selectAuthUser } from 'src/app/shared/data-access/state/authentication/authentication.selectors';
 
 @Component({
   selector: 'app-client-main-page',
@@ -6,19 +9,24 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./client-main-page.component.scss'],
 })
 export class ClientMainPageComponent {
-  datasets = [
+    datasets = [
     {
-      data: [20, 50, 30],
-      type: 'bar',
-      label: 'File Operations',
-      color: '#fff',
-      backgroundColor: '#007bff',
+        data: [20, 50, 30],
+        type: 'bar',
+        label: 'File Operations',
+        color: '#fff',
+        backgroundColor: '#007bff',
     },
-  ];
-  labels = ['Access', 'Download', 'Upload'];
-  options = {
-  };
-  legend = true;
-  height = 200;
-  width = 300;
+    ];
+    labels = ['Access', 'Download', 'Upload'];
+    options = {
+    };
+    legend = true;
+    height = 200;
+    width = 300;
+
+    public user$ = this.store.select(selectAuthUser);
+
+    constructor(private store: Store<AppStateInterface>) { }
+
 }

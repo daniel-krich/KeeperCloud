@@ -15,12 +15,10 @@ namespace Keeper.Server.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IKeeperDbContextFactory _keeperFactory;
         private readonly IJwtService _jwtService;
         private readonly IAuthService _authService;
-        public AuthController(IKeeperDbContextFactory keeperFactory, IJwtService jwtService, IAuthService authService)
+        public AuthController(IJwtService jwtService, IAuthService authService)
         {
-            _keeperFactory = keeperFactory;
             _jwtService = jwtService;
             _authService = authService;
         }

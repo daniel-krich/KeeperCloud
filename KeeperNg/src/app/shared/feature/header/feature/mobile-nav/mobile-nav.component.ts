@@ -1,7 +1,9 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, Event as NavigationEvent } from '@angular/router';
 import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { NavigationDataService } from 'src/app/shared/data-access/navigation-data.service';
 import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
 import { signoutBegin } from 'src/app/shared/data-access/state/authentication/authentication.actions';
@@ -25,7 +27,7 @@ import { selectAuthUser } from 'src/app/shared/data-access/state/authentication/
     ])
   ]
 })
-export class MobileNavComponent {
+export class MobileNavComponent implements OnInit, OnDestroy {
 
     public authUser$ = this.store.select(selectAuthUser);
     
@@ -33,9 +35,31 @@ export class MobileNavComponent {
 
     public accountMenuState: boolean = false;
 
+    private routerSubscription!: Subscription;
+
     constructor(public navData: NavigationDataService,
                 private store: Store<AppStateInterface>,
-                private snackBar: MatSnackBar) { }
+                private snackBar: MatSnackBar,
+                private router: Router) { }
+    
+
+    ngOnInit(): void {
+        this.routerSubscription = this.router.events.subscribe((event: NavigationEvent) => {
+
+            switch (true) {
+                case event instanceof NavigationStart: {
+                    this.menuState = 'collapsed';
+                    break;
+                }
+
+                default: break;
+            }
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.routerSubscription.unsubscribe();
+    }
 
     public toggleResponsiveMenu(): void {
         this.menuState = this.menuState == 'collapsed' ? 'expanded' : 'collapsed';

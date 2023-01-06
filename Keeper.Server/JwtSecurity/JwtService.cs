@@ -77,9 +77,7 @@ namespace Keeper.Server.JwtSecurity
 
         private string GenerateRefreshToken()
         {
-            var bytesToken = new byte[128];
-            RandomNumberGenerator.Fill(bytesToken);
-            return Convert.ToBase64String(bytesToken);
+            return HashingUtil.Random1024BitToken();
         }
 
         private string GenerateJwt(UserModel user)
@@ -94,7 +92,7 @@ namespace Keeper.Server.JwtSecurity
                 expires: DateTime.UtcNow.AddMinutes(10),
                 signingCredentials: creds);
 
-            token.Payload["user"] = TransformTypeUtil.MapToDictionary(user, TransformTypeUtil.CaseType.SnakeCase);
+            token.Payload["user"] = TransformTypeUtil.MapObjectToDictionary(user, TransformTypeUtil.CaseType.SnakeCase);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }

@@ -1,13 +1,13 @@
 import { Component, ViewChild } from '@angular/core';
 import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, Event as NavigationEvent } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { AppStateInterface } from './shared/data-access/state/app.state';
-import { signinBegin } from './shared/data-access/state/authentication/authentication.actions';
 import { LoadingScreenComponent } from './shared/ui/loading-screen/loading-screen.component';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html'
+  template: `
+    <app-loading-screen #loading></app-loading-screen>
+    <router-outlet></router-outlet>
+  `
 })
 export class AppComponent {
 

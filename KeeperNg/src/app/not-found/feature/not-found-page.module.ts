@@ -6,6 +6,7 @@ import { NotFoundPageComponent } from './not-found-page.component';
 import { RouterModule } from '@angular/router';
 import { DefaultLayoutModule } from 'src/app/shared/feature/default-layout/default-layout.module';
 import { MatCardModule } from '@angular/material/card';
+import { FadeInContentModule } from 'src/app/shared/ui/fade-in-content/fade-in-content.module';
 
 
 @NgModule({
@@ -15,6 +16,7 @@ import { MatCardModule } from '@angular/material/card';
   imports: [
     CommonModule,
     RouterModule,
+    FadeInContentModule,
     DefaultLayoutModule,
     MatCardModule,
     NotFoundPageRoutingModule

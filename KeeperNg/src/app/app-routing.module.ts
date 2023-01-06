@@ -2,31 +2,15 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-    { 
-        path: 'home',
-        loadChildren: () => import('./home/feature/home-page.module').then(x => x.HomePageModule)
-    },
-    { 
-        path: 'pricing',
-        loadChildren: () => import('./pricing/feature/pricing-page.module').then(x => x.PricingPageModule)
-    },
-    { 
-        path: 'developers',
-        loadChildren: () => import('./developers/feature/developers-page.module').then(m => m.DevelopersPageModule)
-    },
     {
-        path: 'contact',
-        loadChildren: () => import('./contact/feature/contact-page.module').then(m => m.ContactPageModule)
+        path: '',
+        loadChildren: () => import('./main/feature/main-shell/main-shell.module').then(m => m.MainShellModule),
     },
     {
         path: 'client',
         loadChildren: () => import('./client/feature/client-shell/client-shell.module').then(m => m.ClientShellModule),
     },
-    {
-        path: 'auth',
-        loadChildren: () => import('./auth/feature/sign-shell/sign-shell.module').then(m => m.SignShellModule)
-    },
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
+
     { path: '**', loadChildren: () => import('./not-found/feature/not-found-page.module').then(m => m.NotFoundPageModule) }
 ];
 

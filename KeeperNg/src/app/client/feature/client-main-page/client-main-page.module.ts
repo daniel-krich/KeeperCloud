@@ -11,6 +11,7 @@ import { FileDatabaseService } from '../../data-access/File-database.service';
 import { MatButtonModule } from '@angular/material/button';
 import { NgChartsModule } from 'ng2-charts';
 import { MatCardModule } from '@angular/material/card';
+import { FadeInContentModule } from 'src/app/shared/ui/fade-in-content/fade-in-content.module';
 
 
 @NgModule({
@@ -22,6 +23,7 @@ import { MatCardModule } from '@angular/material/card';
     RouterModule,
     ClientMainPageRoutingModule,
     MatTreeModule,
+    FadeInContentModule,
     MatIconModule,
     NgChartsModule,
     MatCardModule,

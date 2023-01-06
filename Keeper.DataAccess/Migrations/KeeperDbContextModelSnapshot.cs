@@ -22,7 +22,7 @@ namespace Keeper.DataAccess.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Keeper.DataAccess.Entities.EncryptedFileEntity", b =>
+            modelBuilder.Entity("Keeper.DataAccess.Entities.FileEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -35,11 +35,6 @@ namespace Keeper.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
                     b.Property<float>("FileSize")
                         .HasColumnType("real");
 
@@ -49,18 +44,23 @@ namespace Keeper.DataAccess.Migrations
                     b.Property<DateTime>("LastModified")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("OwnerId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("PublicAccessKey")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<Guid>("RepositoryId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("OwnerId");
+                    b.HasIndex("RepositoryId");
 
-                    b.ToTable("EncryptedFiles");
+                    b.ToTable("Files");
                 });
 
             modelBuilder.Entity("Keeper.DataAccess.Entities.RefreshTokenEntity", b =>
@@ -91,6 +91,38 @@ namespace Keeper.DataAccess.Migrations
                     b.HasIndex("OwnerId");
 
                     b.ToTable("RefreshTokens");
+                });
+
+            modelBuilder.Entity("Keeper.DataAccess.Entities.RepositoryEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("Repositories");
                 });
 
             modelBuilder.Entity("Keeper.DataAccess.Entities.UserEntity", b =>
@@ -151,15 +183,15 @@ namespace Keeper.DataAccess.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Keeper.DataAccess.Entities.EncryptedFileEntity", b =>
+            modelBuilder.Entity("Keeper.DataAccess.Entities.FileEntity", b =>
                 {
-                    b.HasOne("Keeper.DataAccess.Entities.UserEntity", "Owner")
+                    b.HasOne("Keeper.DataAccess.Entities.RepositoryEntity", "Repository")
                         .WithMany("Files")
-                        .HasForeignKey("OwnerId")
+                        .HasForeignKey("RepositoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Owner");
+                    b.Navigation("Repository");
                 });
 
             modelBuilder.Entity("Keeper.DataAccess.Entities.RefreshTokenEntity", b =>
@@ -173,11 +205,27 @@ namespace Keeper.DataAccess.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("Keeper.DataAccess.Entities.UserEntity", b =>
+            modelBuilder.Entity("Keeper.DataAccess.Entities.RepositoryEntity", b =>
+                {
+                    b.HasOne("Keeper.DataAccess.Entities.UserEntity", "Owner")
+                        .WithMany("Repositories")
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("Keeper.DataAccess.Entities.RepositoryEntity", b =>
                 {
                     b.Navigation("Files");
+                });
 
+            modelBuilder.Entity("Keeper.DataAccess.Entities.UserEntity", b =>
+                {
                     b.Navigation("RefreshTokens");
+
+                    b.Navigation("Repositories");
                 });
 #pragma warning restore 612, 618
         }

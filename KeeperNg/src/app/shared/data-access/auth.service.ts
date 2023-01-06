@@ -2,9 +2,11 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { catchError, map, Observable, of, switchMap, tap, throwError, throwIfEmpty } from 'rxjs';
 import { BASE_URL } from 'src/app/app.module';
-import { SignInModel } from 'src/app/auth/models/sign-in.model';
+import { SignInModel } from 'src/app/main/feature/auth/models/sign-in.model';
+import { SignupModel } from 'src/app/main/feature/auth/models/sign-up.model';
 import { JwtTokenDTOInterface } from '../interfaces/jwt-token-dto.interface';
 import { SigninDTOInterface } from '../interfaces/sign-in-dto.interface';
+import { SignupDTOInterface } from '../interfaces/sign-up-dto.interface';
 import { UserInterface } from '../interfaces/user.interface';
 import { LocalStorageService } from './local-storage.service';
 
@@ -26,6 +28,16 @@ export class AuthService {
                 return throwError(() => new Error('Error while getting Jwt token'));
             })
         );
+    }
+
+    public signUp(signUp: SignupModel): Observable<void> {
+        return this.httpClient.post<void>(this.baseUrl + '/api/auth/sign-up',
+            <SignupDTOInterface>{ 
+                email: signUp.email,
+                password: signUp.password,
+                firstname: signUp.firstname,
+                lastname: signUp.lastname
+            });
     }
 
     public signOut(): Observable<void> {

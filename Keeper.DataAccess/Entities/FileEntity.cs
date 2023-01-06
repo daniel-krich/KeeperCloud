@@ -12,27 +12,23 @@ namespace Keeper.DataAccess.Entities
     {
 #nullable disable
         [Required, MaxLength(256)]
-        public string FileName { get; set; }
+        public string Name { get; set; }
+
         [Required]
         public byte[] EncryptKey { get; set; }
+
         [Required]
         public float FileSize { get; set; }
+
         public bool IsPublic { get; set; }
-        public bool IsFolder { get; set; }
         //
 
-        public Guid ParentId { get; set; }
-
-        [ForeignKey(nameof(ParentId))]
-        public virtual FileEntity Parent { get; set; }
-
-        public virtual ICollection<FileEntity> Children { get; set; }
-
-        //
         [Required]
-        public Guid OwnerId { get; set; }
-        [ForeignKey(nameof(OwnerId))]
-        public virtual UserEntity Owner { get; set; }
+        public Guid RepositoryId { get; set; }
+
+        [ForeignKey(nameof(RepositoryId))]
+        public virtual RepositoryEntity Repository { get; set; }
+
 #nullable enable
 
         [MaxLength(256)]

@@ -5,6 +5,13 @@ namespace Keeper.Server.Utils
 {
     public static class HashingUtil
     {
+        public static string Random1024BitToken()
+        {
+            byte[] randomBytes = new byte[128];
+            RandomNumberGenerator.Fill(randomBytes);
+            return Convert.ToBase64String(randomBytes);
+        }
+
         public static void HashHmac(string plain_text, out byte[] hash, out byte[] salt)
         {
             salt = new byte[128];
