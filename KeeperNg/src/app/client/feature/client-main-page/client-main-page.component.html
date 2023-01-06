@@ -1,4 +1,76 @@
-<app-client-layout-with-nav>
-    <h1 class="m-3 text-center">Main page!</h1>
-    <p>client-main-page works!</p>
-</app-client-layout-with-nav>
+<div class="container mt-5 mb-5">
+  <!-- The stats card -->
+  <div class="card">
+    <div class="card-header">Account Stats</div>
+    <div class="card-body">
+      <div class="row">
+        <!-- The total file count stat -->
+        <div class="col-md-4">
+          <div class="card text-center">
+            <div class="card-body">
+              <h5 class="card-title">Total Files</h5>
+              <h3 class="card-text">150</h3>
+            </div>
+          </div>
+        </div>
+        <!-- The total storage usage stat -->
+        <div class="col-md-4">
+          <div class="card text-center">
+            <div class="card-body">
+              <h5 class="card-title">Storage Used</h5>
+              <h3 class="card-text">3.2GB/15GB</h3>
+            </div>
+          </div>
+        </div>
+        <!-- The total bandwidth usage stat -->
+        <div class="col-md-4">
+          <div class="card text-center">
+            <div class="card-body">
+              <h5 class="card-title">Bandwidth Used</h5>
+              <h3 class="card-text">Unlimited</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- The usage quota card -->
+  <div class="card mt-5 mb-5">
+    <div class="card-header">Usage Quota</div>
+    <div class="card-body">
+      <div class="row">
+        <!-- The storage quota stat -->
+        <div class="col-md-6">
+          <div class="card text-center">
+            <div class="card-body">
+              <h5 class="card-title">Storage Quota</h5>
+              <h3 class="card-text">100Gbps</h3>
+            </div>
+          </div>
+        </div>
+        <!-- The bandwidth quota stat -->
+        <div class="col-md-6">
+          <div class="card text-center">
+            <div class="card-body">
+              <h5 class="card-title">Bandwidth Quota</h5>
+              <h3 class="card-text">100Gbps</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <mat-card class="p-3">
+    <canvas
+      baseChart
+      [datasets]="datasets"
+      [labels]="labels"
+      [options]="options"
+      [legend]="legend"
+      [height]="height"
+      [width]="width"
+    ></canvas>
+  </mat-card>
+</div>

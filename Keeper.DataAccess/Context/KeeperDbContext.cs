@@ -13,7 +13,7 @@ namespace Keeper.DataAccess.Context
     {
 #nullable disable
         public DbSet<UserEntity> Users { get; set; }
-        public DbSet<EncryptedFileEntity> EncryptedFiles { get; set; }
+        public DbSet<FileEntity> EncryptedFiles { get; set; }
         public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
 #nullable enable
 

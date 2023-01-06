@@ -26,6 +26,8 @@
     "@types/prismjs": "^1.26.0",
     "bootstrap": "^5.2.3",
     "bootstrap-icons": "^1.10.3",
+    "chart.js": "^4.1.2",
+    "ng2-charts": "^4.1.1",
     "prismjs": "^1.29.0",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",

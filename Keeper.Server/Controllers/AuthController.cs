@@ -2,6 +2,7 @@
 using Keeper.DataAccess.Factories;
 using Keeper.Server.DTOs;
 using Keeper.Server.JwtSecurity;
+using Keeper.Server.Services;
 using Keeper.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -16,10 +17,12 @@ namespace Keeper.Server.Controllers
     {
         private readonly IKeeperDbContextFactory _keeperFactory;
         private readonly IJwtService _jwtService;
-        public AuthController(IKeeperDbContextFactory keeperFactory, IJwtService jwtService)
+        private readonly IAuthService _authService;
+        public AuthController(IKeeperDbContextFactory keeperFactory, IJwtService jwtService, IAuthService authService)
         {
             _keeperFactory = keeperFactory;
             _jwtService = jwtService;
+            _authService = authService;
         }
 
         [HttpPost("sign-in")]
@@ -37,28 +40,11 @@ namespace Keeper.Server.Controllers
         [HttpPost("sign-up")]
         public async Task<IActionResult> SignupRequest([FromBody] SignupRequestDTO signupReq)
         {
-            using (var context = _keeperFactory.CreateDbContext())
+            if (await _authService.CreateAccount(signupReq, HttpContext.Connection.RemoteIpAddress?.ToString()))
             {
-                if(await context.Users.FirstOrDefaultAsync(x => x.Email == signupReq.Email) == null)
-                {
-                    HashingUtil.HashHmac(signupReq.Password, out var hash, out var salt);
-                    context.Users.Add(new UserEntity
-                    {
-                        Email = signupReq.Email,
-                        PasswordHash = hash,
-                        PasswordSalt = salt,
-                        Firstname = signupReq.Firstname,
-                        Lastname = signupReq.Lastname,
-                        RegisterIp = HttpContext.Connection.RemoteIpAddress?.ToString(),
-                        LastAccessIp = HttpContext.Connection.RemoteIpAddress?.ToString(),
-
-
-                    });
-                    await context.SaveChangesAsync();
-                    return NoContent();
-                }
-                return BadRequest();
+                return NoContent();
             }
+            else return BadRequest();
         }
 
         [HttpGet("validate")]

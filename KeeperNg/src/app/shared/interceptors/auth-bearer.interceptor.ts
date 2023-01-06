@@ -11,7 +11,7 @@ export class AuthBearerInterceptor implements HttpInterceptor {
               private authService: AuthService) {}
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        if(request.url.startsWith(this.baseUrl)) { // check domain to prevent token leak.
+        if(request.url.startsWith(this.baseUrl) || request.url.startsWith('/')) { // check domain to prevent token leak.
 
             let token = this.authService.getJwtFromStorage()?.token;
             request = request.clone({

@@ -1,6 +1,7 @@
 using Keeper.DataAccess.Context;
 using Keeper.DataAccess.Extensions;
 using Keeper.Server.JwtSecurity;
+using Keeper.Server.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -14,6 +15,7 @@ builder.Services.AddControllers();
 builder.Services.UseKeeperDbContextFactory();
 
 builder.Services.AddTransient<IJwtService, JwtService>();
+builder.Services.AddTransient<IAuthService, AuthService>();
 
 builder.Services.AddCors(options =>
 {
@@ -59,8 +61,6 @@ app.UseStaticFiles();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-
 
 app.MapControllers();
 

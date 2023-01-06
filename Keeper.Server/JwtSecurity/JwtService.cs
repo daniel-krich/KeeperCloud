@@ -9,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 
 namespace Keeper.Server.JwtSecurity
 {
@@ -40,13 +41,8 @@ namespace Keeper.Server.JwtSecurity
                 {
                     if(HashingUtil.IsHashHmacMatch(request.Password, user.PasswordHash, user.PasswordSalt))
                     {
-                        var jwtToken = GenerateJwt(new UserModel
-                        {
-                            Id = user.Id,
-                            Email = user.Email,
-                            Firstname = user.Firstname,
-                            Lastname = user.Lastname
-                        });
+                        UserModel userModel = TransformTypeUtil.Transform<UserEntity, UserModel>(user);
+                        var jwtToken = GenerateJwt(userModel);
                         var jwtRefresh = GenerateRefreshToken();
                         context.RefreshTokens.Add(new RefreshTokenEntity
                         {
@@ -71,13 +67,8 @@ namespace Keeper.Server.JwtSecurity
                               select refreshT).FirstOrDefaultAsync();
                 if (refresh != null)
                 {
-                    var jwtToken = GenerateJwt(new UserModel
-                    {
-                        Id = refresh.Owner.Id,
-                        Email = refresh.Owner.Email,
-                        Firstname = refresh.Owner.Firstname,
-                        Lastname = refresh.Owner.Lastname
-                    });
+                    UserModel userModel = TransformTypeUtil.Transform<UserEntity, UserModel>(refresh.Owner);
+                    var jwtToken = GenerateJwt(userModel);
                     return new JwtAccessToken(jwtToken, refreshToken);
                 }
                 return default;
@@ -103,13 +94,7 @@ namespace Keeper.Server.JwtSecurity
                 expires: DateTime.UtcNow.AddMinutes(10),
                 signingCredentials: creds);
 
-            token.Payload["user"] = new
-            {
-                id = user.Id,
-                email = user.Email,
-                firstname = user.Firstname,
-                lastname = user.Lastname,
-            };
+            token.Payload["user"] = TransformTypeUtil.MapToDictionary(user, TransformTypeUtil.CaseType.SnakeCase);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }

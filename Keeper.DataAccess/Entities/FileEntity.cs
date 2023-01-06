@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Keeper.DataAccess.Entities
 {
-    public class EncryptedFileEntity : BaseEntity
+    public class FileEntity : BaseEntity
     {
 #nullable disable
         [Required, MaxLength(256)]
@@ -18,6 +18,17 @@ namespace Keeper.DataAccess.Entities
         [Required]
         public float FileSize { get; set; }
         public bool IsPublic { get; set; }
+        public bool IsFolder { get; set; }
+        //
+
+        public Guid ParentId { get; set; }
+
+        [ForeignKey(nameof(ParentId))]
+        public virtual FileEntity Parent { get; set; }
+
+        public virtual ICollection<FileEntity> Children { get; set; }
+
+        //
         [Required]
         public Guid OwnerId { get; set; }
         [ForeignKey(nameof(OwnerId))]

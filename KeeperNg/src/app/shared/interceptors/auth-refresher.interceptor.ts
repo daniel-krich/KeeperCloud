@@ -10,7 +10,7 @@ export class AuthRefresherInterceptor implements HttpInterceptor {
               private authService: AuthService) { }
 
     intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-        if(request.url.startsWith(this.baseUrl)) { // check domain to prevent token leak.
+        if(request.url.startsWith(this.baseUrl) || request.url.startsWith('/')) { // check domain to prevent token leak.
 
             return next.handle(request).pipe(
                 catchError((error) => {
