@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Keeper.DataAccess.Migrations
 {
     [DbContext(typeof(KeeperDbContext))]
-    [Migration("20230106190746_init")]
-    partial class init
+    [Migration("20230107182633_init2")]
+    partial class init2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -33,7 +33,11 @@ namespace Keeper.DataAccess.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<byte[]>("EncryptKey")
+                    b.Property<byte[]>("EncIV")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("EncKey")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 

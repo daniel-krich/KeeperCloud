@@ -15,10 +15,12 @@ namespace Keeper.DataAccess.Entities
         public string Name { get; set; }
 
         [Required]
-        public byte[] EncryptKey { get; set; }
+        public byte[] EncKey { get; set; }
+        [Required]
+        public byte[] EncIV { get; set; }
 
         [Required]
-        public float FileSize { get; set; }
+        public long FileSize { get; set; }
 
         public bool IsPublic { get; set; }
         //

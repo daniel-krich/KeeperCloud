@@ -4,6 +4,7 @@ using Keeper.DataAccess.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Keeper.DataAccess.Migrations
 {
     [DbContext(typeof(KeeperDbContext))]
-    partial class KeeperDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230107180808_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,16 +33,13 @@ namespace Keeper.DataAccess.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<byte[]>("EncIV")
+                    b.Property<string>("EncryptKey")
                         .IsRequired()
-                        .HasColumnType("varbinary(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-                    b.Property<byte[]>("EncKey")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<long>("FileSize")
-                        .HasColumnType("bigint");
+                    b.Property<float>("FileSize")
+                        .HasColumnType("real");
 
                     b.Property<bool>("IsPublic")
                         .HasColumnType("bit");

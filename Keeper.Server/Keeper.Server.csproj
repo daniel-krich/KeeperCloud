@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Mapster" Version="7.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.12">
       <PrivateAssets>all</PrivateAssets>
@@ -22,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Keeper.DataAccess\Keeper.DataAccess.csproj" />
+    <ProjectReference Include="..\Keeper.RepositoriesMaster\Keeper.RepositoriesMaster.csproj" />
   </ItemGroup>
 
 </Project>

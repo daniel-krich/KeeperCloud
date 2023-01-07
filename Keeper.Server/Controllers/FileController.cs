@@ -2,8 +2,17 @@
 using System.IO;
 using System.IO.Compression;
 using System.Security.Cryptography;
+using System.Text.Json;
 using ICSharpCode.SharpZipLib.Zip;
+using Keeper.RepositoriesMaster.Enums;
+using Keeper.RepositoriesMaster.Master;
+using Keeper.Server.Models;
+using Keeper.Server.Services;
+using MapsterMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Keeper.Server.Controllers
 {
@@ -11,44 +20,36 @@ namespace Keeper.Server.Controllers
     [ApiController]
     public class FileController : ControllerBase
     {
+        private IRepositoriesMaster _repoMaster;
+        private IRepositoryService _repositoryService;
+        private IMapper _mapper;
 
-        private static readonly byte[] _key;
-        private static readonly byte[] _iv;
-
-        static FileController()
+        public FileController(IRepositoriesMaster repoMaster, IRepositoryService repositoryService, IMapper mapper)
         {
-            using (var aes = Aes.Create())
-            {
-                _key = aes.Key;
-                _iv = aes.IV;
-            }
+            _repoMaster = repoMaster;
+            _repositoryService = repositoryService;
+            _mapper = mapper;
         }
 
-        public FileController()
+        [HttpPost("{repositoryId:guid}")]
+        [DisableRequestSizeLimit]
+        [Authorize]
+        public async Task<IActionResult> UploadFile(Guid repositoryId, [FromForm] IEnumerable<IFormFile> files)
         {
-            // Generate a random key and IV
-            /*using (var aes = Aes.Create())
+            var rawUser = HttpContext.User.FindFirst(x => x.Type == "user")?.Value;
+            var settings = new JsonSerializerSettings
             {
-                _key = aes.Key;
-                _iv = aes.IV;
-            }*/
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> UploadFile([FromForm] IEnumerable<IFormFile> files)
-        {
-            foreach (var file in files)
-            {
-                using (var fileStream = new FileStream("temp/" + file.FileName, FileMode.Create))
-                using (var aes = Aes.Create())
-                using (var encryptor = aes.CreateEncryptor(_key, _iv))
-                using (var encryptionStream = new CryptoStream(fileStream, encryptor, CryptoStreamMode.Write))
-                using (var compressionStream = new GZipStream(encryptionStream, CompressionMode.Compress))
+                ContractResolver = new DefaultContractResolver
                 {
-                    await file.CopyToAsync(compressionStream);
+                    NamingStrategy = new CamelCaseNamingStrategy()
                 }
+            };
+            var user = JsonConvert.DeserializeObject<UserModel>(rawUser!, settings);
+            if(user is not null)
+            {
+                var res = await _repositoryService.CreateFilesByForm(user.Id, repositoryId, files);
+                return Ok(res);
             }
-
             return Ok();
         }
 
@@ -58,14 +59,14 @@ namespace Keeper.Server.Controllers
         {
             Response.Headers.Add("Content-Disposition", "attachment; filename=" + fileName);
 
-            using (var fileStream = new FileStream("temp/" + fileName, FileMode.Open))
+            /*using (var fileStream = new FileStream("temp/" + fileName, FileMode.Open))
             using (var aes = Aes.Create())
             using (var decryptor = aes.CreateDecryptor(_key, _iv))
             using (var encryptionStream = new CryptoStream(fileStream, decryptor, CryptoStreamMode.Read))
             using (var compressionStream = new GZipStream(encryptionStream, CompressionMode.Decompress))
             {
                 await compressionStream.CopyToAsync(Response.Body);
-            }
+            }*/
         }
 
         [HttpGet("many")]
@@ -74,7 +75,7 @@ namespace Keeper.Server.Controllers
             Response.ContentType = "application/zip";
             Response.Headers.Add("Content-Disposition", "attachment; filename=archive.zip");
 
-            using (var zipStream = new ZipOutputStream(Response.Body))
+            /*using (var zipStream = new ZipOutputStream(Response.Body))
             {
                 //foreach (var filePath in filePaths)
                 {
@@ -91,7 +92,7 @@ namespace Keeper.Server.Controllers
                         await compressionStream.CopyToAsync(zipStream);
                     }
 
-                    /*// Write the contents of the file to the zip archive
+                    // Write the contents of the file to the zip archive
                     using (var fileStream = new FileStream("temp/" + fileName, FileMode.Open, FileAccess.Read))
                     {
                         var buffer = new byte[1024];
@@ -100,9 +101,9 @@ namespace Keeper.Server.Controllers
                         {
                             await zipStream.WriteAsync(buffer, 0, bytesRead);
                         }
-                    }*/
+                    }
                 }
-            }
+            }*/
         }
     }
 }

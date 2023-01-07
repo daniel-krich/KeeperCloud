@@ -81,7 +81,7 @@ namespace Keeper.DataAccess.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    EncryptKey = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    EncryptKey = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     FileSize = table.Column<float>(type: "real", nullable: false),
                     IsPublic = table.Column<bool>(type: "bit", nullable: false),
                     RepositoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
