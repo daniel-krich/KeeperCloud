@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>File Upload and Download</title>
+</head>
+<body>
+    <h1>File Upload</h1>
+    <form action="/api/file" method="post" enctype="multipart/form-data">
+        <label for="file">Select file(s) to upload:</label><br>
+        <input type="file" id="file" name="files" multiple><br>
+        <input type="submit" value="Upload">
+    </form>
+    <h1>File Download</h1>
+    <form action="/api/file" method="get">
+        <label for="fileName">Enter file name:</label><br>
+        <input type="text" id="fileName" name="fileName"><br>
+        <input type="submit" value="Download">
+    </form>
+    <h1>Multi Download</h1>
+    <form action="/api/file/many" method="get">
+        <label for="fileName">Enter file name:</label><br>
+        <input type="text" id="fileName" name="fileName"><br>
+        <input type="submit" value="Download">
+    </form>
+</body>
+</html>
