@@ -8,11 +8,15 @@ import { selectIsUserLoggedIn, selectAuthStateStatus, selectAuthUser } from "../
 @Injectable({
     providedIn: 'root'
 })
-export class IsAuthenticatedGuard implements CanActivate {
+export class IsAuthenticatedGuard implements CanActivate, CanLoad {
 
     private redirectIfNotAuthenticated: string = '/auth';
 
     constructor(private store: Store<AppStateInterface>, private router: Router) { }
+
+    canLoad() {
+        return this.canActivate();
+    }
 
     canActivate() {
         return this.store.select(selectIsUserLoggedIn).pipe(

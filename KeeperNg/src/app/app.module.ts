@@ -12,6 +12,8 @@ import { AuthBearerInterceptor } from './shared/interceptors/auth-bearer.interce
 import { EffectsModule } from '@ngrx/effects';
 import { AuthenticationEffects } from './shared/data-access/state/authentication/authentication.effects';
 import { AuthRefresherInterceptor } from './shared/interceptors/auth-refresher.interceptor';
+import { repositoryReducer } from './shared/data-access/state/repository/repository.reducers';
+import { RepositoryEffects } from './shared/data-access/state/repository/repository.effects';
 
 export const BASE_URL = new InjectionToken<string>('base_url');
 
@@ -27,8 +29,8 @@ const baseUrlValue = 'http://localhost:5202';
     HttpClientModule,
     BrowserAnimationsModule,
     LoadingScreenModule,
-    StoreModule.forRoot({ authentication: authenticationReducer }),
-    EffectsModule.forRoot([AuthenticationEffects])
+    StoreModule.forRoot({ authentication: authenticationReducer, repository: repositoryReducer }),
+    EffectsModule.forRoot([AuthenticationEffects, RepositoryEffects])
   ],
   providers: [
         { provide: BASE_URL, useValue: baseUrlValue },

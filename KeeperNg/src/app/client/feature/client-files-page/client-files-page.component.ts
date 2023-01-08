@@ -29,7 +29,7 @@ export class ClientFilesPageComponent {
 
     uploadFiles() {
         this.uploading = true;
-        this.httpClient.post('/api/file/944FAD5E-8AE7-4E3E-969E-C4A3C5475036', this.filesForm, { reportProgress: true, observe: 'events' }).subscribe({
+        this.httpClient.post('/api/file/upload?repositoryId=944FAD5E-8AE7-4E3E-969E-C4A3C5475036', this.filesForm, { reportProgress: true, observe: 'events' }).subscribe({
           next: (event) => {
             if (event.type === HttpEventType.UploadProgress) {
               this.uploadProgress = Math.round((event.loaded * 100) / (event?.total ?? 0));

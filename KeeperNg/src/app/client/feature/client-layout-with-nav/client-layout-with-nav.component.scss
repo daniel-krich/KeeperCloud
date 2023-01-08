@@ -12,11 +12,20 @@
     flex-grow: 1;
 }
 
-.header-spacer {
-    flex: 1 1 auto;
+.nav-list-custom {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-width: 200px;
 }
 
-.nav-item {
+.flex-spacer {
+    flex: 1 1 50%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+::ng-deep .nav-item {
     display: flex;
     align-items: center;
 
@@ -24,6 +33,7 @@
 
     mat-icon {
         margin-right: 15px;
+        overflow: unset;
     }
 
     span {

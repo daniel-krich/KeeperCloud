@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
 import { selectAuthUser } from 'src/app/shared/data-access/state/authentication/authentication.selectors';
+import { selectRepos } from 'src/app/shared/data-access/state/repository/repository.selectors';
+import { RepositoryDataService } from '../../data-access/repository-data.service';
 
 @Component({
   selector: 'app-client-main-page',
@@ -9,24 +11,26 @@ import { selectAuthUser } from 'src/app/shared/data-access/state/authentication/
   styleUrls: ['./client-main-page.component.scss'],
 })
 export class ClientMainPageComponent {
+    
     datasets = [
-    {
-        data: [20, 50, 30],
-        type: 'bar',
-        label: 'File Operations',
-        color: '#fff',
-        backgroundColor: '#007bff',
-    },
+        {
+            data: [20, 50, 30],
+            type: 'bar',
+            label: 'File Operations',
+            color: '#fff',
+            backgroundColor: '#007bff',
+        }
     ];
+
     labels = ['Access', 'Download', 'Upload'];
-    options = {
-    };
+    options = { };
     legend = true;
     height = 200;
     width = 300;
 
     public user$ = this.store.select(selectAuthUser);
+    public repositories$ = this.store.select(selectRepos);
 
-    constructor(private store: Store<AppStateInterface>) { }
+    constructor(private store: Store<AppStateInterface>, private repService: RepositoryDataService) { }
 
 }

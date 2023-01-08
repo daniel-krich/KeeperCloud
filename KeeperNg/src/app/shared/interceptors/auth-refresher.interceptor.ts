@@ -28,7 +28,7 @@ export class AuthRefresherInterceptor implements HttpInterceptor {
                             })
                         );
                     }
-                    else if(error.status.toString().startsWith('4')) return throwError(() => of(this.authService.removeJwtFromStorage()));
+                    else if(error.status.toString().startsWith('4') && request.url.includes('/auth')) return throwError(() => of(this.authService.removeJwtFromStorage()));
                     else return throwError(() => error);
                     
                 })

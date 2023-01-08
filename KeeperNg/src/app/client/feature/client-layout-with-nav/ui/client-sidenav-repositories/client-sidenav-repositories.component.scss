@@ -1,0 +1,13 @@
+.sidenav-repositories {
+    padding: 5px;
+    min-height: 100%;
+}
+
+.no-repos-found {
+    text-align: center;
+    margin-top: 30px;
+
+    p {
+        font-weight: 500;
+    }
+}

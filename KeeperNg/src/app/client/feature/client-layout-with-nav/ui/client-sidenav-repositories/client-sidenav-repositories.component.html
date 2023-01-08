@@ -1,0 +1,17 @@
+<div class="sidenav-repositories">
+    <ng-container *ngIf="repositories && repositories.length > 0; else noReposTemplate">
+        <a mat-list-item *ngFor="let repository of repositories" (click)="onRepoClick(repository)" [title]="repository.name">
+            <div class="nav-item">
+                <mat-icon>perm_media</mat-icon>
+                <span>{{repository.name}}</span>
+            </div>
+        </a>
+    </ng-container>
+    
+
+    <ng-template #noReposTemplate>
+        <div class="no-repos-found">
+            <p>No repositories</p>
+        </div>
+    </ng-template>
+</div>

@@ -10,6 +10,12 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { RouterModule } from '@angular/router';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { ClientSidenavRepositoriesModule } from './ui/client-sidenav-repositories/client-sidenav-repositories.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { DialogRepoCreateModule } from './feature/dialog-repo-create/dialog-repo-create.module';
+import { MatInputModule } from '@angular/material/input';
 
 
 
@@ -19,14 +25,21 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
   ],
   imports: [
     CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatDialogModule,
     RouterModule,
+    ClientSidenavRepositoriesModule,
     MatButtonModule,
     MatMenuModule,
     MatToolbarModule,
     MatIconModule,
+    MatFormFieldModule,
     MatSidenavModule,
     MatListModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatInputModule,
+    DialogRepoCreateModule
   ],
   exports: [ClientLayoutWithNavComponent]
 })
