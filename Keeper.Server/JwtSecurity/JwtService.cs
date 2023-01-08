@@ -3,6 +3,7 @@ using Keeper.DataAccess.Factories;
 using Keeper.Server.DTOs;
 using Keeper.Server.Models;
 using Keeper.Server.Utils;
+using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -24,12 +25,14 @@ namespace Keeper.Server.JwtSecurity
     {
         private readonly IConfiguration _configuration;
         private readonly IKeeperDbContextFactory _keeperFactory;
+        private readonly IMapper _mapper;
         public JwtSettings JwtSettings { get; }
 
-        public JwtService(IConfiguration configuration, IKeeperDbContextFactory keeperFactory)
+        public JwtService(IConfiguration configuration, IKeeperDbContextFactory keeperFactory, IMapper mapper)
         {
             _configuration = configuration;
             _keeperFactory = keeperFactory;
+            _mapper = mapper;
             JwtSettings = _configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>();
         }
 
@@ -41,7 +44,7 @@ namespace Keeper.Server.JwtSecurity
                 {
                     if(HashingUtil.IsHashHmacMatch(request.Password, user.PasswordHash, user.PasswordSalt))
                     {
-                        UserModel userModel = TransformTypeUtil.Transform<UserEntity, UserModel>(user);
+                        UserModel userModel = _mapper.Map<UserModel>(user);
                         var jwtToken = GenerateJwt(userModel);
                         var jwtRefresh = GenerateRefreshToken();
                         context.RefreshTokens.Add(new RefreshTokenEntity
@@ -67,7 +70,7 @@ namespace Keeper.Server.JwtSecurity
                               select refreshT).FirstOrDefaultAsync();
                 if (refresh != null)
                 {
-                    UserModel userModel = TransformTypeUtil.Transform<UserEntity, UserModel>(refresh.Owner);
+                    UserModel userModel = _mapper.Map<UserModel>(refresh.Owner);
                     var jwtToken = GenerateJwt(userModel);
                     return new JwtAccessToken(jwtToken, refreshToken);
                 }
@@ -92,7 +95,8 @@ namespace Keeper.Server.JwtSecurity
                 expires: DateTime.UtcNow.AddMinutes(10),
                 signingCredentials: creds);
 
-            token.Payload["user"] = TransformTypeUtil.MapObjectToDictionary(user, TransformTypeUtil.CaseType.SnakeCase);
+
+            token.Payload["user"] = _mapper.Map<IDictionary<string, object>>(user);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }

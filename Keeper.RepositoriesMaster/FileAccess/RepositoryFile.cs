@@ -92,18 +92,6 @@ namespace Keeper.RepositoriesMaster.FileAccess
             }
         }
 
-        public bool DeleteFile()
-        {
-            string filePath = Path.Combine(RepositoryRootPath, FileId.ToString());
-            if (File.Exists(filePath) && !this._deleted)
-            {
-                File.Delete(filePath);
-                this._deleted = true;
-                return true;
-            }
-            return false;
-        }
-
         public async Task<bool> DeleteAsync(CancellationToken token = default)
         {
             string filePath = Path.Combine(RepositoryRootPath, FileId.ToString());

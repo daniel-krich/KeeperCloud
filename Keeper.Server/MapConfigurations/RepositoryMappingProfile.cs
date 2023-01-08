@@ -4,18 +4,14 @@ using Mapster;
 
 namespace Keeper.Server.MapConfigurations
 {
-    public class UserMappingProfile : IRegister
+    public class RepositoryMappingProfile : IRegister
     {
         public void Register(TypeAdapterConfig config)
         {
-            config.NewConfig<UserModel, UserEntity>()
+            config.NewConfig<RepositoryEntity, RepositoryModel>()
                 .TwoWays();
 
-            config.NewConfig<UserModel, IDictionary<string, object>>()
-                .NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
-
             config.Compile();
-
         }
     }
 }

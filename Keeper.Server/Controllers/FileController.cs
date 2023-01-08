@@ -6,6 +6,7 @@ using System.Text.Json;
 using ICSharpCode.SharpZipLib.Zip;
 using Keeper.RepositoriesMaster.Enums;
 using Keeper.RepositoriesMaster.Master;
+using Keeper.Server.Helpers;
 using Keeper.Server.Models;
 using Keeper.Server.Services;
 using MapsterMapper;
@@ -31,21 +32,13 @@ namespace Keeper.Server.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost("{repositoryId:guid}")]
+        [HttpPost("upload")]
         [DisableRequestSizeLimit]
         [Authorize]
         public async Task<IActionResult> UploadFile(Guid repositoryId, [FromForm] IEnumerable<IFormFile> files)
         {
-            var rawUser = HttpContext.User.FindFirst(x => x.Type == "user")?.Value;
-            var settings = new JsonSerializerSettings
-            {
-                ContractResolver = new DefaultContractResolver
-                {
-                    NamingStrategy = new CamelCaseNamingStrategy()
-                }
-            };
-            var user = JsonConvert.DeserializeObject<UserModel>(rawUser!, settings);
-            if(user is not null)
+            UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
+            if (user is not null)
             {
                 var res = await _repositoryService.CreateFilesByForm(user.Id, repositoryId, files);
                 return Ok(res);

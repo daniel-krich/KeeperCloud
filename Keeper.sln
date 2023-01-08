@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Keeper.Server", "Keeper.Ser
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Keeper.DataAccess", "Keeper.DataAccess\Keeper.DataAccess.csproj", "{E0C0987C-6A8A-4140-9FCD-30445290CA1F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keeper.RepositoriesMaster", "Keeper.RepositoriesMaster\Keeper.RepositoriesMaster.csproj", "{CA57A06F-E07A-4A82-8566-69AC2B918C5F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Keeper.RepositoriesMaster", "Keeper.RepositoriesMaster\Keeper.RepositoriesMaster.csproj", "{CA57A06F-E07A-4A82-8566-69AC2B918C5F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

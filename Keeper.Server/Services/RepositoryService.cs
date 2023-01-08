@@ -16,7 +16,8 @@ namespace Keeper.Server.Services
 {
     public interface IRepositoryService
     {
-        Task CreateRepository(Guid userId, CreateRepositoryRequestDTO request);
+        Task<RepositoryModel?> CreateRepository(Guid userId, CreateRepositoryRequestDTO request);
+        Task<BatchWrapperModel<RepositoryModel>> GetRepositoriesBatch(Guid userId, int batchOffset, int batchCountLimit);
         Task<(FileModel fileMetadata, IRepositoryFile? file)?> GetFileAccessor(Guid userId, Guid repositoryId, Guid fileId);
         Task<List<FileModel>> CreateFilesByForm(Guid userId, Guid repositoryId, IEnumerable<IFormFile> files);
     }
@@ -33,7 +34,7 @@ namespace Keeper.Server.Services
             _mapper = mapper;
         }
 
-        public async Task CreateRepository(Guid userId, CreateRepositoryRequestDTO request)
+        public async Task<RepositoryModel?> CreateRepository(Guid userId, CreateRepositoryRequestDTO request)
         {
             using (var context = _keeperFactory.CreateDbContext())
             {
@@ -42,15 +43,19 @@ namespace Keeper.Server.Services
                     var repo = _repoMaster.CreateRepository(userId);
                     if (repo != null)
                     {
-                        context.Repositories.Add(new RepositoryEntity
+                        var repoEntity = new RepositoryEntity
                         {
                             Id = repo.RepositoryId,
                             OwnerId = repo.OwnerId,
                             Name = request.Name,
                             Description = request.Description
-                        });
+                        };
+                        context.Repositories.Add(repoEntity);
+                        await context.SaveChangesAsync();
+                        return _mapper.Map<RepositoryModel>(repoEntity);
                     }
                 }
+                return default;
             }
         }
 
@@ -65,7 +70,7 @@ namespace Keeper.Server.Services
                     var repo = _repoMaster.OpenRepository(userId, repositoryId);
                     if(repo != null)
                     {
-                        return (TransformTypeUtil.Transform<FileEntity, FileModel>(fileEntity), repo.OpenRepoFileAccessor(fileId));
+                        return (_mapper.Map<FileModel>(fileEntity), repo.OpenRepoFileAccessor(fileId));
                     }
                 }
                 return default;
@@ -88,16 +93,17 @@ namespace Keeper.Server.Services
                             if(repo.CreateRepoFileAccessor() is IRepositoryFile repoFile)
                             {
                                 using Aes aes = Aes.Create();
-                                using Stream repoFileStream = await repoFile.OpenStreamAsync(o =>
+                                using (Stream repoFileStream = await repoFile.OpenStreamAsync(o =>
+                                 {
+                                     o.Mode = RepositoryFileStreamMode.Write;
+                                     o.Encryption = true;
+                                     o.Key = aes.Key;
+                                     o.IV = aes.IV;
+                                     o.Compression = true;
+                                 }))
                                 {
-                                    o.Mode = RepositoryFileStreamMode.Write;
-                                    o.Encryption = true;
-                                    o.Key = aes.Key;
-                                    o.IV = aes.IV;
-                                    o.Compression = true;
-                                });
-
-                                await file.CopyToAsync(repoFileStream);
+                                    await file.CopyToAsync(repoFileStream);
+                                }
 
                                 fileEntities.Add(new FileEntity
                                 {
@@ -116,6 +122,17 @@ namespace Keeper.Server.Services
                     }
                 }
                 throw new ApplicationException("err...");
+            }
+        }
+
+        public async Task<BatchWrapperModel<RepositoryModel>> GetRepositoriesBatch(Guid userId, int batchOffset, int batchTakeLimit)
+        {
+            using (var context = _keeperFactory.CreateDbContext())
+            {
+                var repositories = await context.Repositories.Where(x => x.OwnerId == userId).Skip(batchOffset).Take(batchTakeLimit).ToListAsync();
+                var howMuchReposLeftCount = (await context.Repositories.Where(x => x.OwnerId == userId).CountAsync()) - batchOffset - repositories.Count;
+                var repModelList = _mapper.Map<List<RepositoryEntity>, List<RepositoryModel>>(repositories);
+                return new BatchWrapperModel<RepositoryModel>(repModelList, batchOffset, howMuchReposLeftCount > 0);
             }
         }
     }
