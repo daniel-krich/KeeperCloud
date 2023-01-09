@@ -16,7 +16,7 @@ namespace Keeper.Server.Controllers
         private readonly IRepositoryService _repoService;
         private readonly IMapper _mapper;
 
-        private readonly int _batchTakeLimit = 20;
+        private readonly int _batchTakeLimit = 30;
 
         public RepositoryController(IRepositoryService repoService, IMapper mapper)
         {
@@ -24,7 +24,34 @@ namespace Keeper.Server.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpGet("{repositoryId:guid}")]
+        [Authorize]
+        public async Task<IActionResult> GetRepositoryInfo(Guid repositoryId)
+        {
+            UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
+            if (user != null)
+            {
+                RepositoryModel? repositoriesBatch = await _repoService.GetRepository(user.Id, repositoryId);
+                if (repositoriesBatch != null) return Ok(repositoriesBatch);
+                else return NotFound();
+            }
+            return BadRequest();
+        }
+
+        [HttpGet("{repositoryId:guid}/files")]
+        [Authorize]
+        public async Task<IActionResult> GetRepositoryFilesBatched(Guid repositoryId, int batchOffset = 0)
+        {
+            UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
+            if (user != null)
+            {
+                BatchWrapperModel<RepositoryModel> repositoriesBatch = await _repoService.GetRepositoriesBatch(user.Id, batchOffset, _batchTakeLimit);
+                return Ok(repositoriesBatch);
+            }
+            return BadRequest();
+        }
+
+        [HttpGet("all")]
         [Authorize]
         public async Task<IActionResult> GetRepositoriesBatched(int batchOffset = 0)
         {

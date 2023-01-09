@@ -18,6 +18,8 @@ namespace Keeper.Server.Services
     {
         Task<RepositoryModel?> CreateRepository(Guid userId, CreateRepositoryRequestDTO request);
         Task<BatchWrapperModel<RepositoryModel>> GetRepositoriesBatch(Guid userId, int batchOffset, int batchCountLimit);
+        Task<RepositoryModel?> GetRepository(Guid userId, Guid repositoryId);
+        Task<BatchWrapperModel<FileModel>> GetRepositoryFilesBatch(Guid userId, Guid repositoryId, int batchOffset, int batchCountLimit);
         Task<(FileModel fileMetadata, IRepositoryFile? file)?> GetFileAccessor(Guid userId, Guid repositoryId, Guid fileId);
         Task<List<FileModel>> CreateFilesByForm(Guid userId, Guid repositoryId, IEnumerable<IFormFile> files);
     }
@@ -129,10 +131,45 @@ namespace Keeper.Server.Services
         {
             using (var context = _keeperFactory.CreateDbContext())
             {
-                var repositories = await context.Repositories.Where(x => x.OwnerId == userId).Skip(batchOffset).Take(batchTakeLimit).ToListAsync();
+                var repositories = await context.Repositories.Where(x => x.OwnerId == userId)
+                                                             .OrderByDescending(x => x.CreatedDate)
+                                                             .Skip(batchOffset)
+                                                             .Take(batchTakeLimit).ToListAsync();
                 var howMuchReposLeftCount = (await context.Repositories.Where(x => x.OwnerId == userId).CountAsync()) - batchOffset - repositories.Count;
                 var repModelList = _mapper.Map<List<RepositoryEntity>, List<RepositoryModel>>(repositories);
-                return new BatchWrapperModel<RepositoryModel>(repModelList, batchOffset, howMuchReposLeftCount > 0);
+                return new BatchWrapperModel<RepositoryModel>(repModelList, batchOffset, howMuchReposLeftCount);
+            }
+        }
+
+        public async Task<BatchWrapperModel<FileModel>> GetRepositoryFilesBatch(Guid userId, Guid repositoryId, int batchOffset, int batchCountLimit)
+        {
+            using (var context = _keeperFactory.CreateDbContext())
+            {
+                var repository = await context.Repositories.Include(x =>
+                                        x.Files.OrderByDescending(x => x.CreatedDate)
+                                        .Skip(batchOffset)
+                                        .Take(batchCountLimit)
+                                ).FirstOrDefaultAsync(x => x.OwnerId == userId && x.Id == repositoryId);
+                if(repository != null)
+                {
+                    var howMuchFilesLeftCount = (await context.Files.Where(x => x.RepositoryId == repositoryId).CountAsync()) - batchOffset - repository.Files.Count;
+                    var fileModelList = _mapper.Map<ICollection<FileEntity>, List<FileModel>>(repository.Files);
+                    return new BatchWrapperModel<FileModel>(fileModelList, batchOffset, howMuchFilesLeftCount);
+                }
+                return new BatchWrapperModel<FileModel>();
+            }
+        }
+
+        public async Task<RepositoryModel?> GetRepository(Guid userId, Guid repositoryId)
+        {
+            using (var context = _keeperFactory.CreateDbContext())
+            {
+                var repository = await context.Repositories.FirstOrDefaultAsync(x => x.OwnerId == userId && x.Id == repositoryId);
+                if (repository != null)
+                {
+                    return _mapper.Map<RepositoryEntity, RepositoryModel>(repository);
+                }
+                return default;
             }
         }
     }
