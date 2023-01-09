@@ -10,6 +10,7 @@ import { DesktopNavComponent } from './desktop-nav.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 
 
@@ -26,6 +27,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
     MatButtonModule,
     MatMenuModule,
     MatSnackBarModule,
+    NgxSkeletonLoaderModule,
     MatProgressSpinnerModule,
     MatExpansionModule
 

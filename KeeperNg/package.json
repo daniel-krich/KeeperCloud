@@ -28,6 +28,7 @@
     "bootstrap-icons": "^1.10.3",
     "chart.js": "^4.1.2",
     "ng2-charts": "^4.1.1",
+    "ngx-skeleton-loader": "^6.0.0",
     "prismjs": "^1.29.0",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",

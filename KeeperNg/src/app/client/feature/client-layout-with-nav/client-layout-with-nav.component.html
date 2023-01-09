@@ -29,17 +29,22 @@
                 </div>
             </a>
 
-            <hr class="top-bottom-border">
+            <hr class="top-bottom-border mb-0">
 
             <div class="d-flex justify-content-center mt-3 mb-3">
-                <button mat-mini-fab (click)="openDialog('300', '300')">
+                <button mat-flat-button (click)="openDialog('300', '300')" color="accent">
                     <mat-icon>add</mat-icon>
+                    <span>Add repository</span>
                 </button>
             </div>
             
 
             <div class="flex-spacer">
-                <app-client-sidenav-repositories [repositories]="repositories$ | async" (RepositoryClick)="onRepositoryClicked($event)"></app-client-sidenav-repositories>
+                <ng-container *ngIf="repositoriesState$ | async as repositoriesState">
+                    <app-client-sidenav-repositories [repositories]="repositoriesState.repositories"
+                                                     [isLoading]="repositoriesState.stateStatus !== 'success'"
+                                                     (RepositoryClick)="onRepositoryClicked($event)"></app-client-sidenav-repositories>
+                </ng-container>
             </div>
 
             <hr class="bottom-border">

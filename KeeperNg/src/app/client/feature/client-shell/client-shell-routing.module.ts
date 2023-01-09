@@ -15,6 +15,11 @@ const routes: Route[] = [
                 pathMatch: 'full'
             },
             {
+                path: 'repository',
+                loadChildren: () => import('../client-repository/feature/client-repository-shell/client-repository-shell.module').then(m => m.ClientRepositoryShellModule),
+                canActivate: [IsAuthenticatedGuard]
+            },
+            {
                 path: 'files',
                 loadChildren: () => import('../client-files-page/client-files-page.module').then(m => m.ClientFilesPageModule),
                 canActivate: [IsAuthenticatedGuard],

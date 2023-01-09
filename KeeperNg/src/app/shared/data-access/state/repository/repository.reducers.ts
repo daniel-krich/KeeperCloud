@@ -29,7 +29,11 @@ export const repositoryReducer = createReducer(
 
     on(loadRepoBatchSuccess, (state, { batch }) => ({
         ...state,
-        repositories: [...state.repositories, ...batch.batch],
+        
+        repositories: state.repositories.concat(batch.batch)
+                                        .filter((item, index, self) => 
+                                            self.findIndex(t => t.id === item.id) === index
+                                        ),
         disableAdditionalBatchLoading: !batch.isThereMoreBatch,
         stateStatus: 'success'
     })),

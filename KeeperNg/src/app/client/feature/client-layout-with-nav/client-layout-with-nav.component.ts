@@ -4,12 +4,12 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NavigationStart, Router, Event as NavigationEvent } from '@angular/router';
 import { select, Store } from '@ngrx/store';
-import { catchError, Subscription } from 'rxjs';
+import { catchError, map, Subscription, tap } from 'rxjs';
 import { NavigationDataService } from 'src/app/shared/data-access/navigation-data.service';
 import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
 import { signoutBegin } from 'src/app/shared/data-access/state/authentication/authentication.actions';
 import { createRepo } from 'src/app/shared/data-access/state/repository/repository.actions';
-import { selectRepos } from 'src/app/shared/data-access/state/repository/repository.selectors';
+import { selectRepoStateDesc } from 'src/app/shared/data-access/state/repository/repository.selectors';
 import { RepoInterface } from 'src/app/shared/interfaces/repo.interface';
 import { RepositoryDataService } from '../../data-access/repository-data.service';
 import { DialogRepoCreateComponent } from './feature/dialog-repo-create/dialog-repo-create.component';
@@ -26,7 +26,7 @@ export class ClientLayoutWithNavComponent implements OnInit, OnDestroy {
 
     private routerSubscription!: Subscription;
 
-    public repositories$ = this.store.select(selectRepos).pipe(select(x => x.repositories));
+    public repositoriesState$ = this.store.select(selectRepoStateDesc);
 
     constructor(public navigationData: NavigationDataService,
                 private repoService: RepositoryDataService,
@@ -54,7 +54,7 @@ export class ClientLayoutWithNavComponent implements OnInit, OnDestroy {
     }
 
     public onRepositoryClicked(repo: RepoInterface): void {
-        console.log(repo);
+        this.router.navigate(['/client/repository/' + repo.id]);
     }
 
     public openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {

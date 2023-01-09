@@ -7,7 +7,8 @@ import { RepoInterface } from 'src/app/shared/interfaces/repo.interface';
   styleUrls: ['./client-sidenav-repositories.component.scss']
 })
 export class ClientSidenavRepositoriesComponent {
-    @Input() public repositories: RepoInterface[] | null = null;
+    @Input() public isLoading: boolean = false;
+    @Input() public repositories: RepoInterface[] = [];
     @Output() public RepositoryClick: EventEmitter<RepoInterface> = new EventEmitter<RepoInterface>();
 
     public onRepoClick(repo: RepoInterface): void {

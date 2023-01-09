@@ -51,7 +51,10 @@
 
         <ng-template #conditionSpinnerTemplate>
             <ng-container *ngIf="authUser.stateStatus == 'loading'; else gotoAuthTemplate">
-                <mat-spinner class="ms-3 white-spinner" mode="indeterminate" diameter="30"></mat-spinner>
+                <div class="d-flex justify-content-center mb-3 mt-3">
+                    <mat-spinner class="white-spinner" mode="indeterminate" diameter="30"></mat-spinner>
+                </div>
+                
             </ng-container>
 
             <ng-template #gotoAuthTemplate>

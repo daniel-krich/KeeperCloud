@@ -16,6 +16,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { DialogRepoCreateModule } from './feature/dialog-repo-create/dialog-repo-create.module';
 import { MatInputModule } from '@angular/material/input';
+import { SortByDateModule } from 'src/app/shared/pipes/sort-by-date/sort-by-date.module';
 
 
 
@@ -39,6 +40,7 @@ import { MatInputModule } from '@angular/material/input';
     MatListModule,
     MatSnackBarModule,
     MatInputModule,
+    SortByDateModule,
     DialogRepoCreateModule
   ],
   exports: [ClientLayoutWithNavComponent]

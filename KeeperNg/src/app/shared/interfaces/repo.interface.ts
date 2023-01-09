@@ -5,5 +5,4 @@ export interface RepoInterface {
     name: string;
     description: string;
     createdDate: string;
-    files: RepoFileInterface[] | null;
 }
