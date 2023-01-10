@@ -1,2 +1,12 @@
-<p>client-repository-files works! ({{repoId$ | async}})</p>
+<div fadeInContent *ngIf="repository$ | async as repository; else errorTemplate">
+    <app-repository-info [repository]="repository"></app-repository-info>
+    <app-search-file-input></app-search-file-input>
+    <div class="container mt-3 mb-3">
+        <app-table-file-display [files]="(repositoryFiles$ | async)!"></app-table-file-display>
+    </div>
+    
+</div>
 
+<ng-template #errorTemplate>
+    error loading
+</ng-template>

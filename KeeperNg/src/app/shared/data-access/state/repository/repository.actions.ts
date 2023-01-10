@@ -1,7 +1,28 @@
 import { createAction, props } from "@ngrx/store";
 import { BatchWrapperInterface } from "src/app/shared/interfaces/batch-wrapper.interface";
+import { RepoFileInterface } from "src/app/shared/interfaces/repo-file.interface";
 import { RepoInterface } from "src/app/shared/interfaces/repo.interface";
 
+export const loadRepoStart = createAction(
+    '[Repository Load] Repository Load Start',
+    props<{ repositoryId: string }>()
+);
+
+export const loadRepoSuccess = createAction(
+    '[Repository Load] Repository Load Success',
+    props<{ repository: RepoInterface }>()
+);
+
+export const loadRepoSuccessEmpty = createAction(
+    '[Repository Load] Repository Load Success But Empty'
+);
+
+export const loadRepoError = createAction(
+    '[Repository Load] Repository Load Error',
+    props<{error: string}>()
+);
+
+//
 
 export const loadRepoBatchInit = createAction(
     '[Repository Load] Repository Load Batch Init'
@@ -17,10 +38,11 @@ export const loadRepoBatchSuccess = createAction(
 );
 
 export const loadRepoBatchError = createAction(
-    '[Repository Load] Repository Load Batch Error'
+    '[Repository Load] Repository Load Batch Error',
+    props<{error: string}>()
 );
 
 export const createRepo = createAction(
     '[Repository Create] Repository Create',
-    props<{ repo: RepoInterface }>()
+    props<{ repository: RepoInterface }>()
 );

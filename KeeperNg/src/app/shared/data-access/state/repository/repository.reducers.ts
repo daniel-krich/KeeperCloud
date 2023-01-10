@@ -1,7 +1,8 @@
 import { state } from "@angular/animations";
 import { createReducer, on } from "@ngrx/store";
+import { RepositoryFilesStateInterface } from "../interfaces/repository-files-state.interface";
 import { RepositoryStateInterface } from "../interfaces/repository-state.interface";
-import { loadRepoBatchSuccess, loadRepoBatchError, loadRepoBatchNext, loadRepoBatchInit, createRepo } from './repository.actions';
+import { loadRepoBatchSuccess, loadRepoBatchError, loadRepoBatchNext, loadRepoBatchInit, createRepo, loadRepoSuccess, loadRepoStart, loadRepoError, loadRepoSuccessEmpty } from './repository.actions';
 
 
 const initState: RepositoryStateInterface = {
@@ -27,24 +28,59 @@ export const repositoryReducer = createReducer(
         stateStatus: 'loading'
     })),
 
-    on(loadRepoBatchSuccess, (state, { batch }) => ({
-        ...state,
-        
-        repositories: state.repositories.concat(batch.batch)
+    on(loadRepoBatchSuccess, (state, { batch }) => {
+        const updatedReposNoDuplicates = state.repositories.concat(batch.batch)
                                         .filter((item, index, self) => 
                                             self.findIndex(t => t.id === item.id) === index
-                                        ),
-        disableAdditionalBatchLoading: !batch.isThereMoreBatch,
-        stateStatus: 'success'
-    })),
+                                        );
+        return ({
+            ...state,
+            repositories: updatedReposNoDuplicates,
+            disableAdditionalBatchLoading: !batch.isThereMoreBatch,
+            stateStatus: 'success'
+        });
+    }),
 
-    on(loadRepoBatchError, (state) => ({
+    on(loadRepoBatchError, (state, { error }) => ({
         ...state,
+        error: error,
         stateStatus: 'error'
     })),
 
-    on(createRepo, (state, { repo }) => ({
-        ...state,
-        repositories: [...state.repositories, repo]
-    })),
+    on(createRepo, (state, { repository }) => {
+        return ({
+            ...state,
+            repositories: [...state.repositories, repository]
+        });
+    }),
+
+    on(loadRepoStart, (state, { repositoryId }) => {
+        return ({
+            ...state,
+            stateStatus: 'loading'
+        });
+    }),
+
+    on(loadRepoSuccessEmpty, (state) => {
+        return ({
+            ...state,
+            stateStatus: 'success'
+        });
+    }),
+
+    on(loadRepoSuccess, (state, { repository }) => {
+        return ({
+            ...state,
+            repositories: [...state.repositories.filter(x => x.id !== repository.id), repository],
+            stateStatus: 'success'
+        });
+    }),
+
+    on(loadRepoError, (state, { error }) => {
+        return ({
+            ...state,
+            error: error,
+            stateStatus: 'error'
+        });
+    }),
 );

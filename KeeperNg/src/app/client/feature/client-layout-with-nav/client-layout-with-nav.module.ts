@@ -10,7 +10,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { RouterModule } from '@angular/router';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { ClientSidenavRepositoriesModule } from './ui/client-sidenav-repositories/client-sidenav-repositories.module';
+import { ClientSidenavRepositoriesModule } from './feature/client-sidenav-repositories/client-sidenav-repositories.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';

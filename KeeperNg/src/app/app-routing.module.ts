@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { IsAuthenticatedGuard } from './shared/guards/is-authenticated.guard';
 
 const routes: Routes = [

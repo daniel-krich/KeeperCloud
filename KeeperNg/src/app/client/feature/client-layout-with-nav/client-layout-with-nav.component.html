@@ -31,7 +31,7 @@
 
             <hr class="top-bottom-border mb-0">
 
-            <div class="d-flex justify-content-center mt-3 mb-3">
+            <div class="d-flex justify-content-center mt-5 mb-5">
                 <button mat-flat-button (click)="openDialog('300', '300')" color="accent">
                     <mat-icon>add</mat-icon>
                     <span>Add repository</span>
@@ -40,11 +40,7 @@
             
 
             <div class="flex-spacer">
-                <ng-container *ngIf="repositoriesState$ | async as repositoriesState">
-                    <app-client-sidenav-repositories [repositories]="repositoriesState.repositories"
-                                                     [isLoading]="repositoriesState.stateStatus !== 'success'"
-                                                     (RepositoryClick)="onRepositoryClicked($event)"></app-client-sidenav-repositories>
-                </ng-container>
+                <app-client-sidenav-repositories></app-client-sidenav-repositories>
             </div>
 
             <hr class="bottom-border">
@@ -65,7 +61,6 @@
         </mat-sidenav>
       
         <mat-sidenav-content class="p-4">
-    
             <ng-content></ng-content>
     
         </mat-sidenav-content>

@@ -29,8 +29,7 @@ export class ClientMainPageComponent {
     width = 300;
 
     public user$ = this.store.select(selectAuthUser);
-    public repositories$ = this.store.select(selectRepos);
 
-    constructor(private store: Store<AppStateInterface>, private repService: RepositoryDataService) { }
+    constructor(private store: Store<AppStateInterface>) { }
 
 }

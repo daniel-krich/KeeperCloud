@@ -14,6 +14,8 @@ import { AuthenticationEffects } from './shared/data-access/state/authentication
 import { AuthRefresherInterceptor } from './shared/interceptors/auth-refresher.interceptor';
 import { repositoryReducer } from './shared/data-access/state/repository/repository.reducers';
 import { RepositoryEffects } from './shared/data-access/state/repository/repository.effects';
+import { repositoryFilesReducer } from './shared/data-access/state/repositories-files/repositories-files.reducers';
+import { RepositoryFilesEffects } from './shared/data-access/state/repositories-files/repositories-files.effects';
 
 export const BASE_URL = new InjectionToken<string>('base_url');
 
@@ -29,8 +31,14 @@ const baseUrlValue = 'http://localhost:5202';
     HttpClientModule,
     BrowserAnimationsModule,
     LoadingScreenModule,
-    StoreModule.forRoot({ authentication: authenticationReducer, repository: repositoryReducer }),
-    EffectsModule.forRoot([AuthenticationEffects, RepositoryEffects])
+    StoreModule.forRoot(
+        {
+            authentication: authenticationReducer,
+            repositories: repositoryReducer,
+            repositoriesFiles: repositoryFilesReducer
+        }
+    ),
+    EffectsModule.forRoot([AuthenticationEffects, RepositoryEffects, RepositoryFilesEffects])
   ],
   providers: [
         { provide: BASE_URL, useValue: baseUrlValue },

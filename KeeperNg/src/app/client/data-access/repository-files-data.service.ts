@@ -14,7 +14,7 @@ export class RepositoryFilesDataService {
     constructor(private httpClient: HttpClient,
                 @Inject(BASE_URL) private baseUrl: string) { }
 
-    public loadRepositoryFiles(repositoryId: string, batchOffset: number): Observable<BatchWrapperInterface<RepoFileInterface>> {
+    public loadRepositoryFiles(repositoryId: string, batchOffset: number = 0): Observable<BatchWrapperInterface<RepoFileInterface>> {
         return this.httpClient.get<BatchWrapperInterface<RepoFileInterface>>(this.baseUrl + `/api/repository/${repositoryId}/files`, {params: { batchOffset: batchOffset }});
     }
     

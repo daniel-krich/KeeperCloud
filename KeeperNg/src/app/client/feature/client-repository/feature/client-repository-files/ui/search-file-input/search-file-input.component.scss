@@ -1,0 +1,10 @@
+.search-card {
+    padding: 20px;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.2);
+}
+
+.search-card ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    height: 0px;
+}

@@ -26,8 +26,6 @@ export class ClientLayoutWithNavComponent implements OnInit, OnDestroy {
 
     private routerSubscription!: Subscription;
 
-    public repositoriesState$ = this.store.select(selectRepoStateDesc);
-
     constructor(public navigationData: NavigationDataService,
                 private repoService: RepositoryDataService,
                 private dialog: MatDialog,
@@ -53,10 +51,6 @@ export class ClientLayoutWithNavComponent implements OnInit, OnDestroy {
         this.routerSubscription.unsubscribe();
     }
 
-    public onRepositoryClicked(repo: RepoInterface): void {
-        this.router.navigate(['/client/repository/' + repo.id]);
-    }
-
     public openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
         const dialogRef = this.dialog.open(DialogRepoCreateComponent, {
           width: '250px',
@@ -70,7 +64,7 @@ export class ClientLayoutWithNavComponent implements OnInit, OnDestroy {
             if(result){
                 this.repoService.createRepository(result).subscribe({
                     next: (repoModel: RepoInterface) => {
-                        this.store.dispatch(createRepo({ repo: repoModel }));
+                        this.store.dispatch(createRepo({ repository: repoModel }));
                         this.snackBar.open('Repository created', '', {
                             duration: 2000,
                             panelClass: ['success-snackbar']

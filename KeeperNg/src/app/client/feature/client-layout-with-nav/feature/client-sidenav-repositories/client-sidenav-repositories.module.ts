@@ -5,6 +5,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { RouterModule } from '@angular/router';
 
 
 
@@ -14,6 +15,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
   ],
   imports: [
     CommonModule,
+    RouterModule,
     MatButtonModule,
     MatIconModule,
     NgxSkeletonLoaderModule,
