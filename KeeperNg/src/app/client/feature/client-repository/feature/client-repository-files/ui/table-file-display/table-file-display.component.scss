@@ -1,3 +1,27 @@
+.drag-selection-area {
+    position: relative;
+    user-select: none;
+
+    ::ng-deep .row-selected:hover {
+        background-color: #2e70ff20;
+    }
+    
+    ::ng-deep .row-selected {
+        background-color: #2e70ff20;
+    }
+}
+
+.drag-selection-rectangle {
+    position: absolute;
+    background-color: #2e70ff20;
+    border: 1px dashed #2e70ff;
+    pointer-events: none;
+
+    &.hide-border {
+        border: none;
+    }
+}
+
 table {
     box-shadow: #21212120 0px 0px 20px;
 }

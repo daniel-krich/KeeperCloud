@@ -2,6 +2,11 @@ import { createAction, props } from "@ngrx/store";
 import { BatchWrapperInterface } from "src/app/shared/interfaces/batch-wrapper.interface";
 import { RepoFileInterface } from "src/app/shared/interfaces/repo-file.interface";
 
+
+export const clearAllRepoFiles = createAction(
+    '[Repository Files Clean] Clean and reset the repository files'
+);
+
 export const loadRepoFilesBatchInit = createAction(
     '[Repository Files Load] Load Repository Files Batch Init',
     props<{ repositoryId: string }>()

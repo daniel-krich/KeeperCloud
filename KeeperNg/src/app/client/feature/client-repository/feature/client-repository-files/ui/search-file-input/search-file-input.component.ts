@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'app-search-file-input',
@@ -6,5 +6,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./search-file-input.component.scss']
 })
 export class SearchFileInputComponent {
+
+    @Output() public searchSubmit: EventEmitter<string> = new EventEmitter<string>();
+
+    public onSearchSubmit(search: string): void {
+        this.searchSubmit.emit(search);
+    }
 
 }

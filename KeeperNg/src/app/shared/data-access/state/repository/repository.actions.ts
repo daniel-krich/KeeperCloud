@@ -10,11 +10,12 @@ export const loadRepoStart = createAction(
 
 export const loadRepoSuccess = createAction(
     '[Repository Load] Repository Load Success',
-    props<{ repository: RepoInterface }>()
+    props<{ repositoryId: string, repository: RepoInterface }>()
 );
 
 export const loadRepoSuccessEmpty = createAction(
-    '[Repository Load] Repository Load Success But Empty'
+    '[Repository Load] Repository Load Success But Empty',
+    props<{ repositoryId: string }>()
 );
 
 export const loadRepoError = createAction(

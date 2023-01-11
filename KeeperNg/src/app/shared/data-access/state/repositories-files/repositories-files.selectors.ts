@@ -12,6 +12,10 @@ export const selectReposKeyFile = createSelector(
 
 export const selectRepoFilesByObservableId = (repoId: string | null) => pipe(
     select(selectReposKeyFile),
-    map(repo => repoId ? repo[repoId].files : []),
-    throwIfEmpty(() => throwError(() => new Error('Repository id files key not found')))
+    map(repo => repoId ? (repo[repoId]?.files ?? []) : [])
+);
+
+export const selectRepoFilesInterfaceByObservableId = (repoId: string | null) => pipe(
+    select(selectReposKeyFile),
+    map(repo => repoId ? repo[repoId] : null)
 );

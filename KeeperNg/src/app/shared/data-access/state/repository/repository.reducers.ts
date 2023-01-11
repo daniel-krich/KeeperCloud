@@ -7,6 +7,7 @@ import { loadRepoBatchSuccess, loadRepoBatchError, loadRepoBatchNext, loadRepoBa
 
 const initState: RepositoryStateInterface = {
     repositories: [],
+    batchRemainder: 0,
     disableAdditionalBatchLoading: false,
     error: '',
     stateStatus: 'pending'
@@ -18,6 +19,7 @@ export const repositoryReducer = createReducer(
     on(loadRepoBatchInit, (state) => ({
         ...state,
         repositories: [],
+        batchRemainder: 0,
         disableAdditionalBatchLoading: false,
         error: '',
         stateStatus: 'loading'
@@ -36,6 +38,7 @@ export const repositoryReducer = createReducer(
         return ({
             ...state,
             repositories: updatedReposNoDuplicates,
+            batchRemainder: batch.howMuchLeftCount,
             disableAdditionalBatchLoading: !batch.isThereMoreBatch,
             stateStatus: 'success'
         });

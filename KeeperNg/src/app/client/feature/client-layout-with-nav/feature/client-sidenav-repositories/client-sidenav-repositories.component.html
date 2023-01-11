@@ -13,6 +13,13 @@
                         <span>{{repository.name}}</span>
                     </div>
                 </a>
+
+                <ng-container *ngIf="repoBatchInfo$ | async as repoFileBatchInfo">
+                    <div *ngIf="repoFileBatchInfo.canLoadMore" class="d-flex justify-content-center">
+                        <button mat-button class="mt-3 mb-3" color="primary" (click)="loadMoreRepositories()">Load more ({{repoFileBatchInfo.HowMuchLeft}})</button>
+                    </div>
+                </ng-container>
+                
             </ng-container>
             
         </ng-container>

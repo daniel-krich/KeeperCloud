@@ -17,7 +17,7 @@ export class RepositoryFilesEffects {
             ofType(loadRepoFilesBatchInit),
             withLatestFrom(this.store.select(selectReposKeyFile)),
             switchMap(([action, repoFiles]) => {
-                if(repoFiles[action.repositoryId].files.length == 0 && repoFiles[action.repositoryId].stateStatus == 'loading') {
+                if(repoFiles[action.repositoryId].files == null && repoFiles[action.repositoryId].stateStatus == 'loading') {
                     return this.repoFilesDataService.loadRepositoryFiles(action.repositoryId).pipe(
                         map(filesBatch => loadRepoFilesBatchSuccess({ repositoryFilesBatch: filesBatch, repositoryId: action.repositoryId })),
                         catchError((error: Error) => of(loadRepoFilesBatchError({ repositoryId: action.repositoryId, error: error.message })))
@@ -33,7 +33,7 @@ export class RepositoryFilesEffects {
             ofType(loadRepoFilesBatchNext),
             withLatestFrom(this.store.select(selectReposKeyFile)),
             switchMap(([action, repoFiles]) =>
-                this.repoFilesDataService.loadRepositoryFiles(action.repositoryId, repoFiles[action.repositoryId].files.length).pipe(
+                this.repoFilesDataService.loadRepositoryFiles(action.repositoryId, repoFiles[action.repositoryId].files?.length).pipe(
                     map(filesBatch => loadRepoFilesBatchSuccess({ repositoryFilesBatch: filesBatch, repositoryId: action.repositoryId })),
                     catchError((error: Error) => of(loadRepoFilesBatchError({ repositoryId: action.repositoryId, error: error.message })))
                 )

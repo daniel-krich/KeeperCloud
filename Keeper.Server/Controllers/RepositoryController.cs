@@ -16,7 +16,9 @@ namespace Keeper.Server.Controllers
         private readonly IRepositoryService _repoService;
         private readonly IMapper _mapper;
 
-        private readonly int _batchTakeLimit = 30;
+        private readonly int _batchTakeRepositoryLimit = 20;
+
+        private readonly int _batchTakeRepositoryFilesLimit = 10;
 
         public RepositoryController(IRepositoryService repoService, IMapper mapper)
         {
@@ -45,7 +47,7 @@ namespace Keeper.Server.Controllers
             UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
             if (user != null)
             {
-                BatchWrapperModel<FileModel> filesBatch = await _repoService.GetRepositoryFilesBatch(user.Id, repositoryId, batchOffset, _batchTakeLimit);
+                BatchWrapperModel<FileModel> filesBatch = await _repoService.GetRepositoryFilesBatch(user.Id, repositoryId, batchOffset, _batchTakeRepositoryFilesLimit);
                 return Ok(filesBatch);
             }
             return BadRequest();
@@ -58,7 +60,7 @@ namespace Keeper.Server.Controllers
             UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
             if (user != null)
             {
-                BatchWrapperModel<RepositoryModel> repositoriesBatch = await _repoService.GetRepositoriesBatch(user.Id, batchOffset, _batchTakeLimit);
+                BatchWrapperModel<RepositoryModel> repositoriesBatch = await _repoService.GetRepositoriesBatch(user.Id, batchOffset, _batchTakeRepositoryLimit);
                 return Ok(repositoriesBatch);
             }
             return BadRequest();

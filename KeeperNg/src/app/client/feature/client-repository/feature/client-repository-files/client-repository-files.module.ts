@@ -9,6 +9,7 @@ import { FadeInContentModule } from 'src/app/shared/ui/fade-in-content/fade-in-c
 import { RepositoryInfoModule } from './ui/repository-info/repository-info.module';
 import { SearchFileInputModule } from './ui/search-file-input/search-file-input.module';
 import { TableFileDisplayModule } from './ui/table-file-display/table-file-display.module';
+import { MatButtonModule } from '@angular/material/button';
 
 
 @NgModule({
@@ -21,6 +22,7 @@ import { TableFileDisplayModule } from './ui/table-file-display/table-file-displ
     NgxSkeletonLoaderModule,
     FadeInContentModule,
     RepositoryInfoModule,
+    MatButtonModule,
     SearchFileInputModule,
     TableFileDisplayModule,
     ClientRepositoryFilesRoutingModule

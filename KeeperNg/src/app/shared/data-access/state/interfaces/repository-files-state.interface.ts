@@ -3,7 +3,8 @@ import { BaseStateInterface } from "./base-state.interface";
 
 
 export interface RepositoryFilesStateInterface extends BaseStateInterface {
-    files: RepoFileInterface[];
+    files: RepoFileInterface[] | null;
+    batchRemainder: number;
     disableAdditionalBatchLoading: boolean;
 }
 

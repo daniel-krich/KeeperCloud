@@ -1,10 +1,12 @@
 <div class="container">
     <div class="search-card">
-        <div class="card-body d-flex">
-            <mat-form-field class="example-full-width flex-fill">
-                <input type="text" placeholder="Search" matInput>
-                <mat-icon matSuffix>search</mat-icon>
-            </mat-form-field>
-        </div>
+        <form (ngSubmit)="onSearchSubmit(searchTextInput.value)">
+            <div class="card-body d-flex">
+                <mat-form-field class="flex-fill">
+                    <input type="text" placeholder="Search" matInput #searchTextInput>
+                    <mat-icon matSuffix>search</mat-icon>
+                </mat-form-field>
+            </div>
+        </form>
     </div>
 </div>
