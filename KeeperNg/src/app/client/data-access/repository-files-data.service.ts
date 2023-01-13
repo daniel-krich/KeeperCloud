@@ -17,5 +17,9 @@ export class RepositoryFilesDataService {
     public loadRepositoryFiles(repositoryId: string, batchOffset: number = 0): Observable<BatchWrapperInterface<RepoFileInterface>> {
         return this.httpClient.get<BatchWrapperInterface<RepoFileInterface>>(this.baseUrl + `/api/repository/${repositoryId}/files`, {params: { batchOffset: batchOffset }});
     }
+
+    public downloadRepositoryFiles(repositoryId: string, fileIds: string[]): Observable<Blob> {
+        return this.httpClient.post(this.baseUrl + '/api/file/download', fileIds, { responseType: 'blob', params: { repositoryId: repositoryId } });
+    }
     
 }

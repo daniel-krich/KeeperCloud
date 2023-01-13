@@ -1,9 +1,9 @@
 ﻿using Keeper.RepositoriesMaster.Enums;
 using Keeper.RepositoriesMaster.FileAccess;
-using Keeper.RepositoriesMaster.Helper;
 using System.Collections.Concurrent;
 using System.IO.Compression;
 using System.Security.Cryptography;
+using System.Text.Json;
 
 namespace Keeper.RepositoriesMaster.FileAccess
 {
@@ -78,16 +78,17 @@ namespace Keeper.RepositoriesMaster.FileAccess
                     throw new FileNotFoundException();
 
                 Stream inputStream = new FileStream(Path.Combine(RepositoryRootPath, FileId.ToString()), FileMode.Open, System.IO.FileAccess.Read, FileShare.Read);
-                if (options.Compression)
-                {
-                    inputStream = new GZipStream(inputStream, CompressionMode.Decompress);
-                }
                 if (options.Encryption && options.Key != null && options.IV != null)
                 {
                     var aes = Aes.Create();
                     var decryptor = aes.CreateDecryptor(options.Key, options.IV);
                     inputStream = new CryptoStream(inputStream, decryptor, CryptoStreamMode.Read);
                 }
+                if (options.Compression)
+                {
+                    inputStream = new GZipStream(inputStream, CompressionMode.Decompress);
+                }
+                
                 return inputStream;
             }
         }

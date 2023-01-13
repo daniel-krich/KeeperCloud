@@ -61,6 +61,25 @@ export class ClientRepositoryFilesComponent implements OnDestroy {
         
     }
 
+    onDownloadFiles(fileIds: string[], repositoryId: string): void {
+        console.log(fileIds);
+
+        this.fileRepoService.downloadRepositoryFiles(repositoryId, fileIds).subscribe(x => {
+            
+            const url = window.URL.createObjectURL(x);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'group.zip';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        });
+        
+    }
+
+    onDeleteFiles(fileIds: string[], repositoryId: string): void {
+        console.log(fileIds);
+    }
+
     onLoadMoreFiles(repositoryId: string): void {
         this.store.dispatch(loadRepoFilesBatchNext({repositoryId: repositoryId}));
     }

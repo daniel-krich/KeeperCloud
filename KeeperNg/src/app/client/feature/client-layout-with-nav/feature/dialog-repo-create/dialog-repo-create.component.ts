@@ -18,7 +18,7 @@ import { CreateRepositoryModel } from '../../models/create-repository.model';
         </div>
         <div mat-dialog-actions class="d-flex justify-content-center">
             <button mat-button (click)="closeDialog()">Cancel</button>
-            <button mat-button [mat-dialog-close]="repoModel">Ok</button>
+            <button mat-button [mat-dialog-close]="repoModel" cdkFocusInitial>Ok</button>
         </div>
 
   `

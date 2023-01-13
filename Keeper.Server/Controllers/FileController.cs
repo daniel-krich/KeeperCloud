@@ -3,7 +3,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text.Json;
-using ICSharpCode.SharpZipLib.Zip;
 using Keeper.RepositoriesMaster.Enums;
 using Keeper.RepositoriesMaster.Master;
 using Keeper.Server.Helpers;
@@ -11,9 +10,12 @@ using Keeper.Server.Models;
 using Keeper.Server.Services;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using SharpCompress.Common;
+using SharpCompress.Writers;
 
 namespace Keeper.Server.Controllers
 {
@@ -21,15 +23,17 @@ namespace Keeper.Server.Controllers
     [ApiController]
     public class FileController : ControllerBase
     {
-        private IRepositoriesMaster _repoMaster;
-        private IRepositoryService _repositoryService;
-        private IMapper _mapper;
+        private readonly IRepositoriesMaster _repoMaster;
+        private readonly IRepositoryService _repositoryService;
+        private readonly IMapper _mapper;
+        private readonly ILogger<FileController> _logger;
 
-        public FileController(IRepositoriesMaster repoMaster, IRepositoryService repositoryService, IMapper mapper)
+        public FileController(IRepositoriesMaster repoMaster, IRepositoryService repositoryService, IMapper mapper, ILogger<FileController> logger)
         {
             _repoMaster = repoMaster;
             _repositoryService = repositoryService;
             _mapper = mapper;
+            _logger = logger;
         }
 
         [HttpPost("upload")]
@@ -47,56 +51,39 @@ namespace Keeper.Server.Controllers
         }
 
 
-        [HttpGet]
-        public async Task DownloadFile(string fileName)
+        [HttpPost("download")]
+        [Authorize]
+        public async Task DownloadFiles(Guid repositoryId, [FromBody] IEnumerable<Guid> fileIds)
         {
-            Response.Headers.Add("Content-Disposition", "attachment; filename=" + fileName);
-
-            /*using (var fileStream = new FileStream("temp/" + fileName, FileMode.Open))
-            using (var aes = Aes.Create())
-            using (var decryptor = aes.CreateDecryptor(_key, _iv))
-            using (var encryptionStream = new CryptoStream(fileStream, decryptor, CryptoStreamMode.Read))
-            using (var compressionStream = new GZipStream(encryptionStream, CompressionMode.Decompress))
+            UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
+            if (user is not null)
             {
-                await compressionStream.CopyToAsync(Response.Body);
-            }*/
-        }
 
-        [HttpGet("many")]
-        public async Task DownloadMany(string fileName)
-        {
-            Response.ContentType = "application/zip";
-            Response.Headers.Add("Content-Disposition", "attachment; filename=archive.zip");
-
-            /*using (var zipStream = new ZipOutputStream(Response.Body))
-            {
-                //foreach (var filePath in filePaths)
+                using (var archive = new ZipArchive(Response.BodyWriter.AsStream(), ZipArchiveMode.Create))
                 {
-                    // Add the file to the zip archive
-                    var entry = new ZipEntry(Path.GetFileName(fileName));
-                    await zipStream.PutNextEntryAsync(entry);
+                    Response.ContentType = "application/zip";
+                    Response.Headers.Add("Content-Disposition", "attachment; filename=group.zip");
 
-                    using (var fileStream = new FileStream("temp/" + fileName, FileMode.Open))
-                    using (var aes = Aes.Create())
-                    using (var decryptor = aes.CreateDecryptor(_key, _iv))
-                    using (var encryptionStream = new CryptoStream(fileStream, decryptor, CryptoStreamMode.Read))
-                    using (var compressionStream = new GZipStream(encryptionStream, CompressionMode.Decompress))
-                    {
-                        await compressionStream.CopyToAsync(zipStream);
-                    }
+                    var files = await _repositoryService.GetFilesReadStreams(user.Id, repositoryId, fileIds);
 
-                    // Write the contents of the file to the zip archive
-                    using (var fileStream = new FileStream("temp/" + fileName, FileMode.Open, FileAccess.Read))
+                    foreach(var fileAccess in files)
                     {
-                        var buffer = new byte[1024];
-                        int bytesRead;
-                        while ((bytesRead = await fileStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                        try
                         {
-                            await zipStream.WriteAsync(buffer, 0, bytesRead);
+                            using (var fileStream = await fileAccess.OpenStreamAsync(RepositoryFileStreamMode.Read))
+                            {
+                                var entry = archive.CreateEntry(fileAccess.Name, CompressionLevel.Optimal);
+                                using var entryStream = entry.Open();
+                                await fileStream.CopyToAsync(entryStream);
+                            }
+                        }
+                        catch
+                        {
+                            _logger.LogWarning($"Error while accessing file {fileAccess.Name}");
                         }
                     }
                 }
-            }*/
+            }
         }
     }
 }

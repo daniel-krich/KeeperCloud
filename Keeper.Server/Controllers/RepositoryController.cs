@@ -18,7 +18,7 @@ namespace Keeper.Server.Controllers
 
         private readonly int _batchTakeRepositoryLimit = 20;
 
-        private readonly int _batchTakeRepositoryFilesLimit = 10;
+        private readonly int _batchTakeRepositoryFilesLimit = 50;
 
         public RepositoryController(IRepositoryService repoService, IMapper mapper)
         {

@@ -1,5 +1,4 @@
 .drag-selection-area {
-    position: relative;
     user-select: none;
 
     ::ng-deep .row-selected:hover {
@@ -9,6 +8,10 @@
     ::ng-deep .row-selected {
         background-color: #2e70ff20;
     }
+}
+
+.drag-selection-container {
+    position: relative;
 }
 
 .drag-selection-rectangle {

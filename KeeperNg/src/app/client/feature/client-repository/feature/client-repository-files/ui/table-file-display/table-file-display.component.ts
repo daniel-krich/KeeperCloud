@@ -1,4 +1,5 @@
-import { Component, ElementRef, HostListener, Input, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { MatMenuTrigger } from '@angular/material/menu';
 import { Observable } from 'rxjs';
 import { RepoFileInterface } from 'src/app/shared/interfaces/repo-file.interface';
 import { RepoInterface } from 'src/app/shared/interfaces/repo.interface';
@@ -12,27 +13,64 @@ export class TableFileDisplayComponent {
 
     @ViewChild('dragSelectionArea') public dragSelectionAreaRef!: ElementRef<HTMLDivElement>;
     @ViewChild('dragSelectionRectangle') public dragSelectionRectangleRef!: ElementRef<HTMLDivElement>;
+    @ViewChild('dragSelectionContainer') public dragSelectionContainerRef!: ElementRef<HTMLDivElement>;
 
     @ViewChildren('fileRows') public fileRows!: QueryList<HTMLTableRowElement>;
     
-    displayedColumns: string[] = ['name', 'size', 'dateModified', 'options'];
+    displayedColumns: string[] = ['name', 'size', 'dateModified'];
 
     @Input() files!: RepoFileInterface[];
+
+    @Output() filesDownload: EventEmitter<string[]> = new EventEmitter<string[]>();
+    @Output() filesDelete: EventEmitter<string[]> = new EventEmitter<string[]>();
 
     private startX: number = 0;
     private startY: number = 0;
     private isSelecting: boolean = false;
-    
 
-    public fileOpen(file: RepoFileInterface): void {
+    public itemList = ['Download', 'Delete'];
+    public contextMenuPosition = { x: 0, y: 0 };
+    public contextMenuVisible = false;
+
+    public onContextMenuItemClick(item: string): void {
+        let selectedFilesIds: string[] = [];
+        this.files.forEach((file) => {
+            const element = window.document.querySelector('#file-' + file.id) as HTMLTableRowElement;
+            if(element.classList.contains('row-selected')) {
+                selectedFilesIds.push(file.id);
+            }
+        });
+        switch(item){
+            case 'Download': {
+                this.downloadFiles(selectedFilesIds);
+                break;
+            }
+            case 'Delete': {
+                this.deleteFiles(selectedFilesIds);
+                break;
+            }
+            default: break;
+        }
     }
 
-    public fileDownload(file: RepoFileInterface): void {
+    public openContextMenu(event: MouseEvent) {
+        event.preventDefault();
+        event.stopPropagation();
+        if (event.type === 'contextmenu') {
+            this.contextMenuVisible = !this.contextMenuVisible;
 
+            const baseRect = this.dragSelectionAreaRef.nativeElement.getBoundingClientRect();
+
+            this.contextMenuPosition = { x: event.clientX - baseRect.left, y: event.clientY - baseRect.top };
+        }
     }
 
-    public fileDelete(file: RepoFileInterface): void {
+    public downloadFiles(fileIds: string[]): void {
+        this.filesDownload.emit(fileIds);
+    }
 
+    public deleteFiles(fileIds: string[]): void {
+        this.filesDelete.emit(fileIds);
     }
 
     startSelection(event: MouseEvent) {
@@ -49,10 +87,16 @@ export class TableFileDisplayComponent {
     @HostListener('document:click', ['$event'])
     onClick(event: MouseEvent) {
         if(!this.dragSelectionAreaRef.nativeElement.contains(event.target as Node)) {
-            this.files.forEach((file) => {
-                const element = window.document.querySelector('#file-' + file.id) as HTMLTableRowElement;
-                element.classList.remove('row-selected');
-            });
+            if(!this.dragSelectionContainerRef.nativeElement.contains(event.target as Node)) {
+                this.files.forEach((file) => {
+                    const element = window.document.querySelector('#file-' + file.id) as HTMLTableRowElement;
+                    element.classList.remove('row-selected');
+                });
+                this.contextMenuVisible = false;
+            }
+        }
+        else if(this.dragSelectionContainerRef.nativeElement.contains(event.target as Node)) {
+            this.contextMenuVisible = false;
         }
         
     }

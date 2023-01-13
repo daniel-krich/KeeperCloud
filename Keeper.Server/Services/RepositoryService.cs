@@ -1,13 +1,14 @@
-﻿using Keeper.DataAccess.Entities;
+﻿using Keeper.DataAccess.Context;
+using Keeper.DataAccess.Entities;
 using Keeper.DataAccess.Factories;
 using Keeper.RepositoriesMaster.Enums;
 using Keeper.RepositoriesMaster.FileAccess;
-using Keeper.RepositoriesMaster.Helper;
 using Keeper.RepositoriesMaster.Master;
 using Keeper.Server.DTOs;
 using Keeper.Server.Models;
 using Keeper.Server.Utils;
 using MapsterMapper;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text.Json;
@@ -20,7 +21,8 @@ namespace Keeper.Server.Services
         Task<BatchWrapperModel<RepositoryModel>> GetRepositoriesBatch(Guid userId, int batchOffset, int batchCountLimit);
         Task<RepositoryModel?> GetRepository(Guid userId, Guid repositoryId);
         Task<BatchWrapperModel<FileModel>> GetRepositoryFilesBatch(Guid userId, Guid repositoryId, int batchOffset, int batchCountLimit);
-        Task<(FileModel fileMetadata, IRepositoryFile? file)?> GetFileAccessor(Guid userId, Guid repositoryId, Guid fileId);
+        Task<(FileEntity fileEntity, IRepositoryFile? file)?> GetFileAccessor(Guid userId, Guid repositoryId, Guid fileId);
+        Task<IEnumerable<FileStreamWithMetaModel>> GetFilesReadStreams(Guid userId, Guid repositoryId, IEnumerable<Guid> fileIds);
         Task<List<FileModel>> CreateFilesByForm(Guid userId, Guid repositoryId, IEnumerable<IFormFile> files);
     }
 
@@ -61,7 +63,7 @@ namespace Keeper.Server.Services
             }
         }
 
-        public async Task<(FileModel fileMetadata, IRepositoryFile? file)?> GetFileAccessor(Guid userId, Guid repositoryId, Guid fileId)
+        public async Task<(FileEntity fileEntity, IRepositoryFile? file)?> GetFileAccessor(Guid userId, Guid repositoryId, Guid fileId)
         {
             using (var context = _keeperFactory.CreateDbContext())
             {
@@ -72,7 +74,7 @@ namespace Keeper.Server.Services
                     var repo = _repoMaster.OpenRepository(userId, repositoryId);
                     if(repo != null)
                     {
-                        return (_mapper.Map<FileModel>(fileEntity), repo.OpenRepoFileAccessor(fileId));
+                        return (fileEntity, repo.OpenRepoFileAccessor(fileId));
                     }
                 }
                 return default;
@@ -170,6 +172,31 @@ namespace Keeper.Server.Services
                     return _mapper.Map<RepositoryEntity, RepositoryModel>(repository);
                 }
                 return default;
+            }
+        }
+
+        public async Task<IEnumerable<FileStreamWithMetaModel>> GetFilesReadStreams(Guid userId, Guid repositoryId, IEnumerable<Guid> fileIds)
+        {
+            using (var context = _keeperFactory.CreateDbContext())
+            {
+                var repo = await context.Repositories.FirstOrDefaultAsync(x => x.Id == repositoryId && x.OwnerId == userId);
+                if(repo is not null)
+                {
+                    var fileEntities = await context.Files.Where(x => fileIds.Contains(x.Id) && x.RepositoryId == repositoryId).ToListAsync();
+
+                    var repoAccess = _repoMaster.OpenRepository(userId, repositoryId);
+                    if (repoAccess != null)
+                    {
+
+                        return fileEntities.Select(x =>
+                        {
+                            var repoFile = repoAccess.OpenRepoFileAccessor(x.Id);
+                            
+                            return new FileStreamWithMetaModel(x.Name, x.EncKey, x.EncIV, repoFile);
+                        });
+                    }
+                }
+                return new List<FileStreamWithMetaModel>();
             }
         }
     }

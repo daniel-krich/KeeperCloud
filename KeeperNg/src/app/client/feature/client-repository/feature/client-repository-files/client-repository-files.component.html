@@ -1,22 +1,40 @@
-<div *ngIf="repository$ | async as repository; else errorTemplate">
+<div *ngIf="repository$ | async as repository; else placeHolderTemplate">
 
     <app-repository-info [repository]="repository"></app-repository-info>
 
     <app-search-file-input (searchSubmit)="onSearchSubmit($event)"></app-search-file-input>
 
     <div class="container mt-3 mb-3">
-        <app-table-file-display [files]="(repositoryFiles$ | async)!"></app-table-file-display>
+        <app-table-file-display [files]="(repositoryFiles$ | async)!"
+                                (filesDownload)="onDownloadFiles($event, repository.id)"
+                                (filesDelete)="onDeleteFiles($event, repository.id)"></app-table-file-display>
 
         <ng-container *ngIf="repoFileBatchInfo$ | async as repoFileBatchInfo">
             <div *ngIf="repoFileBatchInfo.canLoadMore" class="d-flex justify-content-center">
                 <button mat-button class="mt-3 mb-3" color="primary" (click)="onLoadMoreFiles(repository.id)">Load more ({{repoFileBatchInfo.HowMuchLeft}})</button>
             </div>
         </ng-container>
-        
     </div>
     
 </div>
 
-<ng-template #errorTemplate>
-    error loading
+<ng-template #placeHolderTemplate>
+    <div class="container mb-4">
+        <div class="card p-4">
+            <ngx-skeleton-loader count="1" [theme]="{ 'display': 'block', 'margin-bottom': '50px', 'width': '20%', 'height': '10px'  }" appearance="line"></ngx-skeleton-loader>
+            <ngx-skeleton-loader count="2" [theme]="{ 'display': 'block', 'margin-bottom': '20px', 'width': '70%', 'height': '10px'  }" appearance="line"></ngx-skeleton-loader>
+        </div>
+    </div>
+    
+    <div class="container mb-4">
+        <div class="card p-4">
+            <ngx-skeleton-loader count="1" appearance="line"></ngx-skeleton-loader>
+        </div>
+    </div>
+    
+    <div class="container mb-4">
+        <div class="card p-4">
+            <ngx-skeleton-loader count="6" [theme]="{ 'margin-bottom': '20px' }" appearance="line"></ngx-skeleton-loader>
+        </div>
+    </div>
 </ng-template>

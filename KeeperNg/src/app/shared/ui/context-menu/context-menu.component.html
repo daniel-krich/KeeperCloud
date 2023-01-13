@@ -1,0 +1,5 @@
+<div class="context-menu" [style.top]="position.y + 'px'" [style.left]="position.x + 'px'" [style.visibility]="visible ? 'visible' : 'hidden'">
+    <button mat-button *ngFor="let item of itemList" (click)="onClick(item)">
+        <span>{{item}}</span>
+    </button>
+</div>
