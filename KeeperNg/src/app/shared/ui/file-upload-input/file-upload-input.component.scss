@@ -1,0 +1,32 @@
+.file-upload {
+    position: relative;
+}
+
+.file-upload-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    z-index: 1;
+
+
+    input[type=file] {
+        display: none;
+    }
+
+    &.file-hover {
+        display: block;
+        border: #fff dashed 5px;
+
+        animation: alternate linear blink 1s infinite;
+
+        @keyframes blink {
+            from { background-color: #3b7aff30; }
+            to { background-color: #3b7aff60;}
+        }
+    }
+
+    
+}

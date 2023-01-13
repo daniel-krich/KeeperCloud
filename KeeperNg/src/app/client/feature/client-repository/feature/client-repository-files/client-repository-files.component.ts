@@ -52,6 +52,11 @@ export class ClientRepositoryFilesComponent implements OnDestroy {
         this.routerParamsSubscribe = this.repoId$.subscribe(repoId => this.onRepoIdChanges(repoId));
     }
 
+    onFilesChangeUpload(files: File[]): void {
+        console.log(files);
+        
+    }
+
     
     onRepoIdChanges(repositoryId: string | null): void {
 

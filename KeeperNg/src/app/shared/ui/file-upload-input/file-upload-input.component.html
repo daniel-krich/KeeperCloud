@@ -1,0 +1,9 @@
+<div class="file-upload" (dragenter)="onDragEnter($event, labelElement)">
+
+    <label class="file-upload-input" for="file-input" (dragover)="onDragOver($event)" (drop)="onDrop($event, labelElement)" (dragleave)="onDragLeave($event, labelElement)" dropzone="copy" #labelElement>
+        <input type="file" id="file-input" multiple #fileInput>
+    </label>
+
+    <ng-content></ng-content>
+
+</div>

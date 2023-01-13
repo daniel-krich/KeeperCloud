@@ -5,9 +5,11 @@
     <app-search-file-input (searchSubmit)="onSearchSubmit($event)"></app-search-file-input>
 
     <div class="container mt-3 mb-3">
-        <app-table-file-display [files]="(repositoryFiles$ | async)!"
-                                (filesDownload)="onDownloadFiles($event, repository.id)"
-                                (filesDelete)="onDeleteFiles($event, repository.id)"></app-table-file-display>
+        <app-file-upload-input (filesChange)="onFilesChangeUpload($event)">
+            <app-table-file-display [files]="(repositoryFiles$ | async)!"
+                                    (filesDownload)="onDownloadFiles($event, repository.id)"
+                                    (filesDelete)="onDeleteFiles($event, repository.id)"></app-table-file-display>
+        </app-file-upload-input>
 
         <ng-container *ngIf="repoFileBatchInfo$ | async as repoFileBatchInfo">
             <div *ngIf="repoFileBatchInfo.canLoadMore" class="d-flex justify-content-center">

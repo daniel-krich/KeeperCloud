@@ -10,6 +10,7 @@ import { RepositoryInfoModule } from './ui/repository-info/repository-info.modul
 import { SearchFileInputModule } from './ui/search-file-input/search-file-input.module';
 import { TableFileDisplayModule } from './ui/table-file-display/table-file-display.module';
 import { MatButtonModule } from '@angular/material/button';
+import { FileUploadInputModule } from 'src/app/shared/ui/file-upload-input/file-upload-input.module';
 
 
 @NgModule({
@@ -23,6 +24,7 @@ import { MatButtonModule } from '@angular/material/button';
     FadeInContentModule,
     RepositoryInfoModule,
     MatButtonModule,
+    FileUploadInputModule,
     SearchFileInputModule,
     TableFileDisplayModule,
     ClientRepositoryFilesRoutingModule
