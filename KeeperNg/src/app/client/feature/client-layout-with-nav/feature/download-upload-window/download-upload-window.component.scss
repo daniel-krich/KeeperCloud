@@ -1,0 +1,29 @@
+.download-upload-window {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    max-width: 400px;
+    margin-right: 0.4em;
+    border-radius: 10px 0px 0px 0px;
+    z-index: 2;
+    background-color: #fff;
+    box-shadow: #21212150 0px 0px 20px;
+
+    .title {
+        border-radius: 10px 0px 0px 0px;
+        display: flex;
+        justify-content: flex-end;
+        background-color: #212121;
+        color: #fff;
+    }
+
+    .body {
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        margin: 0px 10px 0px 10px;
+    }
+}

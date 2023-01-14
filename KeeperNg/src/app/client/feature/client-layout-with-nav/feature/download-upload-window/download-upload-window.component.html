@@ -1,0 +1,19 @@
+<ng-container *ngIf="downloadState$ | async as downloadState">
+    <div class="download-upload-window" *ngIf="(isVisible$ | async) == 'open'">
+        <div class="title">
+            <button mat-icon-button (click)="closeTab()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+        <div class="body">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <span>Downloading {{downloadState.files.length}} file(s)...</span>
+                <mat-icon *ngIf="downloadState.status == 'done'">done</mat-icon>
+                <mat-icon *ngIf="downloadState.status == 'error'">error</mat-icon>
+            </div>
+            <mat-progress-bar *ngIf="downloadState.status == 'downloading'" mode="determinate" [value]="downloadState.progress"></mat-progress-bar>
+            
+            
+        </div>
+    </div>
+</ng-container>

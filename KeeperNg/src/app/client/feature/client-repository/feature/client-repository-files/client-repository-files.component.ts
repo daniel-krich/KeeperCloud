@@ -5,10 +5,13 @@ import { map, Observable, Subscription, switchMap, throwIfEmpty, withLatestFrom 
 import { RepositoryDataService } from 'src/app/client/data-access/repository-data.service';
 import { RepositoryFilesDataService } from 'src/app/client/data-access/repository-files-data.service';
 import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
+import { downloadBegin } from 'src/app/shared/data-access/state/file-transfer/file-transfer.actions';
+import { selectDownloadsState } from 'src/app/shared/data-access/state/file-transfer/file-transfer.selectors';
 import { loadRepoFilesBatchInit, loadRepoFilesBatchNext } from 'src/app/shared/data-access/state/repositories-files/repositories-files.actions';
 import { selectRepoFilesByObservableId, selectRepoFilesInterfaceByObservableId } from 'src/app/shared/data-access/state/repositories-files/repositories-files.selectors';
 import { loadRepoStart } from 'src/app/shared/data-access/state/repository/repository.actions';
 import { selectRepoByObservableId } from 'src/app/shared/data-access/state/repository/repository.selectors';
+import { RepoFileInterface } from 'src/app/shared/interfaces/repo-file.interface';
 
 @Component({
   selector: 'app-client-repository-files',
@@ -66,23 +69,15 @@ export class ClientRepositoryFilesComponent implements OnDestroy {
         
     }
 
-    onDownloadFiles(fileIds: string[], repositoryId: string): void {
-        console.log(fileIds);
+    onDownloadFiles(files: RepoFileInterface[], repositoryId: string): void {
+        //console.log(files);
 
-        this.fileRepoService.downloadRepositoryFiles(repositoryId, fileIds).subscribe(x => {
-            
-            const url = window.URL.createObjectURL(x);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'group.zip';
-            a.click();
-            window.URL.revokeObjectURL(url);
-        });
+        this.store.dispatch(downloadBegin({ repositoryId: repositoryId, files: files }))
         
     }
 
-    onDeleteFiles(fileIds: string[], repositoryId: string): void {
-        console.log(fileIds);
+    onDeleteFiles(files: RepoFileInterface[], repositoryId: string): void {
+        console.log(files);
     }
 
     onLoadMoreFiles(repositoryId: string): void {

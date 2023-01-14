@@ -16,6 +16,8 @@ import { repositoryReducer } from './shared/data-access/state/repository/reposit
 import { RepositoryEffects } from './shared/data-access/state/repository/repository.effects';
 import { repositoryFilesReducer } from './shared/data-access/state/repositories-files/repositories-files.reducers';
 import { RepositoryFilesEffects } from './shared/data-access/state/repositories-files/repositories-files.effects';
+import { fileTransferReducer } from './shared/data-access/state/file-transfer/file-transfer.reducers';
+import { FileTransferEffects } from './shared/data-access/state/file-transfer/file-transfer.effects';
 
 export const BASE_URL = new InjectionToken<string>('base_url');
 
@@ -35,10 +37,11 @@ const baseUrlValue = 'http://localhost:5202';
         {
             authentication: authenticationReducer,
             repositories: repositoryReducer,
-            repositoriesFiles: repositoryFilesReducer
+            repositoriesFiles: repositoryFilesReducer,
+            fileTransfer: fileTransferReducer
         }
     ),
-    EffectsModule.forRoot([AuthenticationEffects, RepositoryEffects, RepositoryFilesEffects])
+    EffectsModule.forRoot([AuthenticationEffects, RepositoryEffects, RepositoryFilesEffects, FileTransferEffects])
   ],
   providers: [
         { provide: BASE_URL, useValue: baseUrlValue },

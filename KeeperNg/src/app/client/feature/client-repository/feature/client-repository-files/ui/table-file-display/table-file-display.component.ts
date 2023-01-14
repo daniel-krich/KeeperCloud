@@ -21,8 +21,8 @@ export class TableFileDisplayComponent {
 
     @Input() files!: RepoFileInterface[];
 
-    @Output() filesDownload: EventEmitter<string[]> = new EventEmitter<string[]>();
-    @Output() filesDelete: EventEmitter<string[]> = new EventEmitter<string[]>();
+    @Output() filesDownload: EventEmitter<RepoFileInterface[]> = new EventEmitter<RepoFileInterface[]>();
+    @Output() filesDelete: EventEmitter<RepoFileInterface[]> = new EventEmitter<RepoFileInterface[]>();
 
     private startX: number = 0;
     private startY: number = 0;
@@ -33,20 +33,20 @@ export class TableFileDisplayComponent {
     public contextMenuVisible = false;
 
     public onContextMenuItemClick(item: string): void {
-        let selectedFilesIds: string[] = [];
+        let selectedFiles: RepoFileInterface[] = [];
         this.files.forEach((file) => {
             const element = window.document.querySelector('#file-' + file.id) as HTMLTableRowElement;
             if(element.classList.contains('row-selected')) {
-                selectedFilesIds.push(file.id);
+                selectedFiles.push(file);
             }
         });
         switch(item){
             case 'Download': {
-                this.downloadFiles(selectedFilesIds);
+                this.downloadFiles(selectedFiles);
                 break;
             }
             case 'Delete': {
-                this.deleteFiles(selectedFilesIds);
+                this.deleteFiles(selectedFiles);
                 break;
             }
             default: break;
@@ -65,12 +65,12 @@ export class TableFileDisplayComponent {
         }
     }
 
-    public downloadFiles(fileIds: string[]): void {
-        this.filesDownload.emit(fileIds);
+    public downloadFiles(files: RepoFileInterface[]): void {
+        this.filesDownload.emit(files);
     }
 
-    public deleteFiles(fileIds: string[]): void {
-        this.filesDelete.emit(fileIds);
+    public deleteFiles(files: RepoFileInterface[]): void {
+        this.filesDelete.emit(files);
     }
 
     startSelection(event: MouseEvent) {
@@ -129,7 +129,8 @@ export class TableFileDisplayComponent {
                 element.classList.add('row-selected');
             }
             else {
-                element.classList.remove('row-selected');
+                if(!event.ctrlKey)
+                    element.classList.remove('row-selected');
             }
             
         });
