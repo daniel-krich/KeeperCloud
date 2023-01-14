@@ -62,11 +62,12 @@ namespace Keeper.Server.Controllers
                 using (var archive = new ZipArchive(Response.BodyWriter.AsStream(), ZipArchiveMode.Create))
                 {
                     Response.ContentType = "application/zip";
-                    Response.Headers.Add("Content-Disposition", "attachment; filename=group.zip");
+                    
+                    Response.Headers.Add("Content-Disposition", $"attachment; filename={DateTime.Now}.zip");
 
                     var files = await _repositoryService.GetFilesReadStreams(user.Id, repositoryId, fileIds);
 
-                    foreach(var fileAccess in files)
+                    foreach (var fileAccess in files)
                     {
                         try
                         {

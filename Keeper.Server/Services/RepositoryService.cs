@@ -192,7 +192,7 @@ namespace Keeper.Server.Services
                         {
                             var repoFile = repoAccess.OpenRepoFileAccessor(x.Id);
                             
-                            return new FileStreamWithMetaModel(x.Name, x.EncKey, x.EncIV, repoFile);
+                            return new FileStreamWithMetaModel(x.Name, x.FileSize, x.EncKey, x.EncIV, repoFile);
                         });
                     }
                 }

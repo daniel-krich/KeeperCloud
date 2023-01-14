@@ -6,13 +6,15 @@ namespace Keeper.Server.Models
     public class FileStreamWithMetaModel
     {
         public string Name { get; }
+        public long Size { get; }
         public IRepositoryFile? RepositoryFile { get; }
         public byte[] Key { get; }
         public byte[] IV { get; }
 
-        public FileStreamWithMetaModel(string name, byte[] key, byte[] iV, IRepositoryFile? repositoryFile)
+        public FileStreamWithMetaModel(string name, long size, byte[] key, byte[] iV, IRepositoryFile? repositoryFile)
         {
             RepositoryFile = repositoryFile;
+            Size = size;
             Name = name;
             Key = key;
             IV = iV;
