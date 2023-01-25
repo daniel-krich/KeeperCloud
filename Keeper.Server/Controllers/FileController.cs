@@ -21,6 +21,7 @@ namespace Keeper.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class FileController : ControllerBase
     {
         private readonly IRepositoriesMaster _repoMaster;
@@ -38,8 +39,7 @@ namespace Keeper.Server.Controllers
 
         [HttpPost("upload")]
         [DisableRequestSizeLimit]
-        [Authorize]
-        public async Task<IActionResult> UploadFile(Guid repositoryId, [FromForm] IEnumerable<IFormFile> files)
+        public async Task<IActionResult> UploadFiles(Guid repositoryId, [FromForm] IEnumerable<IFormFile> files)
         {
             UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
             if (user is not null)
@@ -50,38 +50,67 @@ namespace Keeper.Server.Controllers
             return Ok();
         }
 
+        [HttpPost("delete")]
+        public async Task<IActionResult> DeleteFiles(Guid repositoryId, [FromBody] IEnumerable<Guid> fileIds)
+        {
+            UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
+            if (user is not null)
+            {
+                if(await _repositoryService.DeleteFiles(user.Id, repositoryId, fileIds))
+                {
+                    return Ok();
+                }
+            }
+            return BadRequest();
+        }
+
 
         [HttpPost("download")]
-        [Authorize]
         public async Task DownloadFiles(Guid repositoryId, [FromBody] IEnumerable<Guid> fileIds)
         {
             UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
             if (user is not null)
             {
+                Response.ContentType = "application/octet-stream";
 
-                using (var archive = new ZipArchive(Response.BodyWriter.AsStream(), ZipArchiveMode.Create))
+                Response.Headers.Add("Content-Disposition", $"attachment; filename={DateTime.Now}");
+
+                var files = (await _repositoryService.GetFilesReadStreams(user.Id, repositoryId, fileIds)).ToList();
+                if (files.Count > 1)
                 {
-                    Response.ContentType = "application/zip";
-                    
-                    Response.Headers.Add("Content-Disposition", $"attachment; filename={DateTime.Now}.zip");
-
-                    var files = await _repositoryService.GetFilesReadStreams(user.Id, repositoryId, fileIds);
-
-                    foreach (var fileAccess in files)
+                    using (var archive = new ZipArchive(Response.BodyWriter.AsStream(), ZipArchiveMode.Create))
                     {
-                        try
+                        foreach (var fileAccess in files)
                         {
-                            using (var fileStream = await fileAccess.OpenStreamAsync(RepositoryFileStreamMode.Read))
+                            try
                             {
-                                var entry = archive.CreateEntry(fileAccess.Name, CompressionLevel.Optimal);
-                                using var entryStream = entry.Open();
-                                await fileStream.CopyToAsync(entryStream);
+                                using (var fileStream = await fileAccess.OpenStreamAsync(RepositoryFileStreamMode.Read))
+                                {
+                                    var entry = archive.CreateEntry(fileAccess.Name, CompressionLevel.Optimal);
+                                    using var entryStream = entry.Open();
+                                    await fileStream.CopyToAsync(entryStream);
+                                }
+                            }
+                            catch
+                            {
+                                _logger.LogWarning($"Error while accessing file {fileAccess.Name}");
                             }
                         }
-                        catch
+                    }
+                }
+                else if(files.Count == 1)
+                {
+                    var file = files.First();
+                    try
+                    {
+                        using (var fileStream = await file.OpenStreamAsync(RepositoryFileStreamMode.Read))
                         {
-                            _logger.LogWarning($"Error while accessing file {fileAccess.Name}");
+                            await fileStream.CopyToAsync(Response.Body);
                         }
+                    }
+                    catch
+                    {
+                        _logger.LogWarning($"Error while accessing file {file.Name}");
                     }
                 }
             }

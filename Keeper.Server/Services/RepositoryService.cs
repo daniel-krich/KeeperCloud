@@ -24,6 +24,7 @@ namespace Keeper.Server.Services
         Task<(FileEntity fileEntity, IRepositoryFile? file)?> GetFileAccessor(Guid userId, Guid repositoryId, Guid fileId);
         Task<IEnumerable<FileStreamWithMetaModel>> GetFilesReadStreams(Guid userId, Guid repositoryId, IEnumerable<Guid> fileIds);
         Task<List<FileModel>> CreateFilesByForm(Guid userId, Guid repositoryId, IEnumerable<IFormFile> files);
+        Task<bool> DeleteFiles(Guid userId, Guid repositoryId, IEnumerable<Guid> fileIds);
     }
 
     public class RepositoryService : IRepositoryService
@@ -94,30 +95,33 @@ namespace Keeper.Server.Services
                         var fileEntities = new List<FileEntity>();
                         foreach(var file in files)
                         {
-                            if(repo.CreateRepoFileAccessor() is IRepositoryFile repoFile)
+                            using (var fileStream = file.OpenReadStream())
                             {
-                                using Aes aes = Aes.Create();
-                                using (Stream repoFileStream = await repoFile.OpenStreamAsync(o =>
-                                 {
-                                     o.Mode = RepositoryFileStreamMode.Write;
-                                     o.Encryption = true;
-                                     o.Key = aes.Key;
-                                     o.IV = aes.IV;
-                                     o.Compression = true;
-                                 }))
+                                if (repo.CreateRepoFileAccessor() is IRepositoryFile repoFile)
                                 {
-                                    await file.CopyToAsync(repoFileStream);
-                                }
+                                    using Aes aes = Aes.Create();
+                                    using (Stream repoFileStream = await repoFile.OpenStreamAsync(o =>
+                                     {
+                                         o.Mode = RepositoryFileStreamMode.Write;
+                                         o.Encryption = true;
+                                         o.Key = aes.Key;
+                                         o.IV = aes.IV;
+                                         o.Compression = true;
+                                     }))
+                                    {
+                                        await fileStream.CopyToAsync(repoFileStream);
+                                    }
 
-                                fileEntities.Add(new FileEntity
-                                {
-                                    Id = repoFile.FileId,
-                                    Name = file.FileName,
-                                    EncKey = aes.Key,
-                                    EncIV = aes.IV,
-                                    FileSize = file.Length,
-                                    RepositoryId = repoEntity.Id
-                                });
+                                    fileEntities.Add(new FileEntity
+                                    {
+                                        Id = repoFile.FileId,
+                                        Name = file.FileName,
+                                        EncKey = aes.Key,
+                                        EncIV = aes.IV,
+                                        FileSize = file.Length,
+                                        RepositoryId = repoEntity.Id
+                                    });
+                                }
                             }
                         }
                         context.Files.AddRange(fileEntities);
@@ -197,6 +201,36 @@ namespace Keeper.Server.Services
                     }
                 }
                 return new List<FileStreamWithMetaModel>();
+            }
+        }
+
+        public async Task<bool> DeleteFiles(Guid userId, Guid repositoryId, IEnumerable<Guid> fileIds)
+        {
+            using (var context = _keeperFactory.CreateDbContext())
+            {
+                var repo = await context.Repositories.FirstOrDefaultAsync(x => x.Id == repositoryId && x.OwnerId == userId);
+                if (repo is not null)
+                {
+                    var fileEntities = await context.Files.Where(x => fileIds.Contains(x.Id) && x.RepositoryId == repositoryId).ToListAsync();
+
+                    var repoAccess = _repoMaster.OpenRepository(userId, repositoryId);
+                    if (repoAccess != null && fileEntities.Count > 0)
+                    {
+                        foreach(var file in fileEntities)
+                        {
+                            var fileAccess = repoAccess.OpenRepoFileAccessor(file.Id);
+                            if(fileAccess != null)
+                            {
+                                await fileAccess.DeleteAsync();
+                            }
+                        }
+
+                        context.Files.RemoveRange(fileEntities);
+                        await context.SaveChangesAsync();
+                        return true;
+                    }
+                }
+                return false;
             }
         }
     }

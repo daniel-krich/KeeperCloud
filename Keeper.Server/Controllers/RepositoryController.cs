@@ -11,14 +11,15 @@ namespace Keeper.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class RepositoryController : ControllerBase
     {
         private readonly IRepositoryService _repoService;
         private readonly IMapper _mapper;
 
-        private readonly int _batchTakeRepositoryLimit = 20;
+        private const int _batchTakeRepositoryLimit = 20;
 
-        private readonly int _batchTakeRepositoryFilesLimit = 50;
+        private const int _batchTakeRepositoryFilesLimit = 50;
 
         public RepositoryController(IRepositoryService repoService, IMapper mapper)
         {
@@ -27,7 +28,6 @@ namespace Keeper.Server.Controllers
         }
 
         [HttpGet("{repositoryId:guid}")]
-        [Authorize]
         public async Task<IActionResult> GetRepositoryInfo(Guid repositoryId)
         {
             UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
@@ -41,20 +41,21 @@ namespace Keeper.Server.Controllers
         }
 
         [HttpGet("{repositoryId:guid}/files")]
-        [Authorize]
-        public async Task<IActionResult> GetRepositoryFilesBatched(Guid repositoryId, int batchOffset = 0)
+        public async Task<IActionResult> GetRepositoryFilesBatched(Guid repositoryId, int batchOffset = 0, int take = _batchTakeRepositoryFilesLimit)
         {
+            if (take > _batchTakeRepositoryFilesLimit)
+                take = _batchTakeRepositoryFilesLimit;
+
             UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
             if (user != null)
             {
-                BatchWrapperModel<FileModel> filesBatch = await _repoService.GetRepositoryFilesBatch(user.Id, repositoryId, batchOffset, _batchTakeRepositoryFilesLimit);
+                BatchWrapperModel<FileModel> filesBatch = await _repoService.GetRepositoryFilesBatch(user.Id, repositoryId, batchOffset, take);
                 return Ok(filesBatch);
             }
             return BadRequest();
         }
 
         [HttpGet("all")]
-        [Authorize]
         public async Task<IActionResult> GetRepositoriesBatched(int batchOffset = 0)
         {
             UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
@@ -67,7 +68,6 @@ namespace Keeper.Server.Controllers
         }
 
         [HttpPost("create")]
-        [Authorize]
         public async Task<IActionResult> CreateRepository([FromBody] CreateRepositoryRequestDTO createRepoRequest)
         {
             UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
