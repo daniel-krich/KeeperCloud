@@ -19,8 +19,6 @@ import { MatInputModule } from '@angular/material/input';
 import { SortByDateModule } from 'src/app/shared/pipes/sort-by-date/sort-by-date.module';
 import { DownloadUploadWindowModule } from './feature/download-upload-window/download-upload-window.module';
 
-
-
 @NgModule({
   declarations: [
     ClientLayoutWithNavComponent

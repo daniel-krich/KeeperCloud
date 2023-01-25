@@ -28,3 +28,23 @@
 table {
     box-shadow: #21212120 0px 0px 20px;
 }
+
+.empty-table {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    color: #444;
+    background-color: #fff;
+    box-shadow: #21212130 0px 10px 10px;
+}
+
+cdk-virtual-scroll-viewport {
+    position: relative;
+    display: unset !important;
+
+    ::ng-deep .cdk-virtual-scroll-content-wrapper {
+        position: static;
+    }
+}

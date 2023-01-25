@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 import { DownloadStateInterface, FileTransferStateInterface } from '../interfaces/file-transfer-state.interface'
-import { downloadBegin, downloadError, downloadProgress, downloadRetry, downloadSuccess, toggleFileTransfer } from './file-transfer.actions';
+import { clearFileTransfer, downloadBegin, downloadError, downloadProgress, downloadRetry, downloadSuccess, uploadBegin, uploadError, uploadProgress, uploadRetry, uploadSuccess } from './file-transfer.actions';
 
 
 const initState: FileTransferStateInterface = {
@@ -13,7 +13,9 @@ const initState: FileTransferStateInterface = {
     },
     uploads: {
         files: [],
+        repoId: null,
         progress: 0,
+        error: '',
         status: 'idle'
     },
     fileTransferState: 'closed'
@@ -22,9 +24,8 @@ const initState: FileTransferStateInterface = {
 export const fileTransferReducer = createReducer(
     initState,
 
-    on(toggleFileTransfer, (state) => ({
-        ...state,
-        fileTransferState: state.fileTransferState == 'open' ? 'closed' : 'open'
+    on(clearFileTransfer, (state) => ({
+        ...initState
     })),
 
     on(downloadBegin, (state, { repositoryId, files }) => ({
@@ -73,6 +74,55 @@ export const fileTransferReducer = createReducer(
             progress: 0,
             error: '',
             status: 'downloading'
+        }
+    })),
+
+    on(uploadBegin, (state, { repositoryId, files }) => ({
+        ...state,
+        uploads: {
+            ...state.uploads,
+            files: files,
+            repoId: repositoryId,
+            status: 'uploading',
+            progress: 0
+        },
+        fileTransferState: 'open'
+    })),
+
+    on(uploadSuccess, (state) => ({
+        ...state,
+        uploads: {
+            ...state.uploads,
+            progress: 100,
+            status: 'done'
+        }
+    })),
+
+    on(uploadError, (state, { error }) => ({
+        ...state,
+        uploads: {
+            ...state.uploads,
+            status: 'error',
+            error: error,
+            progress: 0
+        }
+    })),
+
+    on(uploadProgress, (state, { progress }) => ({
+        ...state,
+        uploads: {
+            ...state.uploads,
+            progress: progress
+        }
+    })),
+
+    on(uploadRetry, (state) => ({
+        ...state,
+        uploads: {
+            ...state.uploads,
+            progress: 0,
+            error: '',
+            status: 'uploading'
         }
     }))
 

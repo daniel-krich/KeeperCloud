@@ -12,8 +12,32 @@ export class RepositoryFilesDataService {
     constructor(private httpClient: HttpClient,
                 @Inject(BASE_URL) private baseUrl: string) { }
 
-    public loadRepositoryFiles(repositoryId: string, batchOffset: number = 0): Observable<BatchWrapperInterface<RepoFileInterface>> {
-        return this.httpClient.get<BatchWrapperInterface<RepoFileInterface>>(this.baseUrl + `/api/repository/${repositoryId}/files`, {params: { batchOffset: batchOffset }});
+    public loadRepositoryFiles(repositoryId: string, batchOffset: number = 0, take?: number): Observable<BatchWrapperInterface<RepoFileInterface>> {
+        return this.httpClient.get<BatchWrapperInterface<RepoFileInterface>>(this.baseUrl + `/api/repository/${repositoryId}/files`, {params: { batchOffset: batchOffset, ...(take) && { take: take } }});
+    }
+
+    public deleteRepositoryFiles(repositoryId: string, files: RepoFileInterface[]): Observable<void> {
+        return this.httpClient.post<void>(this.baseUrl + '/api/file/delete', files.map(x => x.id), { params: { repositoryId: repositoryId } });
+    }
+
+    public uploadRepositoryFiles(repositoryId: string, files: File[]): Observable<{ files: RepoFileInterface[] | null, progress: number | null }> {
+        const formData = new FormData();
+        for (const file of files) {
+            formData.append('files', file, file.name);
+        }
+        return this.httpClient.post<RepoFileInterface[]>(this.baseUrl + '/api/file/upload', formData, { observe: 'events', reportProgress: true, params: { repositoryId: repositoryId } }).pipe(
+            filter(event => event.type === HttpEventType.UploadProgress || event.type === HttpEventType.Response),
+            map((event: HttpEvent<RepoFileInterface[]>) => {
+                switch (event.type) {
+                    case HttpEventType.UploadProgress:
+                        return { files: null, progress: event.total ? Math.round((event.loaded * 100) / event.total) : 0 };
+                    case HttpEventType.Response:
+                        return { files: event.body, progress: 100 };
+                    default:
+                        return { files: null, progress: null };
+                }
+            })
+        );
     }
 
     public downloadRepositoryFiles(repositoryId: string, files: RepoFileInterface[]): Observable<{ blob: Blob | null, progress: number | null }> {

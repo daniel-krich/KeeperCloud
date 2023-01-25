@@ -1,6 +1,7 @@
 import { createReducer, on } from "@ngrx/store";
+import { RepoFileInterface } from "src/app/shared/interfaces/repo-file.interface";
 import { RepositoriesFilesStateInterface, RepositoryFilesStateInterface } from "../interfaces/repository-files-state.interface";
-import { clearAllRepoFiles, loadRepoFilesBatchError, loadRepoFilesBatchInit, loadRepoFilesBatchNext, loadRepoFilesBatchSuccess } from "./repositories-files.actions";
+import { appendRepoFiles, clearAllRepoFiles, deleteRepoFilesDone, loadRepoFilesBatchError, loadRepoFilesBatchInit, loadRepoFilesBatchNext, loadRepoFilesBatchSuccess } from "./repositories-files.actions";
 
 const initState: RepositoriesFilesStateInterface = {
     filesByRepositoryKeys: {},
@@ -60,7 +61,28 @@ export const repositoryFilesReducer = createReducer(
         });
     }),
 
+    on(appendRepoFiles, (state, { repositoryId, files }) => {
+        const repositoryFiles = {...state.filesByRepositoryKeys[repositoryId] ?? initFileRepoState};
+        repositoryFiles.files = [...files, ...repositoryFiles.files ?? []];
+        return ({
+            ...state,
+            filesByRepositoryKeys: {...state.filesByRepositoryKeys, [repositoryId]: repositoryFiles}
+        });
+    }),
+
     on(clearAllRepoFiles, (state) => ({
         ...initState
-    }))
+    })),
+
+    on(deleteRepoFilesDone, (state, { repositoryId, fileIds }) => {
+        const repositoryFiles = {...state.filesByRepositoryKeys[repositoryId] ?? initFileRepoState};
+        const filesDict = repositoryFiles.files?.reduce((acc, curr) => { acc[curr.id] = curr; return acc; }, {} as { [id: string]: RepoFileInterface });
+        if(filesDict != null) {
+            fileIds.forEach(x => delete filesDict[x]);
+        }
+        return ({
+            ...state,
+            filesByRepositoryKeys: {...state.filesByRepositoryKeys, [repositoryId]: {...repositoryFiles, files: Object.values(filesDict ?? [])}}
+        });
+    })
 );

@@ -6,11 +6,12 @@
     right: 0;
     width: 100%;
     max-width: 400px;
-    margin-right: 0.4em;
     border-radius: 10px 0px 0px 0px;
     z-index: 2;
     background-color: #fff;
     box-shadow: #21212150 0px 0px 20px;
+
+    user-select: none;
 
     .title {
         border-radius: 10px 0px 0px 0px;
@@ -18,6 +19,14 @@
         justify-content: flex-end;
         background-color: #212121;
         color: #fff;
+
+        button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.9rem;
+            border-radius: 0px;
+        }
     }
 
     .body {
@@ -26,4 +35,18 @@
         padding: 20px;
         margin: 0px 10px 0px 10px;
     }
+}
+
+.error-message {
+    font-size: 0.8rem;
+    color: #b61515;
+    word-break: break-word;
+}
+
+.success-color {
+    color: #00cc90;
+}
+
+.error-color {
+    color: #b61515;
 }

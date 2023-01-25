@@ -10,8 +10,10 @@ export interface DownloadStateInterface {
 
 export interface UploadStateInterface {
     files: File[];
+    repoId: string | null;
     progress: number;
-    status: 'idle' | 'uploading' | 'done';
+    error: string;
+    status: 'idle' | 'error' | 'uploading' | 'done';
 }
 
 export interface FileTransferStateInterface {

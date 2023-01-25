@@ -1,42 +1,51 @@
-<div *ngIf="repository$ | async as repository; else placeHolderTemplate">
+<ng-container *ngIf="repository$ | async as repository; else placeHolderTemplate">
+    <ng-container *ngIf="repositoryFileState$ | async as repositoryFileState; else placeHolderTemplate">
+        <div fadeInContent *ngIf="repositoryFileState.files != null; else placeHolderTemplate">
+            <app-repository-info [repository]="repository"></app-repository-info>
 
-    <app-repository-info [repository]="repository"></app-repository-info>
+            <app-search-file-input (searchSubmit)="onSearchSubmit($event)"></app-search-file-input>
 
-    <app-search-file-input (searchSubmit)="onSearchSubmit($event)"></app-search-file-input>
+            <div class="container mt-3 mb-3">
+                <app-file-upload-input (filesChange)="onFilesChangeUpload($event, repository.id)">
+                    <app-table-file-display [files]="(repositoryFiles$ | async)!"
+                        (filesDownload)="onDownloadFiles($event, repository.id)"
+                        (filesDelete)="onDeleteFiles($event, repository.id)"></app-table-file-display>
+                </app-file-upload-input>
 
-    <div class="container mt-3 mb-3">
-        <app-file-upload-input (filesChange)="onFilesChangeUpload($event)">
-            <app-table-file-display [files]="(repositoryFiles$ | async)!"
-                                    (filesDownload)="onDownloadFiles($event, repository.id)"
-                                    (filesDelete)="onDeleteFiles($event, repository.id)"></app-table-file-display>
-        </app-file-upload-input>
-
-        <ng-container *ngIf="repoFileBatchInfo$ | async as repoFileBatchInfo">
-            <div *ngIf="repoFileBatchInfo.canLoadMore" class="d-flex justify-content-center">
-                <button mat-button class="mt-3 mb-3" color="primary" (click)="onLoadMoreFiles(repository.id)">Load more ({{repoFileBatchInfo.HowMuchLeft}})</button>
+                <ng-container *ngIf="repoFileBatchInfo$ | async as repoFileBatchInfo">
+                    <div *ngIf="repoFileBatchInfo.canLoadMore" class="d-flex justify-content-center">
+                        <button mat-button class="mt-3 mb-3" color="primary" (click)="onLoadMoreFiles(repository.id)">
+                            Load more ({{repoFileBatchInfo.HowMuchLeft}})
+                        </button>
+                    </div>
+                </ng-container>
             </div>
-        </ng-container>
-    </div>
-    
-</div>
+        </div>
+    </ng-container>
+</ng-container>
 
 <ng-template #placeHolderTemplate>
     <div class="container mb-4">
         <div class="card p-4">
-            <ngx-skeleton-loader count="1" [theme]="{ 'display': 'block', 'margin-bottom': '50px', 'width': '20%', 'height': '10px'  }" appearance="line"></ngx-skeleton-loader>
-            <ngx-skeleton-loader count="2" [theme]="{ 'display': 'block', 'margin-bottom': '20px', 'width': '70%', 'height': '10px'  }" appearance="line"></ngx-skeleton-loader>
+            <ngx-skeleton-loader count="1"
+                [theme]="{ 'display': 'block', 'margin-bottom': '50px', 'width': '20%', 'height': '10px'  }"
+                appearance="line"></ngx-skeleton-loader>
+            <ngx-skeleton-loader count="2"
+                [theme]="{ 'display': 'block', 'margin-bottom': '20px', 'width': '70%', 'height': '10px'  }"
+                appearance="line"></ngx-skeleton-loader>
         </div>
     </div>
-    
+
     <div class="container mb-4">
         <div class="card p-4">
             <ngx-skeleton-loader count="1" appearance="line"></ngx-skeleton-loader>
         </div>
     </div>
-    
+
     <div class="container mb-4">
         <div class="card p-4">
-            <ngx-skeleton-loader count="6" [theme]="{ 'margin-bottom': '20px' }" appearance="line"></ngx-skeleton-loader>
+            <ngx-skeleton-loader count="6" [theme]="{ 'margin-bottom': '20px' }"
+                appearance="line"></ngx-skeleton-loader>
         </div>
     </div>
 </ng-template>

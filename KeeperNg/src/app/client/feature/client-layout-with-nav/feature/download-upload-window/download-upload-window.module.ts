@@ -4,6 +4,8 @@ import { DownloadUploadWindowComponent } from './download-upload-window.componen
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { ConfirmDialogModule } from 'src/app/shared/ui/confirm-dialog/confirm-dialog.module';
+import { ConvertByteSizeToStringModule } from 'src/app/shared/pipes/convert-byte-size-to-string/convert-byte-size-to-string.module';
 
 
 
@@ -15,7 +17,9 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     CommonModule,
     MatButtonModule,
     MatIconModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    ConfirmDialogModule,
+    ConvertByteSizeToStringModule
 
   ],
   exports: [DownloadUploadWindowComponent]

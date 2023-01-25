@@ -11,6 +11,8 @@ import { SearchFileInputModule } from './ui/search-file-input/search-file-input.
 import { TableFileDisplayModule } from './ui/table-file-display/table-file-display.module';
 import { MatButtonModule } from '@angular/material/button';
 import { FileUploadInputModule } from 'src/app/shared/ui/file-upload-input/file-upload-input.module';
+import { MatDialogModule } from '@angular/material/dialog';
+import { ConfirmDialogModule } from 'src/app/shared/ui/confirm-dialog/confirm-dialog.module';
 
 
 @NgModule({
@@ -25,6 +27,8 @@ import { FileUploadInputModule } from 'src/app/shared/ui/file-upload-input/file-
     RepositoryInfoModule,
     MatButtonModule,
     FileUploadInputModule,
+    MatDialogModule,
+    ConfirmDialogModule,
     SearchFileInputModule,
     TableFileDisplayModule,
     ClientRepositoryFilesRoutingModule

@@ -23,3 +23,8 @@ export const selectDownloadsStatus = createSelector(
     selectFileTransferState,
     e => ({ progress: e.downloads.progress, status: e.downloads.status, error: e.downloads.error })
 );
+
+export const selectUploadsState = createSelector(
+    selectFileTransferState,
+    e => e.uploads
+);
