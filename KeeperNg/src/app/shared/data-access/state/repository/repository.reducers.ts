@@ -8,6 +8,7 @@ import { loadRepoBatchSuccess, loadRepoBatchError, loadRepoBatchNext, loadRepoBa
 const initState: RepositoryStateInterface = {
     repositories: [],
     batchRemainder: 0,
+    loadedIndividuallyCount: 0,
     disableAdditionalBatchLoading: false,
     error: '',
     stateStatus: 'pending'
@@ -32,14 +33,17 @@ export const repositoryReducer = createReducer(
 
     on(loadRepoBatchSuccess, (state, { batch }) => {
         const updatedReposNoDuplicates = state.repositories.concat(batch.batch)
-                                        .filter((item, index, self) => 
-                                            self.findIndex(t => t.id === item.id) === index
-                                        );
+            .filter((item, index, self) =>
+                self.findIndex(t => t.id === item.id) === index
+            );
+        const duplicateCount = (state.repositories.length + batch.batch.length) - updatedReposNoDuplicates.length;
+        const realHowMuchLeft = batch.howMuchLeftCount - duplicateCount;
+        const realIsThereMoreBatch = realHowMuchLeft > 0;
         return ({
             ...state,
             repositories: updatedReposNoDuplicates,
-            batchRemainder: batch.howMuchLeftCount,
-            disableAdditionalBatchLoading: !batch.isThereMoreBatch,
+            batchRemainder: realHowMuchLeft,
+            disableAdditionalBatchLoading: !realIsThereMoreBatch,
             stateStatus: 'success'
         });
     }),
@@ -72,10 +76,14 @@ export const repositoryReducer = createReducer(
     }),
 
     on(loadRepoSuccess, (state, { repository }) => {
+        const loadedIndividuallyCountUpdated = state.loadedIndividuallyCount + 1;
         return ({
             ...state,
             repositories: [...state.repositories.filter(x => x.id !== repository.id), repository],
-            stateStatus: 'success'
+            stateStatus: 'success',
+            loadedIndividuallyCount: loadedIndividuallyCountUpdated,
+            batchRemainder: state.batchRemainder - loadedIndividuallyCountUpdated,
+            disableAdditionalBatchLoading: state.batchRemainder - loadedIndividuallyCountUpdated <= 0
         });
     }),
 

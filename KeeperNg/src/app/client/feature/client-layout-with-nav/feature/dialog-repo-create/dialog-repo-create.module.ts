@@ -5,12 +5,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatListModule } from '@angular/material/list';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 
 
@@ -21,18 +16,20 @@ import { MatInputModule } from '@angular/material/input';
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
-    MatMenuModule,
-    MatToolbarModule,
     MatInputModule,
     MatIconModule,
     MatFormFieldModule,
-    MatSidenavModule,
-    MatListModule,
-    MatSnackBarModule
   ],
-  exports: [DialogRepoCreateComponent]
+  exports: [
+    DialogRepoCreateComponent,
+    FormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatInputModule,
+    MatIconModule,
+    MatFormFieldModule
+  ]
 })
 export class DialogRepoCreateModule { }

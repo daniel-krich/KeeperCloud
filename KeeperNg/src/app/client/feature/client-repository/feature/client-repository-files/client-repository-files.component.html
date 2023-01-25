@@ -1,7 +1,7 @@
 <ng-container *ngIf="repository$ | async as repository; else placeHolderTemplate">
     <ng-container *ngIf="repositoryFileState$ | async as repositoryFileState; else placeHolderTemplate">
         <div fadeInContent *ngIf="repositoryFileState.files != null; else placeHolderTemplate">
-            <app-repository-info [repository]="repository"></app-repository-info>
+            <app-repository-info [repository]="repository" (repositoryEditOpen)="onRepoEditOpen(repository)" (repositoryRemove)="onRepoRemove(repository)"></app-repository-info>
 
             <app-search-file-input (searchSubmit)="onSearchSubmit($event)"></app-search-file-input>
 

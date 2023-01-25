@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RepositoryInfoComponent } from './repository-info.component';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 
 
@@ -9,7 +11,9 @@ import { RepositoryInfoComponent } from './repository-info.component';
     RepositoryInfoComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    MatIconModule,
+    MatButtonModule
   ],
   exports: [RepositoryInfoComponent]
 })

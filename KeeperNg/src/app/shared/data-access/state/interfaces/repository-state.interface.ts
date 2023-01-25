@@ -6,6 +6,7 @@ import { RepositoryFilesStateInterface } from "./repository-files-state.interfac
 
 export interface RepositoryStateInterface extends BaseStateInterface {
     repositories: RepoInterface[];
+    loadedIndividuallyCount: number;
     batchRemainder: number;
     disableAdditionalBatchLoading: boolean;
 }

@@ -13,8 +13,11 @@ import { selectRepoFilesDescByObservableId, selectRepoFilesInterfaceByObservable
 import { loadRepoStart } from 'src/app/shared/data-access/state/repository/repository.actions';
 import { selectRepoByObservableId } from 'src/app/shared/data-access/state/repository/repository.selectors';
 import { RepoFileInterface } from 'src/app/shared/interfaces/repo-file.interface';
+import { RepoInterface } from 'src/app/shared/interfaces/repo.interface';
 import { ConfirmDialogComponent } from 'src/app/shared/ui/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogModel } from 'src/app/shared/ui/confirm-dialog/confirm-dialog.model';
+import { RepositoryModel } from './model/repository.model';
+import { RepositoryEditDialogComponent } from './ui/repository-edit-dialog/repository-edit-dialog.component';
 
 @Component({
     selector: 'app-client-repository-files',
@@ -69,11 +72,42 @@ export class ClientRepositoryFilesComponent implements OnDestroy {
 
 
     onRepoIdChanges(repositoryId: string | null): void {
-
         if (repositoryId) {
             this.store.dispatch(loadRepoStart({ repositoryId: repositoryId }));
         }
+    }
 
+    onRepoEditOpen(repo: RepoInterface) {
+        const repoModel = new RepositoryModel(repo);
+        const dialogRef = this.dialog.open(RepositoryEditDialogComponent, {
+            data: repoModel,
+            width: '100%',
+            maxWidth: '500px',
+            enterAnimationDuration: '300',
+            exitAnimationDuration: '300',
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            console.log(repoModel);
+            
+        });
+    }
+
+    onRepoRemove(repo: RepoInterface) {
+        const dialogData = new ConfirmDialogModel('Confirm Action', `
+                Are you sure you want to remove this repository? this will cause in permanent file deletion.
+            `);
+
+            const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+                maxWidth: "400px",
+                data: dialogData
+            });
+
+            dialogRef.afterClosed().subscribe((isOk: boolean) => {
+                if (isOk) {
+                    
+                }
+            });
     }
 
     onDownloadFiles(files: RepoFileInterface[], repositoryId: string): void {

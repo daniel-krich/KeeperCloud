@@ -51,18 +51,20 @@ export class ClientLayoutWithNavComponent implements OnInit, OnDestroy {
         this.routerSubscription.unsubscribe();
     }
 
-    public openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
+    public openDialog(): void {
+        const createRepoModel = new CreateRepositoryModel();
         const dialogRef = this.dialog.open(DialogRepoCreateComponent, {
-          width: '250px',
-          enterAnimationDuration,
-          exitAnimationDuration,
-          data: new CreateRepositoryModel()
+          width: '100%',
+          maxWidth: '500px',
+          enterAnimationDuration: '300',
+          exitAnimationDuration: '300',
+          data: createRepoModel
         });
 
-        dialogRef.afterClosed().subscribe((result: CreateRepositoryModel | null) => {
+        dialogRef.afterClosed().subscribe((isOk: boolean) => {
 
-            if(result){
-                this.repoService.createRepository(result).subscribe({
+            if(isOk){
+                this.repoService.createRepository(createRepoModel).subscribe({
                     next: (repoModel: RepoInterface) => {
                         this.store.dispatch(createRepo({ repository: repoModel }));
                         this.snackBar.open('Repository created', '', {

@@ -1,107 +1,55 @@
 <form class="d-flex flex-column" #registerForm="ngForm" (ngSubmit)="onSubmit()">
-  <div class="form-row">
-    <mat-form-field class="form-group col-12 p-2">
-      <input
-        matInput
-        placeholder="Email address"
-        type="email"
-        name="email"
-        [(ngModel)]="signUpForm.email"
-        minlength="5"
-        maxlength="256"
-        #emailField="ngModel"
-        required
-      />
-      <mat-error *ngIf="emailField.invalid"
-        >Please enter a valid email.</mat-error
-      >
-    </mat-form-field>
-  </div>
-
-  <div class="form-row">
-    <mat-form-field class="form-group col-6 mt-3 p-2">
-      <input
-        matInput
-        placeholder="Password"
-        type="password"
-        name="password"
-        [(ngModel)]="signUpForm.password"
-        minlength="5"
-        maxlength="50"
-        #passwordField="ngModel"
-        required
-      />
-      <mat-error *ngIf="passwordField.invalid"
-        >Please enter a password.</mat-error
-      >
-    </mat-form-field>
-
-    <mat-form-field class="form-group col-6 mt-3 p-2">
-      <input
-        matInput
-        placeholder="Revalidate password"
-        type="password"
-        name="revalidate_password"
-        [(ngModel)]="signUpForm.passwordRevalidate"
-        minlength="5"
-        maxlength="50"
-        #passwordRevalidateField="ngModel"
-        required
-      />
-      <mat-error *ngIf="passwordRevalidateField.invalid"
-        >Please revalidate the password.</mat-error
-      >
-    </mat-form-field>
-  </div>
-
-  <div class="form-row">
-    <mat-form-field class="form-group col-6 mt-3 p-2">
-      <input
-        matInput
-        placeholder="Firstname"
-        type="text"
-        name="firstname"
-        [(ngModel)]="signUpForm.firstname"
-        minlength="5"
-        maxlength="50"
-        #firstnameField="ngModel"
-        required
-      />
-      <mat-error *ngIf="firstnameField.invalid"
-        >Please enter your firstname.</mat-error
-      >
-    </mat-form-field>
-
-    <mat-form-field class="form-group col-6 mt-3 p-2">
-      <input
-        matInput
-        placeholder="Lastname"
-        type="text"
-        name="lastname"
-        [(ngModel)]="signUpForm.lastname"
-        minlength="5"
-        maxlength="50"
-        #lastnameField="ngModel"
-        required
-      />
-      <mat-error *ngIf="lastnameField.invalid">Please enter you lastname.</mat-error>
-    </mat-form-field>
-  </div>
-
-  <div class="form-group">
-    <div class="form-check">
-      <mat-checkbox class="mb-2"
-                    name="rememberMe"
-                    [(ngModel)]="signUpForm.agreeToTerms" #agreeToTermsCheck="ngModel" required>I agree to the terms and conditions</mat-checkbox>
-      <mat-error *ngIf="agreeToTermsCheck.invalid && agreeToTermsCheck.touched">Please agree to the terms.</mat-error>
+    <div class="form-row">
+        <mat-form-field class="form-group col-12 p-2">
+            <input matInput placeholder="Email address" type="email" name="email" [(ngModel)]="signUpForm.email"
+                minlength="5" maxlength="256" #emailField="ngModel" required />
+            <mat-error *ngIf="emailField.invalid">Please enter a valid email.</mat-error>
+        </mat-form-field>
     </div>
-  </div>
 
-  <button mat-raised-button type="submit" [disabled]="!registerForm.valid">
-    Register
-  </button>
+    <div class="form-row">
+        <mat-form-field class="form-group col-6 mt-3 p-2">
+            <input matInput placeholder="Password" type="password" name="password" [(ngModel)]="signUpForm.password"
+                minlength="5" maxlength="50" #passwordField="ngModel" required />
+            <mat-error *ngIf="passwordField.invalid">Please enter a password.</mat-error>
+        </mat-form-field>
 
-  <hr>
+        <mat-form-field class="form-group col-6 mt-3 p-2">
+            <input matInput placeholder="Revalidate password" type="password" name="revalidate_password"
+                [(ngModel)]="signUpForm.passwordRevalidate" minlength="5" maxlength="50"
+                #passwordRevalidateField="ngModel" required />
+            <mat-error *ngIf="passwordRevalidateField.invalid">Please revalidate the password.</mat-error>
+        </mat-form-field>
+    </div>
 
-  <button mat-flat-button type="button" (click)="signinRedirect()">I already have an account</button>
+    <div class="form-row">
+        <mat-form-field class="form-group col-6 mt-3 p-2">
+            <input matInput placeholder="Firstname" type="text" name="firstname" [(ngModel)]="signUpForm.firstname"
+                minlength="5" maxlength="50" #firstnameField="ngModel" required />
+            <mat-error *ngIf="firstnameField.invalid">Please enter your firstname.</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="form-group col-6 mt-3 p-2">
+            <input matInput placeholder="Lastname" type="text" name="lastname" [(ngModel)]="signUpForm.lastname"
+                minlength="5" maxlength="50" #lastnameField="ngModel" required />
+            <mat-error *ngIf="lastnameField.invalid">Please enter you lastname.</mat-error>
+        </mat-form-field>
+    </div>
+
+    <div class="form-group">
+        <div class="form-check">
+            <mat-checkbox class="mb-2" name="rememberMe" [(ngModel)]="signUpForm.agreeToTerms"
+                #agreeToTermsCheck="ngModel" required>I agree to the terms and conditions</mat-checkbox>
+            <mat-error *ngIf="agreeToTermsCheck.invalid && agreeToTermsCheck.touched">Please agree to the
+                terms.</mat-error>
+        </div>
+    </div>
+
+    <button mat-raised-button type="submit" [disabled]="!registerForm.valid">
+        Register
+    </button>
+
+    <hr>
+
+    <button mat-flat-button type="button" (click)="signinRedirect()">I already have an account</button>
 </form>

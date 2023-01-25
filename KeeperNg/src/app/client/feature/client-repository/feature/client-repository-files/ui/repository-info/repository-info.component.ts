@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { outputAst } from '@angular/compiler';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { RepoInterface } from 'src/app/shared/interfaces/repo.interface';
 
 @Component({
@@ -8,4 +9,6 @@ import { RepoInterface } from 'src/app/shared/interfaces/repo.interface';
 })
 export class RepositoryInfoComponent {
     @Input() public repository!: RepoInterface;
+    @Output() public repositoryEditOpen: EventEmitter<void> = new EventEmitter();
+    @Output() public repositoryRemove: EventEmitter<void> = new EventEmitter();
 }

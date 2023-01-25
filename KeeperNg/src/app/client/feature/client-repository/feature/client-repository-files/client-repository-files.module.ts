@@ -13,6 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { FileUploadInputModule } from 'src/app/shared/ui/file-upload-input/file-upload-input.module';
 import { MatDialogModule } from '@angular/material/dialog';
 import { ConfirmDialogModule } from 'src/app/shared/ui/confirm-dialog/confirm-dialog.module';
+import { RepositoryEditDialogModule } from './ui/repository-edit-dialog/repository-edit-dialog.module';
 
 
 @NgModule({
@@ -31,7 +32,8 @@ import { ConfirmDialogModule } from 'src/app/shared/ui/confirm-dialog/confirm-di
     ConfirmDialogModule,
     SearchFileInputModule,
     TableFileDisplayModule,
-    ClientRepositoryFilesRoutingModule
+    ClientRepositoryFilesRoutingModule,
+    RepositoryEditDialogModule
   ]
 })
 export class ClientRepositoryFilesModule { }

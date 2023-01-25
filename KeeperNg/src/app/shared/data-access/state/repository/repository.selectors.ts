@@ -20,7 +20,7 @@ const selectRepoState = (state: AppStateInterface) => state.repositories;
 
 export const selectRepos = createSelector(
     selectRepoState,
-    e => ({ repositories: e.repositories, disableAdditionalBatchLoading: e.disableAdditionalBatchLoading })
+    e => ({ repositories: e.repositories, disableAdditionalBatchLoading: e.disableAdditionalBatchLoading, loadedIndividuallyCount: e.loadedIndividuallyCount })
 );
 
 export const selectRepoByObservableId = (repoId: string | null) => pipe(

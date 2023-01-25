@@ -1,56 +1,29 @@
 <form class="d-flex flex-column" #loginForm="ngForm" (ngSubmit)="onSubmit()">
-  <div class="form-row">
-    <mat-form-field class="form-group col-12 p-2">
-      <input
-        matInput
-        placeholder="Email address"
-        type="email"
-        name="email"
-        [(ngModel)]="signInForm.email"
-        minlength="5"
-        maxlength="256"
-        #emailField="ngModel"
-        required
-      />
-      <mat-error *ngIf="emailField.invalid"
-        >Please enter a valid email.</mat-error
-      >
-    </mat-form-field>
-  </div>
+    <div class="form-row">
+        <mat-form-field class="form-group col-12 p-2">
+            <input matInput placeholder="Email address" type="email" name="email" [(ngModel)]="signInForm.email"
+                minlength="5" maxlength="256" #emailField="ngModel" required />
+            <mat-error *ngIf="emailField.invalid">Please enter a valid email.</mat-error>
+        </mat-form-field>
+    </div>
 
-  <div class="form-row">
-    <mat-form-field class="form-group col-12 p-2">
-      <input
-        matInput
-        placeholder="Password"
-        type="password"
-        name="password"
-        [(ngModel)]="signInForm.password"
-        minlength="5"
-        maxlength="50"
-        #passwordField="ngModel"
-        required
-      />
-      <mat-error *ngIf="passwordField.invalid"
-        >Please enter a password.</mat-error
-      >
-    </mat-form-field>
-  </div>
-  <div class="form-row">
-    <mat-checkbox
-      class="mb-2"
-      name="rememberMe"
-      [(ngModel)]="signInForm.rememberMe"
-      >Remember me</mat-checkbox
-    >
-  </div>
-  <button mat-raised-button type="submit" [disabled]="!loginForm.valid">
-    Login
-  </button>
+    <div class="form-row">
+        <mat-form-field class="form-group col-12 p-2">
+            <input matInput placeholder="Password" type="password" name="password" [(ngModel)]="signInForm.password"
+                minlength="5" maxlength="50" #passwordField="ngModel" required />
+            <mat-error *ngIf="passwordField.invalid">Please enter a password.</mat-error>
+        </mat-form-field>
+    </div>
+    <div class="form-row">
+        <mat-checkbox class="mb-2" name="rememberMe" [(ngModel)]="signInForm.rememberMe">Remember me</mat-checkbox>
+    </div>
+    <button mat-raised-button type="submit" [disabled]="!loginForm.valid">
+        Login
+    </button>
 
-  <hr />
+    <hr />
 
-  <button mat-flat-button type="button" (click)="signupRedirect()">
-    Create an account
-  </button>
+    <button mat-flat-button type="button" (click)="signupRedirect()">
+        Create an account
+    </button>
 </form>

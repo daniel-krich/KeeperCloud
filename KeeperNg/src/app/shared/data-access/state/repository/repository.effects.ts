@@ -28,7 +28,7 @@ export class RepositoryEffects {
             ofType(loadRepoBatchInit, loadRepoBatchNext),
             withLatestFrom(this.store.select(selectRepos)),
             switchMap(([_, repos]) =>
-                this.repoDataService.loadRepositories(repos.repositories.length).pipe(
+                this.repoDataService.loadRepositories(repos.repositories.length - repos.loadedIndividuallyCount).pipe(
                     map((repoBatch) => loadRepoBatchSuccess({ batch: repoBatch })),
                     catchError((err: Error) => of(loadRepoBatchError({error: err.message})))
                 )
