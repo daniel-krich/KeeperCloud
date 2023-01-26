@@ -1,11 +1,12 @@
 <div class="container">
     <div class="search-card">
-        <form (ngSubmit)="onSearchSubmit(searchTextInput.value)">
-            <div class="card-body d-flex">
-                <mat-form-field class="flex-fill">
-                    <input type="text" placeholder="Search" matInput #searchTextInput>
+        <form (ngSubmit)="searchSubmit.emit(searchTextInput.value)">
+            <div class="card-body d-flex align-items-center">
+                <mat-form-field class="flex-fill" style="height: 50px;">
+                    <input type="text" placeholder="File name or keyword..." name="searchInput" [(ngModel)]="search" matInput #searchTextInput>
                     <mat-icon matSuffix>search</mat-icon>
                 </mat-form-field>
+                <button mat-flat-button class="ms-2" style="height: 50px;" color="primary" type="submit">Search</button>
             </div>
         </form>
     </div>

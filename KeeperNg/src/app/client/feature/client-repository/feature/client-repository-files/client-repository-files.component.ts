@@ -1,14 +1,13 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { map, Observable, Subscription, switchMap, throwIfEmpty, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable, Subscription, switchMap, tap, throwIfEmpty, withLatestFrom } from 'rxjs';
 import { RepositoryDataService } from 'src/app/client/data-access/repository-data.service';
 import { RepositoryFilesDataService } from 'src/app/client/data-access/repository-files-data.service';
 import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
 import { downloadBegin, uploadBegin } from 'src/app/shared/data-access/state/file-transfer/file-transfer.actions';
-import { selectDownloadsState } from 'src/app/shared/data-access/state/file-transfer/file-transfer.selectors';
-import { deleteRepoFilesBegin, loadRepoFilesBatchInit, loadRepoFilesBatchNext } from 'src/app/shared/data-access/state/repositories-files/repositories-files.actions';
+import { deleteRepoFilesBegin, loadRepoFilesBatchNext } from 'src/app/shared/data-access/state/repositories-files/repositories-files.actions';
 import { selectRepoFilesDescByObservableId, selectRepoFilesInterfaceByObservableId, selectRepoFileStateObservableId } from 'src/app/shared/data-access/state/repositories-files/repositories-files.selectors';
 import { loadRepoStart } from 'src/app/shared/data-access/state/repository/repository.actions';
 import { selectRepoByObservableId } from 'src/app/shared/data-access/state/repository/repository.selectors';
@@ -18,6 +17,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/ui/confirm-dialog/confirm
 import { ConfirmDialogModel } from 'src/app/shared/ui/confirm-dialog/confirm-dialog.model';
 import { RepositoryModel } from './model/repository.model';
 import { RepositoryEditDialogComponent } from './ui/repository-edit-dialog/repository-edit-dialog.component';
+import { SearchFileInputComponent } from './ui/search-file-input/search-file-input.component';
 
 @Component({
     selector: 'app-client-repository-files',
@@ -26,8 +26,16 @@ import { RepositoryEditDialogComponent } from './ui/repository-edit-dialog/repos
 })
 export class ClientRepositoryFilesComponent implements OnDestroy {
 
+    @ViewChild('searchFileInput') searchFileInput?: SearchFileInputComponent;
+
+    public searchFilter$ = new BehaviorSubject<string>('');
+
     public repoId$: Observable<string | null> = this.route.paramMap.pipe(
-        map(x => x.get('repositoryId'))
+        map(x => x.get('repositoryId')),
+        tap(_ => {
+            this.searchFilter$.next('');
+            this.searchFileInput?.changeSearchValue('');
+        }) // reset search filter on repoId change.
     );
 
     public repository$ = this.repoId$.pipe(
@@ -35,8 +43,13 @@ export class ClientRepositoryFilesComponent implements OnDestroy {
         switchMap(repoId => this.store.pipe(selectRepoByObservableId(repoId)))
     );
 
-    public repositoryFiles$ = this.repoId$.pipe(
-        switchMap(repoId => this.store.pipe(selectRepoFilesDescByObservableId(repoId)))
+    public repositoryFiles$ = combineLatest([this.repoId$, this.searchFilter$]).pipe(
+        switchMap(([repoId, searchFilter]) => 
+            this.store.pipe(
+                selectRepoFilesDescByObservableId(repoId),
+                map((repoFiles) => repoFiles.filter(x => x.name.toLowerCase().includes(searchFilter)))
+            )
+        ),
     );
 
     public repositoryFileState$ = this.repoId$.pipe(
@@ -53,6 +66,8 @@ export class ClientRepositoryFilesComponent implements OnDestroy {
         withLatestFrom(this.repoId$),
         map(([repository, repositoryId]) => ({ repository, repositoryId }))
     );
+
+    
 
     private routerParamsSubscribe: Subscription;
 
@@ -138,7 +153,7 @@ export class ClientRepositoryFilesComponent implements OnDestroy {
     }
 
     onSearchSubmit(search: string): void {
-        console.log(search);
+        this.searchFilter$.next(search.toLowerCase());
     }
 
 

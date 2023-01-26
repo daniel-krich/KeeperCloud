@@ -24,6 +24,15 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
     ScrollingModule,
     MatMenuModule
   ],
-  exports: [TableFileDisplayComponent]
+  exports: [
+    TableFileDisplayComponent,
+    ContextMenuModule,
+    MatTableModule,
+    MatIconModule,
+    MatButtonModule,
+    ConvertByteSizeToStringModule,
+    ScrollingModule,
+    MatMenuModule
+  ]
 })
 export class TableFileDisplayModule { }

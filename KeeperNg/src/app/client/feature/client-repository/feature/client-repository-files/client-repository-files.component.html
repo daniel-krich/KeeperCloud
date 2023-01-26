@@ -3,7 +3,7 @@
         <div fadeInContent *ngIf="repositoryFileState.files != null; else placeHolderTemplate">
             <app-repository-info [repository]="repository" (repositoryEditOpen)="onRepoEditOpen(repository)" (repositoryRemove)="onRepoRemove(repository)"></app-repository-info>
 
-            <app-search-file-input (searchSubmit)="onSearchSubmit($event)"></app-search-file-input>
+            <app-search-file-input (searchSubmit)="onSearchSubmit($event)" #searchFileInput></app-search-file-input>
 
             <div class="container mt-3 mb-3">
                 <app-file-upload-input (filesChange)="onFilesChangeUpload($event, repository.id)">
