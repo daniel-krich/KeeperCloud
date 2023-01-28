@@ -1,31 +1,26 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { interval, Subscription } from 'rxjs';
+import { BehaviorSubject, interval, map, Observable, startWith, withLatestFrom } from 'rxjs';
 
 @Component({
   templateUrl: './not-found-page.component.html',
-  styleUrls: ['./not-found-page.component.scss']
+  styleUrls: ['./not-found-page.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NotFoundPageComponent implements OnInit, OnDestroy {
-    
-    private intervalSubscription!: Subscription;
+export class NotFoundPageComponent {
 
-    public countDown: number = 5;
+    private redirectCountDownRemainder: number = 6;
 
-    constructor(private router: Router) { }
-
-    ngOnInit(): void {
-        const intervalSource = interval(1000);
-        this.intervalSubscription = intervalSource.subscribe(_ => {
-            if(--this.countDown <= 0) {
+    public redirectCountDown$: Observable<number> = interval(1000).pipe(
+        startWith(true),
+        map(() => {
+            if(--this.redirectCountDownRemainder <= 0) {
                 this.router.navigateByUrl('/home');
             }
-        });
-    }
+            return this.redirectCountDownRemainder;
+        })
+    );
 
-
-    ngOnDestroy(): void {
-        this.intervalSubscription.unsubscribe();
-    }
+    constructor(private router: Router) { }
 
 }

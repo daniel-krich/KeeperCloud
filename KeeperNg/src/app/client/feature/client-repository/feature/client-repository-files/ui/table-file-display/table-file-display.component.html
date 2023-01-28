@@ -8,7 +8,7 @@
         class="drag-selection-area">
 
         <cdk-virtual-scroll-viewport itemSize="52">
-            <table mat-table [dataSource]="files">
+            <table mat-table [dataSource]="files" [trackBy]="trackByFileId">
                 <ng-container matColumnDef="name">
                 <th mat-header-cell *matHeaderCellDef> File Name </th>
                 <td mat-cell *matCellDef="let file"> {{file.name}} </td>

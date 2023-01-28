@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
 import { SignInModel } from '../../models/sign-in.model';
 
 @Component({
   selector: 'app-sign-in-form',
   templateUrl: './sign-in-form.component.html',
-  styleUrls: ['./sign-in-form.component.scss']
+  styleUrls: ['./sign-in-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SignInFormComponent {
 
@@ -14,7 +15,7 @@ export class SignInFormComponent {
 
     public isLoading: boolean = false;
 
-    public signInForm:  SignInModel = new SignInModel();
+    public signInForm: SignInModel = new SignInModel();
 
     onSubmit() {
         this.signInFormSubmit.emit(this.signInForm);

@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-developers-page',
   templateUrl: './developers-page.component.html',
-  styleUrls: ['./developers-page.component.scss']
+  styleUrls: ['./developers-page.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DevelopersPageComponent {
     public codeSnippet: string = `

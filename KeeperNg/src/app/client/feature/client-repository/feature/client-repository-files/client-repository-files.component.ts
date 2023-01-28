@@ -1,4 +1,4 @@
-import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -22,7 +22,8 @@ import { SearchFileInputComponent } from './ui/search-file-input/search-file-inp
 @Component({
     selector: 'app-client-repository-files',
     templateUrl: './client-repository-files.component.html',
-    styleUrls: ['./client-repository-files.component.scss']
+    styleUrls: ['./client-repository-files.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ClientRepositoryFilesComponent implements OnDestroy {
 
@@ -155,7 +156,6 @@ export class ClientRepositoryFilesComponent implements OnDestroy {
     onSearchSubmit(search: string): void {
         this.searchFilter$.next(search.toLowerCase());
     }
-
 
     ngOnDestroy(): void {
         this.routerParamsSubscribe.unsubscribe();

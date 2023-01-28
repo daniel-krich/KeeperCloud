@@ -1,9 +1,10 @@
-import { Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CreateRepositoryModel } from '../../models/create-repository.model';
 
 @Component({
-  template: `
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    template: `
         <form class="d-flex flex-column p-2" #editRepoForm="ngForm" (ngSubmit)="onSave()">
             <div class="form-row">
                 <mat-form-field floatLabel="always" class="form-group col-12 p-2">
@@ -39,9 +40,9 @@ import { CreateRepositoryModel } from '../../models/create-repository.model';
   `
 })
 export class DialogRepoCreateComponent {
-    
+
     constructor(public dialogRef: MatDialogRef<DialogRepoCreateComponent>,
-                @Inject(MAT_DIALOG_DATA) public repoModel: CreateRepositoryModel) {}
+        @Inject(MAT_DIALOG_DATA) public repoModel: CreateRepositoryModel) { }
 
     onSave(): void {
         this.dialogRef.close(true);

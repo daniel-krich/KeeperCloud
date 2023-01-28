@@ -1,15 +1,16 @@
-import { Component, ElementRef, HostListener } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
   styleUrls: ['./header.component.scss'],
-  templateUrl: './header.component.html'
+  templateUrl: './header.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeaderComponent {
 
     public static readonly MOBILE_DEVICE_WIDTH: number = 900;
-
+    
     public currentInnerWidth: number = window.innerWidth;
     
     constructor(public router: Router) { }

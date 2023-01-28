@@ -5,6 +5,7 @@ import { RepositoryModel } from '../../model/repository.model';
 
 @Component({
     selector: 'app-repository-edit-dialog',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <form class="d-flex flex-column p-2" #editRepoForm="ngForm" (ngSubmit)="onSave()">
             <div class="form-row">

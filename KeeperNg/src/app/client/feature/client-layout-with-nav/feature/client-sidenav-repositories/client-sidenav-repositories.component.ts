@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { map } from 'rxjs';
@@ -10,7 +10,8 @@ import { RepoInterface } from 'src/app/shared/interfaces/repo.interface';
 @Component({
   selector: 'app-client-sidenav-repositories',
   templateUrl: './client-sidenav-repositories.component.html',
-  styleUrls: ['./client-sidenav-repositories.component.scss']
+  styleUrls: ['./client-sidenav-repositories.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClientSidenavRepositoriesComponent {
 

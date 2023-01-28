@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, HostListener, Input, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Input, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { Observable } from 'rxjs';
 import { RepoFileInterface } from 'src/app/shared/interfaces/repo-file.interface';
@@ -7,7 +7,8 @@ import { RepoInterface } from 'src/app/shared/interfaces/repo.interface';
 @Component({
   selector: 'app-table-file-display',
   templateUrl: './table-file-display.component.html',
-  styleUrls: ['./table-file-display.component.scss']
+  styleUrls: ['./table-file-display.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TableFileDisplayComponent {
 
@@ -142,6 +143,10 @@ export class TableFileDisplayComponent {
         // hide the drag selection area
         this.dragSelectionRectangleRef.nativeElement.style.width = '0';
         this.dragSelectionRectangleRef.nativeElement.style.height = '0';
+    }
+
+    trackByFileId(index: number, file: RepoFileInterface): string {
+        return file.id;
     }
 
     isRectanglesOverlap(rect: DOMRect): boolean {

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
@@ -11,7 +11,8 @@ import { ConfirmDialogModel } from 'src/app/shared/ui/confirm-dialog/confirm-dia
 @Component({
   selector: 'app-download-upload-window',
   templateUrl: './download-upload-window.component.html',
-  styleUrls: ['./download-upload-window.component.scss']
+  styleUrls: ['./download-upload-window.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DownloadUploadWindowComponent {
 

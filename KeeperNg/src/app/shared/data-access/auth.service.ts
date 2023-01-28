@@ -11,11 +11,12 @@ import { UserInterface } from '../interfaces/user.interface';
 import { LocalStorageService } from './local-storage.service';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class AuthService {
 
     private jwtObjectName: string = 'jwt-token';
+
     constructor(@Inject(BASE_URL) private baseUrl: string,
                 private httpClient: HttpClient,
                 private localService: LocalStorageService) { }
@@ -23,7 +24,7 @@ export class AuthService {
     public authenticateViaCredentials(signin: SignInModel): Observable<JwtTokenDTOInterface> {
         return this.httpClient.post<JwtTokenDTOInterface>(this.baseUrl + '/api/auth/sign-in', <SigninDTOInterface>{ email: signin.email, password: signin.password }).pipe(
             throwIfEmpty(() => new Error('Error while getting Jwt token')),
-            tap(jwt =>this.setJwtToStorage(jwt)),
+            tap(jwt => this.setJwtToStorage(jwt)),
             catchError(_ => {
                 return throwError(() => new Error('Error while getting Jwt token'));
             })
@@ -32,7 +33,7 @@ export class AuthService {
 
     public signUp(signUp: SignupModel): Observable<void> {
         return this.httpClient.post<void>(this.baseUrl + '/api/auth/sign-up',
-            <SignupDTOInterface>{ 
+            <SignupDTOInterface>{
                 email: signUp.email,
                 password: signUp.password,
                 firstname: signUp.firstname,
@@ -48,7 +49,7 @@ export class AuthService {
 
     public refreshTokens(): Observable<JwtTokenDTOInterface> {
         let refreshToken = this.getJwtFromStorage()?.refreshToken;
-        if(refreshToken) {
+        if (refreshToken) {
             return this.httpClient.post<JwtTokenDTOInterface>(this.baseUrl + '/api/auth/refresh', { RefreshToken: refreshToken }).pipe(
                 throwIfEmpty(() => new Error('Refresh token is missing'))
             );
@@ -57,26 +58,26 @@ export class AuthService {
     }
 
     public authenticateViaBearer(): Observable<UserInterface> {
-        if(!this.getJwtFromStorage()) return throwError(() => new Error('Jwt is missing'));
+        if (!this.getJwtFromStorage()) return throwError(() => new Error('Jwt is missing'));
         return this.httpClient.get(this.baseUrl + '/api/auth/validate').pipe(
             switchMap(_ => {
                 let user = this.getUserFromStorage();
-                if(user) return of(user);
+                if (user) return of(user);
                 else return throwError(() => new Error('Unable to retreive user'))
             })
         );
     }
 
-    public transformTokenToUser(jwt: string) : UserInterface | null {
+    public transformTokenToUser(jwt: string): UserInterface | null {
         const [header, payload, signature] = jwt.split('.');
         if (!header || !payload || !signature) return null;
         const decodedPayload = JSON.parse(window.atob(payload));
-        
-        
+
+
         return decodedPayload.user;
     }
 
-    public getUserFromStorage() : UserInterface | null  {
+    public getUserFromStorage(): UserInterface | null {
         const jwt = this.localService.get<JwtTokenDTOInterface>(this.jwtObjectName);
         if (!jwt) return null;
         return this.transformTokenToUser(jwt.token);

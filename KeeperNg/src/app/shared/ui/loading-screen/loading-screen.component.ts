@@ -1,11 +1,12 @@
-import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
-  selector: 'app-loading-screen',
-  templateUrl: './loading-screen.component.html',
-  styleUrls: ['./loading-screen.component.scss'],
+    selector: 'app-loading-screen',
+    templateUrl: './loading-screen.component.html',
+    styleUrls: ['./loading-screen.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoadingScreenComponent {
-    public isLoading: boolean = false;
+    public isLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 }

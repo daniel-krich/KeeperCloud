@@ -3,7 +3,7 @@
         <form (ngSubmit)="searchSubmit.emit(searchTextInput.value)">
             <div class="card-body d-flex align-items-center">
                 <mat-form-field class="flex-fill" style="height: 50px;">
-                    <input type="text" placeholder="File name or keyword..." name="searchInput" [(ngModel)]="search" matInput #searchTextInput>
+                    <input type="text" placeholder="File name or keyword..." name="searchInput" (input)="changeSearchValue(searchTextInput.value)" [value]="search$ | async" matInput #searchTextInput>
                     <mat-icon matSuffix>search</mat-icon>
                 </mat-form-field>
                 <button mat-flat-button class="ms-2" style="height: 50px;" color="primary" type="submit">Search</button>

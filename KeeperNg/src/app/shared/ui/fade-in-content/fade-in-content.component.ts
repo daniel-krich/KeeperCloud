@@ -1,8 +1,9 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, HostBinding } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding } from '@angular/core';
 
 @Component({
   selector: '[fadeInContent]',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<ng-content></ng-content>`,
   animations: [
     trigger('fade', [

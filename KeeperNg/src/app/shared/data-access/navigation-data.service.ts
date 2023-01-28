@@ -5,9 +5,9 @@ import { Injectable } from '@angular/core';
 })
 export class NavigationDataService {
 
-    public menuTitle: string = 'KeeperCloud';
+    public readonly menuTitle: string = 'KeeperCloud';
 
-    public commonLinks: { path: string, icon: string, label: string }[] = [
+    public readonly commonLinks: { path: string, icon: string, label: string }[] = [
         {
             path: '/home',
             icon: 'home',
@@ -30,7 +30,7 @@ export class NavigationDataService {
         },
     ];
 
-    public clientLinks: { path: string, icon: string, label: string }[] = [
+    public readonly clientLinks: { path: string, icon: string, label: string }[] = [
         {
             path: '/client',
             icon: 'person',
@@ -45,7 +45,7 @@ export class NavigationDataService {
 
     //
 
-    public clientSideNavLinks: { path: string, icon: string, label: string }[] = [
+    public readonly clientSideNavLinks: { path: string, icon: string, label: string }[] = [
         {
             path: '/client',
             icon: 'person',
@@ -63,7 +63,7 @@ export class NavigationDataService {
         }
     ];
 
-    public clientSideNavBottomLinks: { path: string, icon: string, label: string }[] = [
+    public readonly clientSideNavBottomLinks: { path: string, icon: string, label: string }[] = [
         {
             path: '/home',
             icon: 'keyboard_return',

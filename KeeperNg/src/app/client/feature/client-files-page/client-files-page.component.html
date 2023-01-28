@@ -2,44 +2,4 @@
   <h1 class="m-3 text-center">Files page!</h1>
   <p>client-files-page works!</p>
 
-
-
-
-  <div class="container">
-    <div class="row">
-      <div class="col-md-3">
-        <input type="file" (change)="selectFiles($event)" multiple>
-      </div>
-    </div>
-    <div class="row" *ngIf="uploading">
-      <div class="col-md-3">
-        <mat-progress-bar [value]="uploadProgress"></mat-progress-bar>
-      </div>
-    </div>
-    <div class="row" *ngIf="error">
-      <div class="col-md-3">
-        <div class="alert alert-danger">{{ errorMessage }}</div>
-      </div>
-    </div>
-
-
-    <div class="row">
-        <div class="col-md-3">
-          <ul>
-            <li *ngFor="let file of fileList">
-              {{ file.name }} ({{ file.size }} bytes)
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-3">
-          <button mat-raised-button color="primary" (click)="uploadFiles()">Upload Files</button>
-        </div>
-      </div>
-
-  </div>
-
-
 </div>

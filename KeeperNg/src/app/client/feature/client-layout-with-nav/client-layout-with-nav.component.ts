@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -18,7 +18,8 @@ import { CreateRepositoryModel } from './models/create-repository.model';
 @Component({
   selector: 'app-client-layout-with-nav',
   templateUrl: './client-layout-with-nav.component.html',
-  styleUrls: ['./client-layout-with-nav.component.scss']
+  styleUrls: ['./client-layout-with-nav.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClientLayoutWithNavComponent implements OnInit, OnDestroy {
 

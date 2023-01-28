@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
 import { selectAuthUser } from 'src/app/shared/data-access/state/authentication/authentication.selectors';
@@ -9,6 +9,7 @@ import { RepositoryDataService } from '../../data-access/repository-data.service
   selector: 'app-client-main-page',
   templateUrl: './client-main-page.component.html',
   styleUrls: ['./client-main-page.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ClientMainPageComponent {
     

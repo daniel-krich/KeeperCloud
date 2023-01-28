@@ -1,52 +1,50 @@
 <!-- developers.component.html -->
 <div class="container mb-5 mt-5" fadeInContent>
-  <h1 class="mb-5">Developers</h1>
-  <p>
-    KeeperCloud also offers an API for developers to easily integrate file
-    storage and sharing capabilities into their own applications or servers.
-  </p>
-  <p>
-    Our API documentation and support resources make it easy for developers to
-    get started and build with KeeperCloud.
-  </p>
+    <h1 class="mb-5">Developers</h1>
+    <p>
+        KeeperCloud also offers an API for developers to easily integrate file
+        storage and sharing capabilities into their own applications or servers.
+    </p>
+    <p>
+        Our API documentation and support resources make it easy for developers to
+        get started and build with KeeperCloud.
+    </p>
 
-  <!-- API Key section -->
-  <div class="row mt-5">
-    <div class="col-12">
-      <mat-card class="p-3">
-        <mat-card-title class="mb-4">API Key</mat-card-title>
-        <mat-card-content>
-          <p>
-            To use the KeeperCloud API, you will need to obtain an API key. You
-            can obtain an API key by signing up for a KeeperCloud account and
-            navigating to the API Keys section in your account settings.
-          </p>
-          <p>
-            Once you have obtained your API key, you can use it to authenticate
-            your API requests by including it as a bearer token in the
-            `Authorization` header of your HTTP request.
-          </p>
-          <pre>Authorization: Bearer YOUR_API_KEY</pre>
-        </mat-card-content>
-      </mat-card>
+    <!-- API Key section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <mat-card class="p-3">
+                <mat-card-title class="mb-4">API Key</mat-card-title>
+                <mat-card-content>
+                    <p>
+                        To use the KeeperCloud API, you will need to obtain an API key. You
+                        can obtain an API key by signing up for a KeeperCloud account and
+                        navigating to the API Keys section in your account settings.
+                    </p>
+                    <p>
+                        Once you have obtained your API key, you can use it to authenticate
+                        your API requests by including it as a bearer token in the
+                        `Authorization` header of your HTTP request.
+                    </p>
+                    <pre>Authorization: Bearer YOUR_API_KEY</pre>
+                </mat-card-content>
+            </mat-card>
+        </div>
     </div>
-  </div>
-  <div class="row mt-5">
-    <div class="col-12">
-      <mat-card class="p-3">
-        <mat-card-title class="mb-4">Upload Files</mat-card-title>
-        <mat-card-content>
-          <p>
-            This Node.js snippet creates an Express server that receives a file
-            stream from a client, adds an API key to the request, and forwards
-            the file stream to the KeeperCloud API using the axios library,
-            returning the API's response to the client.
-          </p>
-          <app-code-highlighter
-            [formatCode]="codeSnippet"
-          ></app-code-highlighter>
-        </mat-card-content>
-      </mat-card>
+    <div class="row mt-5">
+        <div class="col-12">
+            <mat-card class="p-3">
+                <mat-card-title class="mb-4">Upload Files</mat-card-title>
+                <mat-card-content>
+                    <p>
+                        This Node.js snippet creates an Express server that receives a file
+                        stream from a client, adds an API key to the request, and forwards
+                        the file stream to the KeeperCloud API using the axios library,
+                        returning the API's response to the client.
+                    </p>
+                    <app-code-highlighter [formatCode]="codeSnippet"></app-code-highlighter>
+                </mat-card-content>
+            </mat-card>
+        </div>
     </div>
-  </div>
 </div>
