@@ -25,6 +25,8 @@ namespace Keeper.Server.Services
         Task<IEnumerable<FileStreamWithMetaModel>> GetFilesReadStreams(Guid userId, Guid repositoryId, IEnumerable<Guid> fileIds);
         Task<List<FileModel>> CreateFilesByForm(Guid userId, Guid repositoryId, IEnumerable<IFormFile> files);
         Task<bool> DeleteFiles(Guid userId, Guid repositoryId, IEnumerable<Guid> fileIds);
+        Task<bool> DeleteRepository(Guid userId, Guid repositoryId);
+        Task<bool> UpdateRepository(Guid userId, Guid repositoryId, UpdateRepositoryRequestDTO updateRepositoryRequest);
     }
 
     public class RepositoryService : IRepositoryService
@@ -229,6 +231,45 @@ namespace Keeper.Server.Services
                         await context.SaveChangesAsync();
                         return true;
                     }
+                }
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteRepository(Guid userId, Guid repositoryId)
+        {
+            using (var context = _keeperFactory.CreateDbContext())
+            {
+                var repo = await context.Repositories.FirstOrDefaultAsync(x => x.Id == repositoryId && x.OwnerId == userId);
+                if (repo is not null)
+                {
+                    var repoAccess = _repoMaster.OpenRepository(userId, repositoryId);
+                    if (repoAccess != null)
+                    {
+                        if (repoAccess.DeleteRepository())
+                        {
+                            context.Repositories.Remove(repo);
+                            await context.SaveChangesAsync();
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateRepository(Guid userId, Guid repositoryId, UpdateRepositoryRequestDTO updateRepositoryRequest)
+        {
+            using (var context = _keeperFactory.CreateDbContext())
+            {
+                var repo = await context.Repositories.FirstOrDefaultAsync(x => x.Id == repositoryId && x.OwnerId == userId);
+                if (repo is not null)
+                {
+                    repo.Name = updateRepositoryRequest.Name;
+                    repo.Description = updateRepositoryRequest.Description;
+                    context.Repositories.Update(repo);
+                    await context.SaveChangesAsync();
+                    return true;
                 }
                 return false;
             }

@@ -43,7 +43,10 @@ namespace Keeper.Server.Controllers
         [HttpGet("{repositoryId:guid}/files")]
         public async Task<IActionResult> GetRepositoryFilesBatched(Guid repositoryId, int batchOffset = 0, int take = _batchTakeRepositoryFilesLimit)
         {
-            if (take > _batchTakeRepositoryFilesLimit)
+            if(batchOffset < 0)
+                batchOffset = 0;
+
+            if (take > _batchTakeRepositoryFilesLimit || take < 0)
                 take = _batchTakeRepositoryFilesLimit;
 
             UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
@@ -58,6 +61,9 @@ namespace Keeper.Server.Controllers
         [HttpGet("all")]
         public async Task<IActionResult> GetRepositoriesBatched(int batchOffset = 0)
         {
+            if (batchOffset < 0)
+                batchOffset = 0;
+
             UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
             if (user != null)
             {
@@ -77,6 +83,34 @@ namespace Keeper.Server.Controllers
                 if(repo != null)
                 {
                     return Ok(repo);
+                }
+            }
+            return BadRequest();
+        }
+
+        [HttpDelete("{repositoryId:guid}")]
+        public async Task<IActionResult> RepositoryDelete(Guid repositoryId)
+        {
+            UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
+            if (user != null)
+            {
+                if (await _repoService.DeleteRepository(user.Id, repositoryId))
+                {
+                    return Ok();
+                }
+            }
+            return BadRequest();
+        }
+
+        [HttpPut("{repositoryId:guid}")]
+        public async Task<IActionResult> RepositoryUpdate(Guid repositoryId, [FromBody] UpdateRepositoryRequestDTO updateRepositoryRequest)
+        {
+            UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
+            if (user != null)
+            {
+                if(await _repoService.UpdateRepository(user.Id, repositoryId, updateRepositoryRequest))
+                {
+                    return Ok();
                 }
             }
             return BadRequest();

@@ -6,7 +6,6 @@ namespace Keeper.RepositoriesMaster.Master
     {
         IRepository? CreateRepository(Guid userId);
         IRepository? OpenRepository(Guid userId, Guid repositoryId);
-        Task<bool> DeleteRepository(IRepository repository);
     }
 
     internal class RepositoriesMaster : IRepositoriesMaster
@@ -42,11 +41,6 @@ namespace Keeper.RepositoriesMaster.Master
                 return new Repository(userId, repositoryId, _repositoriesOptions.ReposDirectory);
             }
             return default;
-        }
-
-        public Task<bool> DeleteRepository(IRepository repository)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -23,6 +23,12 @@ namespace Keeper.RepositoriesMaster.FileAccess
         /// </summary>
         /// <returns>Repository in-memory file accessor.</returns>
         IRepositoryFile? OpenRepoFileAccessor(Guid fileId);
+
+        /// <summary>
+        /// Deletes the repository folder and recursively delete all files.
+        /// </summary>
+        /// <returns>A boolean that represents the status of the operation.</returns>
+        bool DeleteRepository();
     }
 
     internal class Repository : IRepository
@@ -63,6 +69,24 @@ namespace Keeper.RepositoriesMaster.FileAccess
                 return new RepositoryFile(fileId, rootPath);
             }
             return null;
+        }
+
+        public bool DeleteRepository()
+        {
+            string rootPath = Path.Combine(RootPath, OwnerId.ToString(), RepositoryId.ToString());
+            if (Directory.Exists(rootPath))
+            {
+                try
+                {
+                    Directory.Delete(rootPath, true);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            return false;
         }
     }
 }
