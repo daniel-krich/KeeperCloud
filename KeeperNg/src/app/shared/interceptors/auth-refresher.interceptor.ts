@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
-import { catchError, Observable, of, switchMap, tap, throwError, throwIfEmpty } from 'rxjs';
+import { catchError, EMPTY, finalize, Observable, of, switchMap, tap, throwError, throwIfEmpty } from 'rxjs';
 import { AuthService } from '../data-access/auth.service';
 import { BASE_URL } from 'src/app/app.module';
 import { Router } from '@angular/router';
@@ -22,13 +22,9 @@ export class AuthRefresherInterceptor implements HttpInterceptor {
                 catchError((error) => {
 
                     if (error.status === 401) {
+                        console.log("[Auth] Auth token invalidated, trying to get a brand new token...");
+                        let finishedWithError = false;
                         return this.authService.refreshTokens().pipe(
-                            catchError(refreshError => { // Retreive refresh token error will trigger logout and a redirect.
-                                this.store.dispatch(signoutFinished());
-                                this.authService.removeJwtFromStorage();
-                                this.router.navigate(['/auth']);
-                                return throwError(() => refreshError);
-                            }),
                             switchMap((newToken) => {
                                 this.authService.setJwtToStorage(newToken);
                                 const newRequest = request.clone({
@@ -37,7 +33,21 @@ export class AuthRefresherInterceptor implements HttpInterceptor {
                                     },
                                 });
                                 return next.handle(newRequest);
+                            }),
+                            catchError(refreshError => { // Retreive refresh token error will trigger logout and a redirect.
+                                this.store.dispatch(signoutFinished());
+                                this.authService.removeJwtFromStorage();
+                                this.router.navigate(['/auth']);
+                                console.log("[Auth] Failed to get a new token, redirecting to auth.");
+                                finishedWithError = true;
+                                return throwError(() => refreshError);
+                            }),
+                            finalize(() => {
+                                if(!finishedWithError) {
+                                    console.log("[Auth] Successfully got a new token.");
+                                }
                             })
+                            
                         );
                     }
                     else if(error.status.toString().startsWith('4') && request.url.includes('/auth')) return throwError(() => of(this.authService.removeJwtFromStorage()));

@@ -9,13 +9,14 @@ import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
 import { downloadBegin, uploadBegin } from 'src/app/shared/data-access/state/file-transfer/file-transfer.actions';
 import { deleteRepoFilesBegin, loadRepoFilesBatchNext } from 'src/app/shared/data-access/state/repositories-files/repositories-files.actions';
 import { selectRepoFilesDescByObservableId, selectRepoFilesInterfaceByObservableId, selectRepoFileStateObservableId } from 'src/app/shared/data-access/state/repositories-files/repositories-files.selectors';
-import { loadRepoStart } from 'src/app/shared/data-access/state/repository/repository.actions';
+import { deleteRepositoryBegin, loadRepoStart, updateRepositoryBegin } from 'src/app/shared/data-access/state/repository/repository.actions';
 import { selectRepoByObservableId } from 'src/app/shared/data-access/state/repository/repository.selectors';
 import { RepoFileInterface } from 'src/app/shared/interfaces/repo-file.interface';
 import { RepoInterface } from 'src/app/shared/interfaces/repo.interface';
 import { ConfirmDialogComponent } from 'src/app/shared/ui/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogModel } from 'src/app/shared/ui/confirm-dialog/confirm-dialog.model';
 import { RepositoryModel } from './model/repository.model';
+import { RepositoryDeleteDialogComponent } from './ui/repository-delete-dialog/repository-delete-dialog.component';
 import { RepositoryEditDialogComponent } from './ui/repository-edit-dialog/repository-edit-dialog.component';
 import { SearchFileInputComponent } from './ui/search-file-input/search-file-input.component';
 
@@ -103,27 +104,25 @@ export class ClientRepositoryFilesComponent implements OnDestroy {
             exitAnimationDuration: '300',
         });
 
-        dialogRef.afterClosed().subscribe(result => {
-            console.log(repoModel);
+        dialogRef.afterClosed().subscribe(isOk => {
+            if(isOk) {
+                this.store.dispatch(updateRepositoryBegin({ repositoryId: repo.id, repositoryUpdate: { name: repoModel.name, description: repoModel.description } }));
+            }
             
         });
     }
 
     onRepoRemove(repo: RepoInterface) {
-        const dialogData = new ConfirmDialogModel('Confirm Action', `
-                Are you sure you want to remove this repository? this will cause in permanent file deletion.
-            `);
+        const dialogRef = this.dialog.open(RepositoryDeleteDialogComponent, {
+            maxWidth: "400px",
+            data: repo.name
+        });
 
-            const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-                maxWidth: "400px",
-                data: dialogData
-            });
-
-            dialogRef.afterClosed().subscribe((isOk: boolean) => {
-                if (isOk) {
-                    
-                }
-            });
+        dialogRef.afterClosed().subscribe((isOk: boolean) => {
+            if (isOk) {
+                this.store.dispatch(deleteRepositoryBegin({ repository: repo }));
+            }
+        });
     }
 
     onDownloadFiles(files: RepoFileInterface[], repositoryId: string): void {

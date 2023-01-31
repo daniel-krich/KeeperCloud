@@ -14,6 +14,7 @@ import { FileUploadInputModule } from 'src/app/shared/ui/file-upload-input/file-
 import { MatDialogModule } from '@angular/material/dialog';
 import { ConfirmDialogModule } from 'src/app/shared/ui/confirm-dialog/confirm-dialog.module';
 import { RepositoryEditDialogModule } from './ui/repository-edit-dialog/repository-edit-dialog.module';
+import { RepositoryDeleteDialogModule } from './ui/repository-delete-dialog/repository-delete-dialog.module';
 
 
 @NgModule({
@@ -33,7 +34,8 @@ import { RepositoryEditDialogModule } from './ui/repository-edit-dialog/reposito
     SearchFileInputModule,
     TableFileDisplayModule,
     ClientRepositoryFilesRoutingModule,
-    RepositoryEditDialogModule
+    RepositoryEditDialogModule,
+    RepositoryDeleteDialogModule
   ]
 })
 export class ClientRepositoryFilesModule { }

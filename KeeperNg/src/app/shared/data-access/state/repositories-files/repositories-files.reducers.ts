@@ -1,7 +1,7 @@
 import { createReducer, on } from "@ngrx/store";
 import { RepoFileInterface } from "src/app/shared/interfaces/repo-file.interface";
 import { RepositoriesFilesStateInterface, RepositoryFilesStateInterface } from "../interfaces/repository-files-state.interface";
-import { appendRepoFiles, clearAllRepoFiles, deleteRepoFilesDone, loadRepoFilesBatchError, loadRepoFilesBatchInit, loadRepoFilesBatchNext, loadRepoFilesBatchSuccess } from "./repositories-files.actions";
+import { appendRepoFiles, clearAllRepoFiles, deleteRepoFilesDone, loadRepoFilesBatchError, loadRepoFilesBatchInit, loadRepoFilesBatchNext, loadRepoFilesBatchSuccess, removeAllRepoFilesByRepoId } from "./repositories-files.actions";
 
 const initState: RepositoriesFilesStateInterface = {
     filesByRepositoryKeys: {},
@@ -84,5 +84,14 @@ export const repositoryFilesReducer = createReducer(
             ...state,
             filesByRepositoryKeys: {...state.filesByRepositoryKeys, [repositoryId]: {...repositoryFiles, files: Object.values(filesDict ?? [])}}
         });
+    }),
+
+    on(removeAllRepoFilesByRepoId, (state, { repositoryId }) => {
+        const repoKeys = {...state.filesByRepositoryKeys};
+        delete repoKeys[repositoryId];
+        return {
+            ...state,
+            filesByRepositoryKeys: repoKeys
+        };
     })
 );

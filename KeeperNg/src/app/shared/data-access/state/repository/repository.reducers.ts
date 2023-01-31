@@ -2,7 +2,7 @@ import { state } from "@angular/animations";
 import { createReducer, on } from "@ngrx/store";
 import { RepositoryFilesStateInterface } from "../interfaces/repository-files-state.interface";
 import { RepositoryStateInterface } from "../interfaces/repository-state.interface";
-import { loadRepoBatchSuccess, loadRepoBatchError, loadRepoBatchNext, loadRepoBatchInit, createRepo, loadRepoSuccess, loadRepoStart, loadRepoError, loadRepoSuccessEmpty } from './repository.actions';
+import { loadRepoBatchSuccess, loadRepoBatchError, loadRepoBatchNext, loadRepoBatchInit, loadRepoSuccess, loadRepoStart, loadRepoError, loadRepoSuccessEmpty, deleteRepositorySuccess, updateRepositorySuccess, createRepositorySuccess } from './repository.actions';
 
 
 const initState: RepositoryStateInterface = {
@@ -21,6 +21,7 @@ export const repositoryReducer = createReducer(
         ...state,
         repositories: [],
         batchRemainder: 0,
+        loadedIndividuallyCount: 0,
         disableAdditionalBatchLoading: false,
         error: '',
         stateStatus: 'loading'
@@ -54,7 +55,7 @@ export const repositoryReducer = createReducer(
         stateStatus: 'error'
     })),
 
-    on(createRepo, (state, { repository }) => {
+    on(createRepositorySuccess, (state, { repository }) => {
         return ({
             ...state,
             repositories: [...state.repositories, repository]
@@ -94,4 +95,22 @@ export const repositoryReducer = createReducer(
             stateStatus: 'error'
         });
     }),
+
+    on(deleteRepositorySuccess, (state, { repositoryId }) => ({
+        ...state,
+        repositories: state.repositories.filter(x => x.id !== repositoryId)
+    })),
+
+    on(updateRepositorySuccess, (state, { repositoryId, repositoryUpdate }) => {
+        const repositoriesCopy = [...state.repositories.filter(x => x.id !== repositoryId)];
+        const currentRepo = { ...state.repositories.find(x => x.id === repositoryId)! };
+        if (currentRepo) {
+            currentRepo.name = repositoryUpdate.name;
+            currentRepo.description = repositoryUpdate.description;
+        }
+        return {
+            ...state,
+            repositories: [...repositoriesCopy, currentRepo]
+        };
+    })
 );

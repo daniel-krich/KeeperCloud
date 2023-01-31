@@ -18,6 +18,7 @@ import { repositoryFilesReducer } from './shared/data-access/state/repositories-
 import { RepositoryFilesEffects } from './shared/data-access/state/repositories-files/repositories-files.effects';
 import { fileTransferReducer } from './shared/data-access/state/file-transfer/file-transfer.reducers';
 import { FileTransferEffects } from './shared/data-access/state/file-transfer/file-transfer.effects';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 export const BASE_URL = new InjectionToken<string>('base_url');
 
@@ -41,7 +42,8 @@ const baseUrlValue = 'http://localhost:5202';
             fileTransfer: fileTransferReducer
         }
     ),
-    EffectsModule.forRoot([AuthenticationEffects, RepositoryEffects, RepositoryFilesEffects, FileTransferEffects])
+    EffectsModule.forRoot([AuthenticationEffects, RepositoryEffects, RepositoryFilesEffects, FileTransferEffects]),
+    MatSnackBarModule
   ],
   providers: [
         { provide: BASE_URL, useValue: baseUrlValue },

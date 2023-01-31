@@ -3,14 +3,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NavigationStart, Router, Event as NavigationEvent } from '@angular/router';
-import { select, Store } from '@ngrx/store';
-import { catchError, map, Subscription, tap } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { NavigationDataService } from 'src/app/shared/data-access/navigation-data.service';
 import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
 import { signoutBegin } from 'src/app/shared/data-access/state/authentication/authentication.actions';
-import { createRepo } from 'src/app/shared/data-access/state/repository/repository.actions';
-import { selectRepoStateDesc } from 'src/app/shared/data-access/state/repository/repository.selectors';
-import { RepoInterface } from 'src/app/shared/interfaces/repo.interface';
+import { createRepositoryBegin } from 'src/app/shared/data-access/state/repository/repository.actions';
 import { RepositoryDataService } from '../../data-access/repository-data.service';
 import { DialogRepoCreateComponent } from './feature/dialog-repo-create/dialog-repo-create.component';
 import { CreateRepositoryModel } from './models/create-repository.model';
@@ -65,21 +63,7 @@ export class ClientLayoutWithNavComponent implements OnInit, OnDestroy {
         dialogRef.afterClosed().subscribe((isOk: boolean) => {
 
             if(isOk){
-                this.repoService.createRepository(createRepoModel).subscribe({
-                    next: (repoModel: RepoInterface) => {
-                        this.store.dispatch(createRepo({ repository: repoModel }));
-                        this.snackBar.open('Repository created', '', {
-                            duration: 2000,
-                            panelClass: ['success-snackbar']
-                        });
-                    },
-                    error: () => {
-                        this.snackBar.open('Repository creation failed', '', {
-                            duration: 2000,
-                            panelClass: ['error-snackbar']
-                        });
-                    }
-                });
+                this.store.dispatch(createRepositoryBegin({ repository: createRepoModel }));
             }
             
             

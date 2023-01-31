@@ -46,3 +46,8 @@ export const deleteRepoFilesDone = createAction(
     '[Repository Files Delete] Delete Repository Files Done',
     props<{ repositoryId: string, fileIds: string[] }>()
 );
+
+export const removeAllRepoFilesByRepoId = createAction(
+    '[All Repository Files Remove] Remove Repository Files',
+    props<{ repositoryId: string }>()
+);
