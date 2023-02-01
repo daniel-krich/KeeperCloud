@@ -31,6 +31,8 @@ export class FileUploadInputComponent {
         event.preventDefault();
         event.stopPropagation();
         uploadElement.classList.remove('file-hover');
-        this.filesChange.emit(event.dataTransfer.files);
+        if(event.dataTransfer.files?.length > 0) {
+            this.filesChange.emit(event.dataTransfer.files);
+        }
     }
 }

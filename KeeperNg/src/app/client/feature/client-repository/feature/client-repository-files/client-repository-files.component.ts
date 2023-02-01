@@ -24,6 +24,7 @@ import { SearchFileInputComponent } from './ui/search-file-input/search-file-inp
     selector: 'app-client-repository-files',
     templateUrl: './client-repository-files.component.html',
     styleUrls: ['./client-repository-files.component.scss'],
+    host: {'class': 'flex-spacer'},
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ClientRepositoryFilesComponent implements OnDestroy {

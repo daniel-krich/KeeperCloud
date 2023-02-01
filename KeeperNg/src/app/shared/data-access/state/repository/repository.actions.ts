@@ -80,7 +80,7 @@ export const deleteRepositoryError = createAction(
 //
 
 export const updateRepositoryBegin = createAction(
-    '[Repository Update] Repository Delete Begin',
+    '[Repository Update] Repository Update Begin',
     props<{ repositoryId: string, repositoryUpdate: UpdateRepositoryDTOInterface }>()
 );
 
@@ -91,4 +91,16 @@ export const updateRepositorySuccess = createAction(
 
 export const updateRepositoryError = createAction(
     '[Repository Update] Repository Update Error'
+);
+
+//
+
+export const decreaseRepositoryFilesStats = createAction(
+    '[Repository Stats Update] Decrease Repository Files Stats',
+    props<{ repositoryId: string, files: RepoFileInterface[] }>()
+);
+
+export const increaseRepositoryFilesStats = createAction(
+    '[Repository Stats Update] Increase Repository Files Stats',
+    props<{ repositoryId: string, files: RepoFileInterface[] }>()
 );

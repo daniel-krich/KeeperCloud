@@ -25,7 +25,7 @@ export const selectRepos = createSelector(
 
 export const selectRepoByObservableId = (repoId: string | null) => pipe(
     select(selectRepoState),
-    map(repo => repo.repositories.find(x => x.id == repoId)),
+    map(repo => repo.repositories.find(x => x.id === repoId)),
     throwIfEmpty(() => throwError(() => new Error('Repository not found')))
 );
 

@@ -5,6 +5,7 @@ import { catchError, map, switchMap, of, throwIfEmpty, tap, throwError, defer, w
 import { RepositoryDataService } from "src/app/client/data-access/repository-data.service";
 import { RepositoryFilesDataService } from "src/app/client/data-access/repository-files-data.service";
 import { AppStateInterface } from "../app.state";
+import { decreaseRepositoryFilesStats } from "../repository/repository.actions";
 import { deleteRepoFilesBegin, deleteRepoFilesDone, loadRepoFilesBatchError, loadRepoFilesBatchInit, loadRepoFilesBatchNext, loadRepoFilesBatchSuccess, loadRepoFilesBatchSuccessEmpty } from "./repositories-files.actions";
 import { selectReposKeyFile } from "./repositories-files.selectors";
 
@@ -17,7 +18,7 @@ export class RepositoryFilesEffects {
             ofType(loadRepoFilesBatchInit),
             withLatestFrom(this.store.select(selectReposKeyFile)),
             switchMap(([action, repoFiles]) => {
-                if(repoFiles[action.repositoryId].files == null && repoFiles[action.repositoryId].stateStatus == 'loading') {
+                if (repoFiles[action.repositoryId].files == null && repoFiles[action.repositoryId].stateStatus == 'loading') {
                     return this.repoFilesDataService.loadRepositoryFiles(action.repositoryId).pipe(
                         map(filesBatch => loadRepoFilesBatchSuccess({ repositoryFilesBatch: filesBatch, repositoryId: action.repositoryId })),
                         catchError((error: Error) => of(loadRepoFilesBatchError({ repositoryId: action.repositoryId, error: error.message })))
@@ -46,7 +47,7 @@ export class RepositoryFilesEffects {
             ofType(deleteRepoFilesBegin),
             switchMap((action) => {
                 return this.repoFilesDataService.deleteRepositoryFiles(action.repositoryId, action.files).pipe(
-                    map(_ => deleteRepoFilesDone({ repositoryId: action.repositoryId, fileIds: action.files.map(x => x.id) })),
+                    map(_ => deleteRepoFilesDone({ repositoryId: action.repositoryId, files: action.files })),
                     catchError(() => EMPTY)
                 )
             })
@@ -56,14 +57,17 @@ export class RepositoryFilesEffects {
     deleteRepoFilesDone$ = createEffect(() =>
         this.actions$.pipe(
             ofType(deleteRepoFilesDone),
-            map(action => loadRepoFilesBatchNext({ repositoryId: action.repositoryId, take: action.fileIds.length }))
+            switchMap(action => of(
+                decreaseRepositoryFilesStats({ repositoryId: action.repositoryId, files: action.files }),
+                loadRepoFilesBatchNext({ repositoryId: action.repositoryId, take: action.files.length })
+            ))
         )
     );
 
 
     constructor(private actions$: Actions,
-                private store: Store<AppStateInterface>,
-                private repoDataService: RepositoryDataService,
-                private repoFilesDataService: RepositoryFilesDataService) {}
-    
+        private store: Store<AppStateInterface>,
+        private repoDataService: RepositoryDataService,
+        private repoFilesDataService: RepositoryFilesDataService) { }
+
 }

@@ -74,11 +74,11 @@ export const repositoryFilesReducer = createReducer(
         ...initState
     })),
 
-    on(deleteRepoFilesDone, (state, { repositoryId, fileIds }) => {
+    on(deleteRepoFilesDone, (state, { repositoryId, files }) => {
         const repositoryFiles = {...state.filesByRepositoryKeys[repositoryId] ?? initFileRepoState};
         const filesDict = repositoryFiles.files?.reduce((acc, curr) => { acc[curr.id] = curr; return acc; }, {} as { [id: string]: RepoFileInterface });
         if(filesDict != null) {
-            fileIds.forEach(x => delete filesDict[x]);
+            files.forEach(x => delete filesDict[x.id]);
         }
         return ({
             ...state,

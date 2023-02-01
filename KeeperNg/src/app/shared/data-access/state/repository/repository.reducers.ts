@@ -2,7 +2,7 @@ import { state } from "@angular/animations";
 import { createReducer, on } from "@ngrx/store";
 import { RepositoryFilesStateInterface } from "../interfaces/repository-files-state.interface";
 import { RepositoryStateInterface } from "../interfaces/repository-state.interface";
-import { loadRepoBatchSuccess, loadRepoBatchError, loadRepoBatchNext, loadRepoBatchInit, loadRepoSuccess, loadRepoStart, loadRepoError, loadRepoSuccessEmpty, deleteRepositorySuccess, updateRepositorySuccess, createRepositorySuccess } from './repository.actions';
+import { loadRepoBatchSuccess, loadRepoBatchError, loadRepoBatchNext, loadRepoBatchInit, loadRepoSuccess, loadRepoStart, loadRepoError, loadRepoSuccessEmpty, deleteRepositorySuccess, updateRepositorySuccess, createRepositorySuccess, decreaseRepositoryFilesStats, increaseRepositoryFilesStats } from './repository.actions';
 
 
 const initState: RepositoryStateInterface = {
@@ -112,5 +112,31 @@ export const repositoryReducer = createReducer(
             ...state,
             repositories: [...repositoriesCopy, currentRepo]
         };
-    })
+    }),
+
+    on(decreaseRepositoryFilesStats, (state, { repositoryId, files }) => {
+        const repositoriesCopy = [...state.repositories.filter(x => x.id !== repositoryId)];
+        const currentRepo = {...state.repositories.find(x => x.id === repositoryId)!};
+        if(currentRepo) {
+            currentRepo.overallFileCount -= files.length;
+            currentRepo.overallRepositorySize -= files.reduce((acc, curr) => acc + curr.fileSize, 0);
+        }
+        return {
+            ...state,
+            repositories: [...repositoriesCopy, currentRepo]
+        }
+    }),
+
+    on(increaseRepositoryFilesStats, (state, { repositoryId, files }) => {
+        const repositoriesCopy = [...state.repositories.filter(x => x.id !== repositoryId)];
+        const currentRepo = {...state.repositories.find(x => x.id === repositoryId)!};
+        if(currentRepo) {
+            currentRepo.overallFileCount += files.length;
+            currentRepo.overallRepositorySize += files.reduce((acc, curr) => acc + curr.fileSize, 0);
+        }
+        return {
+            ...state,
+            repositories: [...repositoriesCopy, currentRepo]
+        }
+    }),
 );

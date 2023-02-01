@@ -28,7 +28,7 @@ namespace Keeper.RepositoriesMaster.FileAccess
         /// Deletes the repository folder and recursively delete all files.
         /// </summary>
         /// <returns>A boolean that represents the status of the operation.</returns>
-        bool DeleteRepository();
+        Task<bool> DeleteRepository(CancellationToken token = default);
     }
 
     internal class Repository : IRepository
@@ -71,14 +71,14 @@ namespace Keeper.RepositoriesMaster.FileAccess
             return null;
         }
 
-        public bool DeleteRepository()
+        public async Task<bool> DeleteRepository(CancellationToken token = default)
         {
             string rootPath = Path.Combine(RootPath, OwnerId.ToString(), RepositoryId.ToString());
             if (Directory.Exists(rootPath))
             {
                 try
                 {
-                    Directory.Delete(rootPath, true);
+                    await Task.Factory.StartNew(() => Directory.Delete(rootPath, true), token);
                     return true;
                 }
                 catch

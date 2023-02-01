@@ -17,9 +17,9 @@ namespace Keeper.Server.Services
 {
     public interface IRepositoryService
     {
-        Task<RepositoryModel?> CreateRepository(Guid userId, CreateRepositoryRequestDTO request);
-        Task<BatchWrapperModel<RepositoryModel>> GetRepositoriesBatch(Guid userId, int batchOffset, int batchCountLimit);
-        Task<RepositoryModel?> GetRepository(Guid userId, Guid repositoryId);
+        Task<RepositoryExtendedModel?> CreateRepository(Guid userId, CreateRepositoryRequestDTO request);
+        Task<BatchWrapperModel<RepositoryExtendedModel>> GetRepositoriesBatch(Guid userId, int batchOffset, int batchCountLimit);
+        Task<RepositoryExtendedModel?> GetRepository(Guid userId, Guid repositoryId);
         Task<BatchWrapperModel<FileModel>> GetRepositoryFilesBatch(Guid userId, Guid repositoryId, int batchOffset, int batchCountLimit);
         Task<(FileEntity fileEntity, IRepositoryFile? file)?> GetFileAccessor(Guid userId, Guid repositoryId, Guid fileId);
         Task<IEnumerable<FileStreamWithMetaModel>> GetFilesReadStreams(Guid userId, Guid repositoryId, IEnumerable<Guid> fileIds);
@@ -41,11 +41,11 @@ namespace Keeper.Server.Services
             _mapper = mapper;
         }
 
-        public async Task<RepositoryModel?> CreateRepository(Guid userId, CreateRepositoryRequestDTO request)
+        public async Task<RepositoryExtendedModel?> CreateRepository(Guid userId, CreateRepositoryRequestDTO request)
         {
             using (var context = _keeperFactory.CreateDbContext())
             {
-                if(await context.Users.FindAsync(userId) is UserEntity user)
+                if (await context.Users.FindAsync(userId) is UserEntity user)
                 {
                     var repo = _repoMaster.CreateRepository(userId);
                     if (repo != null)
@@ -59,7 +59,7 @@ namespace Keeper.Server.Services
                         };
                         context.Repositories.Add(repoEntity);
                         await context.SaveChangesAsync();
-                        return _mapper.Map<RepositoryModel>(repoEntity);
+                        return _mapper.Map<RepositoryExtendedModel>(repoEntity);
                     }
                 }
                 return default;
@@ -75,7 +75,7 @@ namespace Keeper.Server.Services
                 if (fileEntity != null)
                 {
                     var repo = _repoMaster.OpenRepository(userId, repositoryId);
-                    if(repo != null)
+                    if (repo != null)
                     {
                         return (fileEntity, repo.OpenRepoFileAccessor(fileId));
                     }
@@ -92,10 +92,10 @@ namespace Keeper.Server.Services
                                                            .FirstOrDefaultAsync(x => x.Id == repositoryId && x.Owner.Id == userId);
                 if (repoEntity != null)
                 {
-                    if(_repoMaster.OpenRepository(userId, repositoryId) is IRepository repo)
+                    if (_repoMaster.OpenRepository(userId, repositoryId) is IRepository repo)
                     {
                         var fileEntities = new List<FileEntity>();
-                        foreach(var file in files)
+                        foreach (var file in files)
                         {
                             using (var fileStream = file.OpenReadStream())
                             {
@@ -135,17 +135,25 @@ namespace Keeper.Server.Services
             }
         }
 
-        public async Task<BatchWrapperModel<RepositoryModel>> GetRepositoriesBatch(Guid userId, int batchOffset, int batchTakeLimit)
+        public async Task<BatchWrapperModel<RepositoryExtendedModel>> GetRepositoriesBatch(Guid userId, int batchOffset, int batchTakeLimit)
         {
             using (var context = _keeperFactory.CreateDbContext())
             {
-                var repositories = await context.Repositories.Where(x => x.OwnerId == userId)
-                                                             .OrderByDescending(x => x.CreatedDate)
-                                                             .Skip(batchOffset)
-                                                             .Take(batchTakeLimit).ToListAsync();
+
+                var repositories = await (from repo in context.Repositories.Include(x => x.Files)
+                                          where repo.OwnerId == userId
+                                          select new RepositoryExtendedModel
+                                          {
+                                              Id = repo.Id,
+                                              Name = repo.Name,
+                                              Description = repo.Description,
+                                              CreatedDate = repo.CreatedDate,
+                                              OverallFileCount = repo.Files.Count(),
+                                              OverallRepositorySize = repo.Files.Sum(f => f.FileSize)
+                                          }).OrderByDescending(x => x.CreatedDate).Skip(batchOffset).Take(batchTakeLimit).ToListAsync();
+
                 var howMuchReposLeftCount = (await context.Repositories.Where(x => x.OwnerId == userId).CountAsync()) - batchOffset - repositories.Count;
-                var repModelList = _mapper.Map<List<RepositoryEntity>, List<RepositoryModel>>(repositories);
-                return new BatchWrapperModel<RepositoryModel>(repModelList, batchOffset, howMuchReposLeftCount);
+                return new BatchWrapperModel<RepositoryExtendedModel>(repositories, batchOffset, howMuchReposLeftCount);
             }
         }
 
@@ -158,7 +166,7 @@ namespace Keeper.Server.Services
                                         .Skip(batchOffset)
                                         .Take(batchCountLimit)
                                 ).FirstOrDefaultAsync(x => x.OwnerId == userId && x.Id == repositoryId);
-                if(repository != null)
+                if (repository != null)
                 {
                     var howMuchFilesLeftCount = (await context.Files.Where(x => x.RepositoryId == repositoryId).CountAsync()) - batchOffset - repository.Files.Count;
                     var fileModelList = _mapper.Map<ICollection<FileEntity>, List<FileModel>>(repository.Files);
@@ -168,16 +176,21 @@ namespace Keeper.Server.Services
             }
         }
 
-        public async Task<RepositoryModel?> GetRepository(Guid userId, Guid repositoryId)
+        public async Task<RepositoryExtendedModel?> GetRepository(Guid userId, Guid repositoryId)
         {
             using (var context = _keeperFactory.CreateDbContext())
             {
-                var repository = await context.Repositories.FirstOrDefaultAsync(x => x.OwnerId == userId && x.Id == repositoryId);
-                if (repository != null)
-                {
-                    return _mapper.Map<RepositoryEntity, RepositoryModel>(repository);
-                }
-                return default;
+                return await (from repo in context.Repositories.Include(x => x.Files)
+                              where repo.OwnerId == userId && repo.Id == repositoryId
+                              select new RepositoryExtendedModel
+                              {
+                                  Id = repo.Id,
+                                  Name = repo.Name,
+                                  Description = repo.Description,
+                                  CreatedDate = repo.CreatedDate,
+                                  OverallFileCount = repo.Files.Count(),
+                                  OverallRepositorySize = repo.Files.Sum(f => f.FileSize)
+                              }).FirstOrDefaultAsync();
             }
         }
 
@@ -186,7 +199,7 @@ namespace Keeper.Server.Services
             using (var context = _keeperFactory.CreateDbContext())
             {
                 var repo = await context.Repositories.FirstOrDefaultAsync(x => x.Id == repositoryId && x.OwnerId == userId);
-                if(repo is not null)
+                if (repo is not null)
                 {
                     var fileEntities = await context.Files.Where(x => fileIds.Contains(x.Id) && x.RepositoryId == repositoryId).ToListAsync();
 
@@ -197,7 +210,7 @@ namespace Keeper.Server.Services
                         return fileEntities.Select(x =>
                         {
                             var repoFile = repoAccess.OpenRepoFileAccessor(x.Id);
-                            
+
                             return new FileStreamWithMetaModel(x.Name, x.FileSize, x.EncKey, x.EncIV, repoFile);
                         });
                     }
@@ -218,10 +231,10 @@ namespace Keeper.Server.Services
                     var repoAccess = _repoMaster.OpenRepository(userId, repositoryId);
                     if (repoAccess != null && fileEntities.Count > 0)
                     {
-                        foreach(var file in fileEntities)
+                        foreach (var file in fileEntities)
                         {
                             var fileAccess = repoAccess.OpenRepoFileAccessor(file.Id);
-                            if(fileAccess != null)
+                            if (fileAccess != null)
                             {
                                 await fileAccess.DeleteAsync();
                             }
@@ -246,7 +259,7 @@ namespace Keeper.Server.Services
                     var repoAccess = _repoMaster.OpenRepository(userId, repositoryId);
                     if (repoAccess != null)
                     {
-                        if (repoAccess.DeleteRepository())
+                        if (await repoAccess.DeleteRepository())
                         {
                             context.Repositories.Remove(repo);
                             await context.SaveChangesAsync();

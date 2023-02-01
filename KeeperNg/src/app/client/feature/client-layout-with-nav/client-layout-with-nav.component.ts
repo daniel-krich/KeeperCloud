@@ -4,10 +4,11 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NavigationStart, Router, Event as NavigationEvent } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Subscription } from 'rxjs';
+import { map, Subscription } from 'rxjs';
 import { NavigationDataService } from 'src/app/shared/data-access/navigation-data.service';
 import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
 import { signoutBegin } from 'src/app/shared/data-access/state/authentication/authentication.actions';
+import { selectAuthUser } from 'src/app/shared/data-access/state/authentication/authentication.selectors';
 import { createRepositoryBegin } from 'src/app/shared/data-access/state/repository/repository.actions';
 import { RepositoryDataService } from '../../data-access/repository-data.service';
 import { DialogRepoCreateComponent } from './feature/dialog-repo-create/dialog-repo-create.component';
@@ -22,6 +23,8 @@ import { CreateRepositoryModel } from './models/create-repository.model';
 export class ClientLayoutWithNavComponent implements OnInit, OnDestroy {
 
     @ViewChild('sidenav') sidenav!: MatSidenav;
+
+    public user$ = this.store.select(selectAuthUser).pipe(map(x => x.user));
 
     private routerSubscription!: Subscription;
 

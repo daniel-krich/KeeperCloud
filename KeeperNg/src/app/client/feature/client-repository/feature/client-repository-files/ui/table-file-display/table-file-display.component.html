@@ -8,10 +8,15 @@
         class="drag-selection-area">
 
         <cdk-virtual-scroll-viewport itemSize="52">
-            <table mat-table [dataSource]="files" [trackBy]="trackByFileId">
+            <table mat-table [dataSource]="files" class="p-5" [trackBy]="trackByFileId">
                 <ng-container matColumnDef="name">
                 <th mat-header-cell *matHeaderCellDef> File Name </th>
-                <td mat-cell *matCellDef="let file"> {{file.name}} </td>
+                <td mat-cell *matCellDef="let file">
+                    <div class="d-flex align-items-center">
+                        <img src="assets/images/file-icon.png" alt="file">
+                        <span class="ms-2">{{file.name}}</span>
+                    </div>
+                </td>
                 </ng-container>
             
                 <ng-container matColumnDef="size">

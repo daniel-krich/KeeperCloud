@@ -4,11 +4,11 @@ using Mapster;
 
 namespace Keeper.Server.MapConfigurations
 {
-    public class FileMappingProfile : IRegister
+    public class RepositoryExtendedMappingProfile : IRegister
     {
         public void Register(TypeAdapterConfig config)
         {
-            config.NewConfig<FileEntity, FileModel>()
+            config.NewConfig<RepositoryEntity, RepositoryExtendedModel>()
                 .TwoWays();
 
             config.Compile();

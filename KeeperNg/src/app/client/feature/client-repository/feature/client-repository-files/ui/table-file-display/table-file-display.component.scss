@@ -1,4 +1,6 @@
 .drag-selection-area {
+    background-color: #fff;
+    height: 100%;
     user-select: none;
 
     ::ng-deep .row-selected:hover {
@@ -12,6 +14,8 @@
 
 .drag-selection-container {
     position: relative;
+    display: block;
+    height: 100%;
 }
 
 .drag-selection-rectangle {
@@ -25,10 +29,6 @@
     }
 }
 
-table {
-    box-shadow: #21212120 0px 0px 20px;
-}
-
 .empty-table {
     display: flex;
     flex-direction: column;
@@ -37,7 +37,6 @@ table {
     padding: 30px;
     color: #444;
     background-color: #fff;
-    box-shadow: #21212130 0px 10px 10px;
 }
 
 cdk-virtual-scroll-viewport {

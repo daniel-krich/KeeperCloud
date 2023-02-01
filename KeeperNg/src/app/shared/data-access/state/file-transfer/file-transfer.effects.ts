@@ -5,6 +5,7 @@ import { catchError, map, of, switchMap, tap, throwError, withLatestFrom } from 
 import { RepositoryFilesDataService } from "src/app/client/data-access/repository-files-data.service";
 import { AppStateInterface } from "../app.state";
 import { appendRepoFiles } from "../repositories-files/repositories-files.actions";
+import { increaseRepositoryFilesStats } from "../repository/repository.actions";
 import { downloadBegin, downloadError, downloadProgress, downloadRetry, downloadSuccess, uploadBegin, uploadError, uploadProgress, uploadRetry, uploadSuccess } from "./file-transfer.actions";
 import { selectDownloads, selectDownloadsState, selectFileTransferState, selectUploadsState } from "./file-transfer.selectors";
 
@@ -18,13 +19,13 @@ export class FileTransferEffects {
             ofType(downloadBegin, downloadRetry),
             withLatestFrom(this.store.select(selectFileTransferState)),
             switchMap(([_, fileTransferState]) => {
-                if(fileTransferState.downloads.repoId) {
+                if (fileTransferState.downloads.repoId) {
                     return this.repoFilesService.downloadRepositoryFiles(fileTransferState.downloads.repoId, fileTransferState.downloads.files).pipe(
                         withLatestFrom(this.store.select(selectDownloadsState)),
                         switchMap(([response, downloadState]) => {
-                            if(downloadState.status === 'idle') return throwError(() => new Error('Download canceled'));
-                            if(response.progress == null && response.blob != null) return of(downloadError({ error: 'Error while downloading' }));
-                            if(response.blob !== null && response.progress === 100) {
+                            if (downloadState.status === 'idle') return throwError(() => new Error('Download canceled'));
+                            if (response.progress == null && response.blob != null) return of(downloadError({ error: 'Error while downloading' }));
+                            if (response.blob !== null && response.progress === 100) {
                                 return of(downloadSuccess({ file: response.blob }));
                             }
                             else {
@@ -44,15 +45,15 @@ export class FileTransferEffects {
             ofType(downloadSuccess),
             withLatestFrom(this.store.select(selectFileTransferState)),
             tap(([action, fileTransferState]) => {
-                if(fileTransferState.downloads.files.length > 1) {
+                if (fileTransferState.downloads.files.length > 1) {
                     this.repoFilesService.triggerFileDownloadFromBlob(action.file, '');
                 }
-                else if(fileTransferState.downloads.files.length == 1) {
+                else if (fileTransferState.downloads.files.length == 1) {
                     this.repoFilesService.triggerFileDownloadFromBlob(action.file, fileTransferState.downloads.files[0].name, false);
                 }
             })
         )
-    , { dispatch: false });
+        , { dispatch: false });
 
 
     uploadBegin$ = createEffect(() =>
@@ -60,14 +61,14 @@ export class FileTransferEffects {
             ofType(uploadBegin, uploadRetry),
             withLatestFrom(this.store.select(selectFileTransferState)),
             switchMap(([_, fileTransferState]) => {
-                if(fileTransferState.uploads.repoId) {
+                if (fileTransferState.uploads.repoId) {
                     return this.repoFilesService.uploadRepositoryFiles(fileTransferState.uploads.repoId, fileTransferState.uploads.files).pipe(
                         withLatestFrom(this.store.select(selectUploadsState)),
                         switchMap(([response, uploadState]) => {
-                            if(uploadState.status === 'idle') return throwError(() => new Error('Upload canceled'));
-                            if(response.progress == null && response.files != null) return of(uploadError({ error: 'Error while uploading' }));
-                            if(response.files !== null && response.progress === 100) {
-                                 return of(uploadSuccess({ repositoryId: fileTransferState.uploads.repoId!, files: response.files ?? [] }));
+                            if (uploadState.status === 'idle') return throwError(() => new Error('Upload canceled'));
+                            if (response.progress == null && response.files != null) return of(uploadError({ error: 'Error while uploading' }));
+                            if (response.files !== null && response.progress === 100) {
+                                return of(uploadSuccess({ repositoryId: fileTransferState.uploads.repoId!, files: response.files ?? [] }));
                             }
                             else {
                                 return of(uploadProgress({ progress: response.progress ?? 0 }));
@@ -84,11 +85,14 @@ export class FileTransferEffects {
     uploadSuccess$ = createEffect(() =>
         this.actions.pipe(
             ofType(uploadSuccess),
-            map(action => appendRepoFiles({ repositoryId: action.repositoryId, files: action.files }))
+            switchMap(action => of(
+                increaseRepositoryFilesStats({ repositoryId: action.repositoryId, files: action.files }),
+                appendRepoFiles({ repositoryId: action.repositoryId, files: action.files })
+            ))
         )
     );
 
     constructor(private store: Store<AppStateInterface>,
-                private actions: Actions,
-                private repoFilesService: RepositoryFilesDataService) { }
+        private actions: Actions,
+        private repoFilesService: RepositoryFilesDataService) { }
 }

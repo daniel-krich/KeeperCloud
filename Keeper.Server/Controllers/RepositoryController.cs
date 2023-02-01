@@ -67,7 +67,7 @@ namespace Keeper.Server.Controllers
             UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
             if (user != null)
             {
-                BatchWrapperModel<RepositoryModel> repositoriesBatch = await _repoService.GetRepositoriesBatch(user.Id, batchOffset, _batchTakeRepositoryLimit);
+                BatchWrapperModel<RepositoryExtendedModel> repositoriesBatch = await _repoService.GetRepositoriesBatch(user.Id, batchOffset, _batchTakeRepositoryLimit);
                 return Ok(repositoriesBatch);
             }
             return BadRequest();
