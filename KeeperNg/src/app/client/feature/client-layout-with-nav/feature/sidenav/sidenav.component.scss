@@ -24,6 +24,7 @@
     }
 
     span {
+        white-space: nowrap;
         opacity: 0.8;
     }
 }
@@ -31,3 +32,13 @@
 .nav-link-active {
     background-color: #21212120;
 }
+
+/*@media (width <= 750px) {
+    .nav-item {
+        min-width: auto;
+        padding-right: 0;
+        span {
+            display: none;
+        }
+    }
+}*/

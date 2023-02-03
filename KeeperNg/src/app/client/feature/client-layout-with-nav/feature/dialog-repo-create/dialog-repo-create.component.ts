@@ -31,7 +31,7 @@ import { CreateRepositoryModel } from '../../models/create-repository.model';
                 </button>
 
                 <button mat-raised-button color="primary" type="submit" [disabled]="!editRepoForm.valid">
-                    Save
+                    Create
                 </button>
             </div>
             

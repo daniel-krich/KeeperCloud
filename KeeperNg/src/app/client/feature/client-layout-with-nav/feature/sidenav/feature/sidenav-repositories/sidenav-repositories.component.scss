@@ -1,6 +1,6 @@
 .nav-item {
     display: flex;
-    justify-content: start;
+    justify-content: flex-start;
     border-radius: 0;
 
     padding: 25px 0px 25px 20px;
@@ -11,10 +11,17 @@
     }
 
     span {
+        white-space: nowrap;
         opacity: 0.8;
     }
 }
 
 .nav-link-active {
     background-color: #21212120;
+}
+
+.no-repos {
+    margin: 30px;
+    font-size: 1.2rem;
+    text-align: center;
 }

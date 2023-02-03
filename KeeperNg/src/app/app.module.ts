@@ -21,9 +21,9 @@ import { fileTransferReducer } from './shared/data-access/state/file-transfer/fi
 import { FileTransferEffects } from './shared/data-access/state/file-transfer/file-transfer.effects';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
-export const BASE_URL = new InjectionToken<string>('base_url');
+import { environment } from 'src/environments/environment';
 
-const baseUrlValue = 'http://localhost:5202';
+export const BASE_URL = new InjectionToken<string>('base_url');
 
 @NgModule({
     declarations: [
@@ -54,7 +54,7 @@ const baseUrlValue = 'http://localhost:5202';
         }),
     ],
     providers: [
-        { provide: BASE_URL, useValue: baseUrlValue },
+        { provide: BASE_URL, useValue: environment.baseUrl },
         { provide: HTTP_INTERCEPTORS, useClass: AuthBearerInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: AuthRefresherInterceptor, multi: true }
     ],
