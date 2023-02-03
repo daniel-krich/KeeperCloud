@@ -22,11 +22,7 @@ import { CreateRepositoryModel } from './models/create-repository.model';
 })
 export class ClientLayoutWithNavComponent implements OnInit, OnDestroy {
 
-    @ViewChild('sidenav') sidenav!: MatSidenav;
-
     public user$ = this.store.select(selectAuthUser).pipe(map(x => x.user));
-
-    private routerSubscription!: Subscription;
 
     constructor(public navigationData: NavigationDataService,
                 private repoService: RepositoryDataService,
@@ -36,50 +32,11 @@ export class ClientLayoutWithNavComponent implements OnInit, OnDestroy {
                 private snackBar: MatSnackBar) { }
 
     ngOnInit(): void {
-        this.routerSubscription = this.router.events.subscribe((event: NavigationEvent) => {
-
-            switch (true) {
-                case event instanceof NavigationStart: {
-                    this.sidenav.close();
-                    break;
-                }
-
-                default: break;
-            }
-        });
     }
 
     ngOnDestroy(): void {
-        this.routerSubscription.unsubscribe();
     }
 
-    public openDialog(): void {
-        const createRepoModel = new CreateRepositoryModel();
-        const dialogRef = this.dialog.open(DialogRepoCreateComponent, {
-          width: '100%',
-          maxWidth: '500px',
-          enterAnimationDuration: '300',
-          exitAnimationDuration: '300',
-          data: createRepoModel
-        });
 
-        dialogRef.afterClosed().subscribe((isOk: boolean) => {
-
-            if(isOk){
-                this.store.dispatch(createRepositoryBegin({ repository: createRepoModel }));
-            }
-            
-            
-          });
-      }
-
-    logout(): void {
-        this.store.dispatch(signoutBegin());
-        this.router.navigate(['/home']);
-        this.snackBar.open('Logged out...', '', {
-            duration: 2000,
-            panelClass: ['primary-snackbar']
-          });
-    }
     
 }

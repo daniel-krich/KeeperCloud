@@ -1,5 +1,5 @@
-<main class="client-layout">
-    <app-download-upload-window></app-download-upload-window>
+<!--<main class="client-layout">
+    
     <mat-toolbar class="client-toolbar" color="accent">
 
         <button mat-icon-button class="me-2" (click)="sidenav.toggle()">
@@ -63,4 +63,17 @@
         </mat-sidenav-content>
 
     </mat-sidenav-container>
+</main>-->
+
+<main>
+    <app-download-upload-window></app-download-upload-window>
+    <div class="client-layout">
+        <div class="sidebar">
+            <app-sidenav></app-sidenav>
+        </div>
+
+        <div class="content">
+            <ng-content></ng-content>
+        </div>
+    </div>
 </main>

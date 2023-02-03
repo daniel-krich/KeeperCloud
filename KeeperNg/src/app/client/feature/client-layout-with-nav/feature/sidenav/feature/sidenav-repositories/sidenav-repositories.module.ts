@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ClientSidenavRepositoriesComponent } from './client-sidenav-repositories.component';
+import { SidenavRepositoriesComponent } from './sidenav-repositories.component';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,7 +11,7 @@ import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
-    ClientSidenavRepositoriesComponent
+    SidenavRepositoriesComponent
   ],
   imports: [
     CommonModule,
@@ -21,6 +21,8 @@ import { RouterModule } from '@angular/router';
     NgxSkeletonLoaderModule,
     MatListModule
   ],
-  exports: [ClientSidenavRepositoriesComponent]
+  exports: [
+    SidenavRepositoriesComponent
+  ]
 })
-export class ClientSidenavRepositoriesModule { }
+export class SidenavRepositoriesModule { }

@@ -1,46 +1,25 @@
 .client-layout {
     display: flex;
-    flex-direction: column;
-    height: 100vh;
-
-    .client-toolbar {
-        padding: 16px;
-    }
+    flex-direction: row;  
+    flex: 1;
 }
 
-.main-content {
-    flex-grow: 1;
-}
-
-.nav-list-custom {
+main {
+    position: relative;
     display: flex;
-    flex-direction: column;
-    height: 100%;
-    max-width: 200px;
+    flex-direction: row;
+    background-color: #fff;
+    min-height: 100vh;
 }
 
-.flex-spacer {
-    flex: 1 1 50%;
-    overflow-y: auto;
-    overflow-x: hidden;
+.sidebar {
+    background-color: #f9f9f9;
+    width: 250px;
+    max-height: 100vh;
+    position: sticky;
+    top: 0;
 }
 
-.client-layout ::ng-deep .nav-item {
-    display: flex;
-    align-items: center;
-
-    padding-right: 60px;
-
-    mat-icon {
-        margin-right: 15px;
-        overflow: unset;
-    }
-
-    span {
-        opacity: 0.8;
-    }
-}
-
-.client-layout ::ng-deep .nav-link-active {
-    background-color: #21212120;
+.content {
+    flex: 1;
 }

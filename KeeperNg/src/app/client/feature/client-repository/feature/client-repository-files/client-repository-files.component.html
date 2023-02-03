@@ -1,6 +1,6 @@
 <ng-container *ngIf="repository$ | async as repository; else placeHolderTemplate">
     <ng-container *ngIf="repositoryFileState$ | async as repositoryFileState; else placeHolderTemplate">
-        <div class="container d-flex flex-column shadow p-0 h-100" fadeInContent
+        <div class="d-flex flex-column p-0 h-100" fadeInContent
             *ngIf="repositoryFileState.files != null; else placeHolderTemplate">
             <app-repository-info [repository]="repository" (repositoryEditOpen)="onRepoEditOpen(repository)"
                 (repositoryRemove)="onRepoRemove(repository)"></app-repository-info>
@@ -25,7 +25,7 @@
 </ng-container>
 
 <ng-template #placeHolderTemplate>
-    <div class="container d-flex flex-column shadow p-0 h-100">
+    <div class="d-flex flex-column p-0 h-100">
         <div class="card rounded-0 p-4">
             <ngx-skeleton-loader count="1"
                 [theme]="{ 'display': 'block', 'margin-bottom': '50px', 'width': '20%', 'height': '10px'  }"

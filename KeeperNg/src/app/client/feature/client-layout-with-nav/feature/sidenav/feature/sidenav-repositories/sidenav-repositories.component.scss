@@ -1,0 +1,20 @@
+.nav-item {
+    display: flex;
+    justify-content: start;
+    border-radius: 0;
+
+    padding: 25px 0px 25px 20px;
+
+    mat-icon {
+        margin-right: 15px;
+        overflow: unset;
+    }
+
+    span {
+        opacity: 0.8;
+    }
+}
+
+.nav-link-active {
+    background-color: #21212120;
+}

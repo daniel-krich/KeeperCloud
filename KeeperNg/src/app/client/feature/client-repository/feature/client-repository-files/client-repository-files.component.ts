@@ -24,7 +24,7 @@ import { SearchFileInputComponent } from './ui/search-file-input/search-file-inp
     selector: 'app-client-repository-files',
     templateUrl: './client-repository-files.component.html',
     styleUrls: ['./client-repository-files.component.scss'],
-    host: {'class': 'flex-spacer'},
+    host: { 'class': 'flex-spacer' },
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ClientRepositoryFilesComponent implements OnDestroy {
@@ -47,7 +47,7 @@ export class ClientRepositoryFilesComponent implements OnDestroy {
     );
 
     public repositoryFiles$ = combineLatest([this.repoId$, this.searchFilter$]).pipe(
-        switchMap(([repoId, searchFilter]) => 
+        switchMap(([repoId, searchFilter]) =>
             this.store.pipe(
                 selectRepoFilesDescByObservableId(repoId),
                 map((repoFiles) => repoFiles.filter(x => x.name.toLowerCase().includes(searchFilter)))
@@ -70,7 +70,7 @@ export class ClientRepositoryFilesComponent implements OnDestroy {
         map(([repository, repositoryId]) => ({ repository, repositoryId }))
     );
 
-    
+
 
     private routerParamsSubscribe: Subscription;
 
@@ -106,10 +106,10 @@ export class ClientRepositoryFilesComponent implements OnDestroy {
         });
 
         dialogRef.afterClosed().subscribe(isOk => {
-            if(isOk) {
+            if (isOk) {
                 this.store.dispatch(updateRepositoryBegin({ repositoryId: repo.id, repositoryUpdate: { name: repoModel.name, description: repoModel.description } }));
             }
-            
+
         });
     }
 
@@ -127,7 +127,9 @@ export class ClientRepositoryFilesComponent implements OnDestroy {
     }
 
     onDownloadFiles(files: RepoFileInterface[], repositoryId: string): void {
-        this.store.dispatch(downloadBegin({ repositoryId: repositoryId, files: files }));
+        if (files.length > 0) {
+            this.store.dispatch(downloadBegin({ repositoryId: repositoryId, files: files }));
+        }
     }
 
     onDeleteFiles(files: RepoFileInterface[], repositoryId: string): void {

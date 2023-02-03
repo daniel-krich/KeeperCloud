@@ -1,0 +1,34 @@
+<div class="nav-list">
+
+    <a mat-button class="nav-item" *ngFor="let link of navigationData.clientSideNavLinks" [routerLink]="link.path"
+        routerLinkActive="nav-link-active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon>{{link.icon}}</mat-icon>
+        <span>{{link.label}}</span>
+    </a>
+
+    <hr class="top-bottom-border mb-0">
+
+    <div class="d-flex justify-content-center mt-3 mb-3">
+        <button mat-flat-button (click)="openDialog()" color="accent">
+            <mat-icon>add</mat-icon>
+            <span>Add repository</span>
+        </button>
+    </div>
+
+
+    <div class="menu-spacer">
+        <app-sidenav-repositories></app-sidenav-repositories>
+    </div>
+
+    <hr class="bottom-border">
+
+    <a mat-button class="nav-item" *ngFor="let link of navigationData.clientSideNavBottomLinks"
+        [routerLink]="link.path">
+        <mat-icon>{{link.icon}}</mat-icon>
+        <span>{{link.label}}</span>
+    </a>
+    <a mat-button class="nav-item" (click)="logout()">
+        <mat-icon>exit_to_app</mat-icon>
+        <span>Logout</span>
+    </a>
+</div>

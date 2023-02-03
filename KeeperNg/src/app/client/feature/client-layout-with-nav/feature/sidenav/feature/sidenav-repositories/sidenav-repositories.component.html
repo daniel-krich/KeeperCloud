@@ -3,15 +3,13 @@
 
         <ng-container *ngIf="repositoriesState.stateStatus == 'success' || repositoriesState.repositories.length > 0; else loadingSkeletonTemplate">
             <ng-container *ngIf="repositoriesState.repositories.length > 0; else noReposTemplate">
-                <a  mat-list-item
+                <a mat-button class="nav-item"
                     *ngFor="let repository of repositoriesState.repositories"
                     [routerLink]="'/client/repository/' + repository.id"
                     routerLinkActive="nav-link-active"
                     [title]="repository.name">
-                    <div class="nav-item">
                         <mat-icon>perm_media</mat-icon>
                         <span>{{repository.name}}</span>
-                    </div>
                 </a>
 
                 <ng-container *ngIf="repoBatchInfo$ | async as repoFileBatchInfo">
