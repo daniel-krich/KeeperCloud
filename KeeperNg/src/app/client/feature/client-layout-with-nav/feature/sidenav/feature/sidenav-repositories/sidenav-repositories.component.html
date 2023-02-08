@@ -1,27 +1,24 @@
 <div class="sidenav-repositories">
-    <ng-container *ngIf="repositoriesState$ | async as repositoriesState; else loadingSkeletonTemplate">
+    <ng-container *ngIf="repositoriesState$ | async as repositoriesState">
 
-        <ng-container *ngIf="repositoriesState.stateStatus == 'success' || repositoriesState.repositories.length > 0; else loadingSkeletonTemplate">
-            <ng-container *ngIf="repositoriesState.repositories.length > 0; else noReposTemplate">
-                <a mat-button class="nav-item"
-                    *ngFor="let repository of repositoriesState.repositories"
-                    [routerLink]="'/client/repository/' + repository.id"
-                    routerLinkActive="nav-link-active"
-                    [title]="repository.name">
-                        <mat-icon>folder_copy</mat-icon>
-                        <span>{{repository.name}}</span>
-                </a>
+        <ng-container *ngIf="repositoriesState.repositories.length > 0; else noReposTemplate">
+            <a mat-button class="nav-item" *ngFor="let repository of repositoriesState.repositories"
+                [routerLink]="'/client/repository/' + repository.id" routerLinkActive="nav-link-active"
+                [title]="repository.name">
+                <mat-icon>folder_copy</mat-icon>
+                <span>{{repository.name}}</span>
+            </a>
 
-                <ng-container *ngIf="repoBatchInfo$ | async as repoFileBatchInfo">
-                    <div *ngIf="repoFileBatchInfo.canLoadMore" class="d-flex justify-content-center">
-                        <button mat-button class="mt-3 mb-3" color="primary" (click)="loadMoreRepositories()">Load more ({{repoFileBatchInfo.HowMuchLeft}})</button>
-                    </div>
-                </ng-container>
-                
+            <ng-container *ngIf="repoBatchInfo$ | async as repoFileBatchInfo">
+                <div *ngIf="repoFileBatchInfo.canLoadMore" class="d-flex justify-content-center">
+                    <button mat-button class="mt-3 mb-3" color="primary" (click)="loadMoreRepositories()">
+                        Load more ({{repoFileBatchInfo.HowMuchLeft}})
+                    </button>
+                </div>
             </ng-container>
-            
+
         </ng-container>
-        
+
     </ng-container>
 
     <ng-template #noReposTemplate>
@@ -29,8 +26,5 @@
             <p>No repositories</p>
         </div>
     </ng-template>
-    
-    <ng-template #loadingSkeletonTemplate>
-        <ngx-skeleton-loader count="4" animation="progress" [theme]="{ 'margin-bottom': '20px', 'padding': '15px' }" appearance="line"></ngx-skeleton-loader>
-    </ng-template>
+
 </div>

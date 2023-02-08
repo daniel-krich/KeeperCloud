@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { IsAuthenticatedGuard } from './shared/guards/is-authenticated.guard';
+import { RepositoriesInitResolver } from './shared/resolvers/repositories-init.resolver';
 
 const routes: Routes = [
     {
@@ -10,7 +11,8 @@ const routes: Routes = [
     {
         path: 'client',
         loadChildren: () => import('./client/feature/client-shell/client-shell.module').then(m => m.ClientShellModule),
-        canLoad: [IsAuthenticatedGuard]
+        canLoad: [IsAuthenticatedGuard],
+        resolve: [RepositoriesInitResolver]
     },
     { path: 'client-repository-shell', loadChildren: () => import('./client/feature/client-repository/feature/client-repository-shell/client-repository-shell.module').then(m => m.ClientRepositoryShellModule) },
     { path: 'client-repository-files', loadChildren: () => import('./client/feature/client-repository/feature/client-repository-files/client-repository-files.module').then(m => m.ClientRepositoryFilesModule) },

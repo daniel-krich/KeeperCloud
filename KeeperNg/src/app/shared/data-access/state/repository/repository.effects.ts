@@ -60,12 +60,12 @@ export class RepositoryEffects {
         )
     );
 
-    loadRepoFinished$ = createEffect(() =>
+    /*loadRepoFinished$ = createEffect(() =>
         this.actions$.pipe(
             ofType(loadRepoSuccess, loadRepoSuccessEmpty),
             switchMap((action) => of(loadRepoFilesBatchInit({ repositoryId: action.repositoryId })))
         )
-    );
+    );*/
 
     loadRepoFailed$ = createEffect(() =>
         this.actions$.pipe(

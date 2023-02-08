@@ -2,15 +2,15 @@ import { Component, OnDestroy, ViewChild, ChangeDetectionStrategy } from '@angul
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { BehaviorSubject, combineLatest, map, Observable, Subscription, switchMap, tap, throwIfEmpty, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, combineLatest, concatMap, filter, first, map, Observable, Subscription, switchMap, tap, throwIfEmpty, withLatestFrom } from 'rxjs';
 import { RepositoryDataService } from 'src/app/client/data-access/repository-data.service';
 import { RepositoryFilesDataService } from 'src/app/client/data-access/repository-files-data.service';
 import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
 import { downloadBegin, uploadBegin } from 'src/app/shared/data-access/state/file-transfer/file-transfer.actions';
-import { deleteRepoFilesBegin, loadRepoFilesBatchNext } from 'src/app/shared/data-access/state/repositories-files/repositories-files.actions';
-import { selectRepoFilesDescByObservableId, selectRepoFilesInterfaceByObservableId, selectRepoFileStateObservableId } from 'src/app/shared/data-access/state/repositories-files/repositories-files.selectors';
-import { deleteRepositoryBegin, loadRepoStart, updateRepositoryBegin } from 'src/app/shared/data-access/state/repository/repository.actions';
-import { selectRepoByObservableId } from 'src/app/shared/data-access/state/repository/repository.selectors';
+import { deleteRepoFilesBegin, loadRepoFilesBatchInit, loadRepoFilesBatchNext } from 'src/app/shared/data-access/state/repositories-files/repositories-files.actions';
+import { selectRepoFilesDescById, selectRepoFilesInterfaceByObservableId, selectRepoFileStateId } from 'src/app/shared/data-access/state/repositories-files/repositories-files.selectors';
+import { deleteRepositoryBegin, updateRepositoryBegin } from 'src/app/shared/data-access/state/repository/repository.actions';
+import { selectRepoById } from 'src/app/shared/data-access/state/repository/repository.selectors';
 import { RepoFileInterface } from 'src/app/shared/interfaces/repo-file.interface';
 import { RepoInterface } from 'src/app/shared/interfaces/repo.interface';
 import { ConfirmDialogComponent } from 'src/app/shared/ui/confirm-dialog/confirm-dialog.component';
@@ -27,7 +27,7 @@ import { SearchFileInputComponent } from './ui/search-file-input/search-file-inp
     host: { 'class': 'flex-spacer' },
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ClientRepositoryFilesComponent implements OnDestroy {
+export class ClientRepositoryFilesComponent {
 
     @ViewChild('searchFileInput') searchFileInput?: SearchFileInputComponent;
 
@@ -42,21 +42,25 @@ export class ClientRepositoryFilesComponent implements OnDestroy {
     );
 
     public repository$ = this.repoId$.pipe(
-        throwIfEmpty(),
-        switchMap(repoId => this.store.pipe(selectRepoByObservableId(repoId)))
+        switchMap(repoId =>
+            this.store.select(selectRepoById(repoId)).pipe(
+                filter(x => x !== null),
+                //first()
+            )
+        )
     );
 
     public repositoryFiles$ = combineLatest([this.repoId$, this.searchFilter$]).pipe(
         switchMap(([repoId, searchFilter]) =>
             this.store.pipe(
-                selectRepoFilesDescByObservableId(repoId),
+                selectRepoFilesDescById(repoId),
                 map((repoFiles) => repoFiles.filter(x => x.name.toLowerCase().includes(searchFilter)))
             )
         ),
     );
 
-    public repositoryFileState$ = this.repoId$.pipe(
-        switchMap(repoId => this.store.pipe(selectRepoFileStateObservableId(repoId)))
+    public repositoryFileState$ = this.repository$.pipe(
+        switchMap(repo => this.store.select(selectRepoFileStateId(repo?.id ?? "")))
     );
 
     public repoFileBatchInfo$ = this.repoId$.pipe(
@@ -70,29 +74,15 @@ export class ClientRepositoryFilesComponent implements OnDestroy {
         map(([repository, repositoryId]) => ({ repository, repositoryId }))
     );
 
-
-
-    private routerParamsSubscribe: Subscription;
-
-
     constructor(private route: ActivatedRoute,
         private router: Router,
         private repoService: RepositoryDataService,
         private fileRepoService: RepositoryFilesDataService,
         private dialog: MatDialog,
-        private store: Store<AppStateInterface>) {
-        this.routerParamsSubscribe = this.repoId$.subscribe(repoId => this.onRepoIdChanges(repoId));
-    }
+        private store: Store<AppStateInterface>) { }
 
     onFilesChangeUpload(files: File[], repositoryId: string): void {
         this.store.dispatch(uploadBegin({ repositoryId: repositoryId, files: [...files] }))
-    }
-
-
-    onRepoIdChanges(repositoryId: string | null): void {
-        if (repositoryId) {
-            this.store.dispatch(loadRepoStart({ repositoryId: repositoryId }));
-        }
     }
 
     onRepoEditOpen(repo: RepoInterface) {
@@ -159,7 +149,4 @@ export class ClientRepositoryFilesComponent implements OnDestroy {
         this.searchFilter$.next(search.toLowerCase());
     }
 
-    ngOnDestroy(): void {
-        this.routerParamsSubscribe.unsubscribe();
-    }
 }

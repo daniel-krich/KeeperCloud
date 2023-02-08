@@ -16,8 +16,8 @@ import { loadRepoBatchInit } from "src/app/shared/data-access/state/repository/r
 export class ClientShellComponent {
 
     constructor(store: Store<AppStateInterface>) {
-        store.dispatch(loadRepoBatchInit());
-        store.dispatch(clearAllRepoFiles());
+        //store.dispatch(loadRepoBatchInit());
+        //store.dispatch(clearAllRepoFiles());
         store.dispatch(clearFileTransfer());
     }
 

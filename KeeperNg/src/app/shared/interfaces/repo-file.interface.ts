@@ -3,5 +3,5 @@ export interface RepoFileInterface {
     name: string;
     fileSize: number;
     isPublic: boolean;
-    createdDate: string;
+    lastModified: string;
 }

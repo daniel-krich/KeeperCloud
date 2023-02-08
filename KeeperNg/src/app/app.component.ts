@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
-import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, Event as NavigationEvent } from '@angular/router';
+import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, Event as NavigationEvent, ResolveStart, ResolveEnd } from '@angular/router';
 import { LoadingScreenComponent } from './shared/ui/loading-screen/loading-screen.component';
 
 @Component({
@@ -18,11 +18,13 @@ export class AppComponent {
         this.router.events.subscribe((event: NavigationEvent) => {
 
             switch (true) {
+                case event instanceof ResolveStart:
                 case event instanceof NavigationStart: {
                     this.loading.isLoading$.next(true);
                     break;
                 }
-      
+                
+                case event instanceof ResolveEnd:
                 case event instanceof NavigationEnd:
                 case event instanceof NavigationCancel:
                 case event instanceof NavigationError: {

@@ -23,10 +23,17 @@ export const selectRepos = createSelector(
     e => ({ repositories: e.repositories, disableAdditionalBatchLoading: e.disableAdditionalBatchLoading, loadedIndividuallyCount: e.loadedIndividuallyCount })
 );
 
-export const selectRepoByObservableId = (repoId: string | null) => pipe(
-    select(selectRepoState),
-    map(repo => repo.repositories.find(x => x.id === repoId)),
-    throwIfEmpty(() => throwError(() => new Error('Repository not found')))
+export const selectRepoById = (repoId: string | null) => createSelector(
+    selectRepoState,
+    repo => repo.repositories.find(x => x.id === repoId) ?? null
+);
+
+export const selectRepoByIdWithStatus = (repoId: string | null) => createSelector(
+    selectRepoState,
+    repo => ({ 
+        repository: repo.repositories.find(x => x.id === repoId) ?? null,
+        status: repo.stateStatus  
+    })
 );
 
 export const selectRepoStateDesc = createSelector(

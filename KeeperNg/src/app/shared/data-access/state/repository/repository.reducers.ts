@@ -44,6 +44,7 @@ export const repositoryReducer = createReducer(
             ...state,
             repositories: updatedReposNoDuplicates,
             batchRemainder: realHowMuchLeft,
+            loadedIndividuallyCount: Math.max(state.loadedIndividuallyCount - duplicateCount, 0),
             disableAdditionalBatchLoading: !realIsThereMoreBatch,
             stateStatus: 'success'
         });

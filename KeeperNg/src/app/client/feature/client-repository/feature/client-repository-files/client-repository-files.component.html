@@ -1,7 +1,6 @@
-<ng-container *ngIf="repository$ | async as repository; else placeHolderTemplate">
-    <ng-container *ngIf="repositoryFileState$ | async as repositoryFileState; else placeHolderTemplate">
-        <div class="d-flex flex-column p-0 h-100" fadeInContent
-            *ngIf="repositoryFileState.files != null; else placeHolderTemplate">
+<ng-container *ngIf="repository$ | async as repository">
+    <ng-container *ngIf="repositoryFileState$ | async as repositoryFileState">
+        <div class="d-flex flex-column p-0 h-100" fadeInContent *ngIf="repositoryFileState.files != null">
             <app-repository-info [repository]="repository" (repositoryEditOpen)="onRepoEditOpen(repository)"
                 (repositoryRemove)="onRepoRemove(repository)"></app-repository-info>
 
@@ -23,23 +22,3 @@
         </div>
     </ng-container>
 </ng-container>
-
-<ng-template #placeHolderTemplate>
-    <div class="d-flex flex-column p-0 h-100">
-        <div class="card rounded-0 p-4">
-            <ngx-skeleton-loader count="1"
-                [theme]="{ 'display': 'block', 'margin-bottom': '50px', 'width': '20%', 'height': '10px'  }"
-                appearance="line"></ngx-skeleton-loader>
-            <ngx-skeleton-loader count="2"
-                [theme]="{ 'display': 'block', 'margin-bottom': '20px', 'width': '70%', 'height': '10px'  }"
-                appearance="line"></ngx-skeleton-loader>
-        </div>
-        <div class="card rounded-0 p-4">
-            <ngx-skeleton-loader count="1" appearance="line"></ngx-skeleton-loader>
-        </div>
-        <div class="card rounded-0 p-4">
-            <ngx-skeleton-loader count="13" [theme]="{ 'margin-bottom': '20px' }"
-                appearance="line"></ngx-skeleton-loader>
-        </div>
-    </div>
-</ng-template>
