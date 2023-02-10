@@ -1,12 +1,13 @@
 <ng-container *ngIf="repository$ | async as repository">
     <ng-container *ngIf="repositoryFileState$ | async as repositoryFileState">
         <div class="d-flex flex-column p-0 h-100" fadeInContent *ngIf="repositoryFileState.files != null">
-            <app-repository-info [repository]="repository" (repositoryEditOpen)="onRepoEditOpen(repository)"
-                (repositoryRemove)="onRepoRemove(repository)"></app-repository-info>
+            
 
             <app-search-file-input (searchSubmit)="onSearchSubmit($event)" #searchFileInput></app-search-file-input>
 
-            <app-file-upload-input class="d-block h-100" (filesChange)="onFilesChangeUpload($event, repository.id)">
+            <!--<button mat-flat-button color="primary" class="w-100 rounded-0" (click)="triggerFileUpload.emit()">Select files for upload</button>-->
+            
+            <app-file-upload-input class="d-block h-100" [triggerUpload]="triggerFileUpload" (filesChange)="onFilesChangeUpload($event, repository.id)">
                 <app-table-file-display class="d-block h-100" [files]="(repositoryFiles$ | async)!"
                     (filesDownload)="onDownloadFiles($event, repository.id)"
                     (filesDelete)="onDeleteFiles($event, repository.id)"></app-table-file-display>

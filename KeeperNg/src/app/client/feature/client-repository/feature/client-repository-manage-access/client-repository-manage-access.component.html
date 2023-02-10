@@ -1,0 +1,3 @@
+<div fadeInContent *ngIf="repository$ | async as repository">
+    <app-member-api-table [repositoryMembers]="repositoryApiMembers$ | async"></app-member-api-table>
+</div>

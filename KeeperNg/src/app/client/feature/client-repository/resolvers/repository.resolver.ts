@@ -1,16 +1,14 @@
 import { Injectable } from '@angular/core';
 import {
-    Router, Resolve,
+    Resolve,
     RouterStateSnapshot,
     ActivatedRouteSnapshot
 } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { combineLatest, concatMap, EMPTY, filter, first, forkJoin, map, merge, Observable, of, skipWhile, switchMap, take, takeWhile, tap, withLatestFrom } from 'rxjs';
+import { filter, map, Observable, tap } from 'rxjs';
 import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
-import { loadRepoFilesBatchInit } from 'src/app/shared/data-access/state/repositories-files/repositories-files.actions';
-import { selectRepoFileStateId } from 'src/app/shared/data-access/state/repositories-files/repositories-files.selectors';
 import { loadRepoStart } from 'src/app/shared/data-access/state/repository/repository.actions';
-import { selectRepoById, selectRepoByIdWithStatus, selectRepoStateStatus } from 'src/app/shared/data-access/state/repository/repository.selectors';
+import { selectRepoByIdWithStatus } from 'src/app/shared/data-access/state/repository/repository.selectors';
 
 @Injectable({
     providedIn: 'root'
@@ -21,14 +19,7 @@ export class RepositoryResolver implements Resolve<boolean> {
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
         const repositoryId: string = route.params['repositoryId'];
-        return this.retrieveRepository(repositoryId).pipe(
-            take(1),
-            switchMap(_ => 
-                this.retrieveRepositoryFilesInit(repositoryId).pipe(
-                    map(_ => true)
-                )
-            ),
-        );
+        return this.retrieveRepository(repositoryId);
     }
 
     private retrieveRepository(repositoryId: string): Observable<boolean> {
@@ -39,18 +30,6 @@ export class RepositoryResolver implements Resolve<boolean> {
                 }
             }),
             filter((repository) => !!repository.repository && repository.status !== 'loading' && repository.status !== 'pending'),
-            map(_ => true)
-        );
-    }
-
-    private retrieveRepositoryFilesInit(repositoryId: string): Observable<boolean> {
-        return this.store.select(selectRepoFileStateId(repositoryId)).pipe(
-            tap(repoFilesState => {
-                if(!repoFilesState) {
-                    this.store.dispatch(loadRepoFilesBatchInit({ repositoryId: repositoryId }));
-                }
-            }),
-            filter((state) => !!state?.files),
             map(_ => true)
         );
     }

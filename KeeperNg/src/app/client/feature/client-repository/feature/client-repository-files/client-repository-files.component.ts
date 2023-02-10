@@ -1,4 +1,4 @@
-import { Component, OnDestroy, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnDestroy, ViewChild, ChangeDetectionStrategy, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -15,9 +15,6 @@ import { RepoFileInterface } from 'src/app/shared/interfaces/repo-file.interface
 import { RepoInterface } from 'src/app/shared/interfaces/repo.interface';
 import { ConfirmDialogComponent } from 'src/app/shared/ui/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogModel } from 'src/app/shared/ui/confirm-dialog/confirm-dialog.model';
-import { RepositoryModel } from './model/repository.model';
-import { RepositoryDeleteDialogComponent } from './ui/repository-delete-dialog/repository-delete-dialog.component';
-import { RepositoryEditDialogComponent } from './ui/repository-edit-dialog/repository-edit-dialog.component';
 import { SearchFileInputComponent } from './ui/search-file-input/search-file-input.component';
 
 @Component({
@@ -31,9 +28,11 @@ export class ClientRepositoryFilesComponent {
 
     @ViewChild('searchFileInput') searchFileInput?: SearchFileInputComponent;
 
+    public triggerFileUpload: EventEmitter<void> = new EventEmitter<void>();
+
     public searchFilter$ = new BehaviorSubject<string>('');
 
-    public repoId$: Observable<string | null> = this.route.paramMap.pipe(
+    public repoId$: Observable<string | null> = this.route.parent!.paramMap.pipe(
         map(x => x.get('repositoryId')),
         tap(_ => {
             this.searchFilter$.next('');
@@ -85,36 +84,6 @@ export class ClientRepositoryFilesComponent {
         this.store.dispatch(uploadBegin({ repositoryId: repositoryId, files: [...files] }))
     }
 
-    onRepoEditOpen(repo: RepoInterface) {
-        const repoModel = new RepositoryModel(repo);
-        const dialogRef = this.dialog.open(RepositoryEditDialogComponent, {
-            data: repoModel,
-            width: '100%',
-            maxWidth: '500px',
-            enterAnimationDuration: '300',
-            exitAnimationDuration: '300',
-        });
-
-        dialogRef.afterClosed().subscribe(isOk => {
-            if (isOk) {
-                this.store.dispatch(updateRepositoryBegin({ repositoryId: repo.id, repositoryUpdate: { name: repoModel.name, description: repoModel.description } }));
-            }
-
-        });
-    }
-
-    onRepoRemove(repo: RepoInterface) {
-        const dialogRef = this.dialog.open(RepositoryDeleteDialogComponent, {
-            maxWidth: "400px",
-            data: repo.name
-        });
-
-        dialogRef.afterClosed().subscribe((isOk: boolean) => {
-            if (isOk) {
-                this.store.dispatch(deleteRepositoryBegin({ repository: repo }));
-            }
-        });
-    }
 
     onDownloadFiles(files: RepoFileInterface[], repositoryId: string): void {
         if (files.length > 0) {

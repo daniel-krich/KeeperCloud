@@ -7,6 +7,7 @@ export class RepositoryModel implements RepoInterface {
     createdDate: string;
     overallFileCount: number;
     overallRepositorySize: number;
+    allowAnonymousFileRead: boolean;
 
     constructor(repo: RepoInterface) {
         this.id = repo.id;
@@ -15,7 +16,6 @@ export class RepositoryModel implements RepoInterface {
         this.createdDate = repo.createdDate;
         this.overallFileCount = repo.overallFileCount;
         this.overallRepositorySize = repo.overallRepositorySize;
+        this.allowAnonymousFileRead = repo.allowAnonymousFileRead;
     }
-    
-    
 }

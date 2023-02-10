@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoadingScreenComponent } from './loading-screen.component';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 
 
@@ -9,7 +10,8 @@ import { LoadingScreenComponent } from './loading-screen.component';
     LoadingScreenComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    MatProgressBarModule
   ],
   exports: [LoadingScreenComponent]
 })

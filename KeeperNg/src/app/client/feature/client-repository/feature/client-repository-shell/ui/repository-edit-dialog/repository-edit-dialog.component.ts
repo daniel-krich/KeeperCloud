@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { RepoInterface } from 'src/app/shared/interfaces/repo.interface';
-import { RepositoryModel } from '../../model/repository.model';
+import { RepositoryModel } from '../../../../model/repository.model';
 
 @Component({
     selector: 'app-repository-edit-dialog',

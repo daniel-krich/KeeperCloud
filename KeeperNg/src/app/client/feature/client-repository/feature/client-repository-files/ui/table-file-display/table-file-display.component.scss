@@ -29,16 +29,6 @@
     }
 }
 
-.empty-table {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 30px;
-    color: #444;
-    background-color: #fff;
-}
-
 cdk-virtual-scroll-viewport {
     position: relative;
     display: unset !important;

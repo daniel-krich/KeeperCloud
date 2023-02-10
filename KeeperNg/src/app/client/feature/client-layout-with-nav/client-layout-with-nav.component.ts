@@ -5,14 +5,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { NavigationStart, Router, Event as NavigationEvent } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { map, Subscription } from 'rxjs';
+import { RepositoryDataService } from 'src/app/client/data-access/repository-data.service';
 import { NavigationDataService } from 'src/app/shared/data-access/navigation-data.service';
 import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
-import { signoutBegin } from 'src/app/shared/data-access/state/authentication/authentication.actions';
 import { selectAuthUser } from 'src/app/shared/data-access/state/authentication/authentication.selectors';
-import { createRepositoryBegin } from 'src/app/shared/data-access/state/repository/repository.actions';
-import { RepositoryDataService } from '../../data-access/repository-data.service';
-import { DialogRepoCreateComponent } from './feature/dialog-repo-create/dialog-repo-create.component';
-import { CreateRepositoryModel } from './models/create-repository.model';
 
 @Component({
   selector: 'app-client-layout-with-nav',

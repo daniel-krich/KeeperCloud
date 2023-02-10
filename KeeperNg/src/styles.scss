@@ -1,8 +1,9 @@
-html, body { 
+html,
+body {
     min-height: 100vh;
 }
 
-body { 
+body {
     margin: 0;
     font-family: 'Open Sans';
 }
@@ -11,11 +12,11 @@ body {
     &::-webkit-scrollbar {
         width: 0.4em;
     }
-       
+
     &::-webkit-scrollbar-track {
         background-color: #777;
     }
-       
+
     &::-webkit-scrollbar-thumb {
         background-color: #444;
     }
@@ -30,56 +31,74 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--primary-color);
+    background-color: #34405a;
     color: white;
-    font-size: 32px;
-    transition: 200ms ease-in;
+    user-select: none;
+    transition: 250ms ease-in;
     transition-property: opacity, visibility;
     opacity: 1;
 
     z-index: 9999;
     visibility: visible;
 
-    animation: blink 2s ease-in-out infinite;
 
-    @keyframes blink {
-        50% {
-          background-color: var(--primary-darker-color);
-        }
-      }
-  
     &.fade-out {
-      pointer-events: none;
-      opacity: 0;
-      visibility: hidden;
+        transition-delay: 0s;
+        pointer-events: none;
+        opacity: 0;
+        visibility: hidden;
     }
+
+    .group-items {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        * {
+            margin: 0;
+            margin-left: 15px;
+        }
+    }
+
 }
-  
+
+
 .custom-spinner {
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     border-radius: 50%;
-    border: 3px solid var(--primary-lighter-color);
-    border-top-color: #fff;
+    border: 3px solid var(--primary-color);
+    border-top-color: #709dff;
     animation: spinner 0.6s linear infinite;
 
     @keyframes spinner {
         to {
-        transform: rotate(360deg);
+            transform: rotate(360deg);
         }
     }
 }
-  
+
+.empty-table {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    color: #444;
+    background-color: #fff;
+}
+
 .success-snackbar {
 
     >.mdc-snackbar__surface {
         background: #11832a !important;
     }
 
-    .mat-mdc-snack-bar-label, .mdc-button__label {
+    .mat-mdc-snack-bar-label,
+    .mdc-button__label {
         color: #ffffff !important;
     }
-    
+
 }
 
 .error-snackbar {
@@ -88,10 +107,11 @@ body {
         background: #e65050 !important;
     }
 
-    .mat-mdc-snack-bar-label, .mdc-button__label {
+    .mat-mdc-snack-bar-label,
+    .mdc-button__label {
         color: #ffffff !important;
     }
-    
+
 }
 
 .primary-snackbar {
@@ -100,10 +120,11 @@ body {
         background: #3b7aff !important;
     }
 
-    .mat-mdc-snack-bar-label, .mdc-button__label {
+    .mat-mdc-snack-bar-label,
+    .mdc-button__label {
         color: #ffffff !important;
     }
-    
+
 }
 
 .white-spinner {

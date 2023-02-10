@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { ClientMainPageRoutingModule } from './client-main-page-routing.module';
 import { ClientMainPageComponent } from './client-main-page.component';
 import { RouterModule } from '@angular/router';
-import { ClientLayoutWithNavModule } from '../client-layout-with-nav/client-layout-with-nav.module';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,8 +25,7 @@ import { FadeInContentModule } from 'src/app/shared/ui/fade-in-content/fade-in-c
     MatIconModule,
     NgChartsModule,
     MatCardModule,
-    MatButtonModule,
-    ClientLayoutWithNavModule
+    MatButtonModule
   ]
 })
 export class ClientMainPageModule { }

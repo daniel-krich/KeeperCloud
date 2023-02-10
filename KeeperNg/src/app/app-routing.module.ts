@@ -14,8 +14,6 @@ const routes: Routes = [
         canLoad: [IsAuthenticatedGuard],
         resolve: [RepositoriesInitResolver]
     },
-    { path: 'client-repository-shell', loadChildren: () => import('./client/feature/client-repository/feature/client-repository-shell/client-repository-shell.module').then(m => m.ClientRepositoryShellModule) },
-    { path: 'client-repository-files', loadChildren: () => import('./client/feature/client-repository/feature/client-repository-files/client-repository-files.module').then(m => m.ClientRepositoryFilesModule) },
     { path: '**', loadChildren: () => import('./not-found/feature/not-found-page.module').then(m => m.NotFoundPageModule) }
 ];
 

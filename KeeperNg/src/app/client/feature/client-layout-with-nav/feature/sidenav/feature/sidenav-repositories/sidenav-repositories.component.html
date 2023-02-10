@@ -5,7 +5,7 @@
             <a mat-button class="nav-item" *ngFor="let repository of repositoriesState.repositories"
                 [routerLink]="'/client/repository/' + repository.id" routerLinkActive="nav-link-active"
                 [title]="repository.name">
-                <mat-icon>folder_copy</mat-icon>
+                <mat-icon [innerText]="repository.allowAnonymousFileRead ? 'lock_open' : 'lock'"></mat-icon>
                 <span>{{repository.name}}</span>
             </a>
 

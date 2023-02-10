@@ -3,6 +3,7 @@ export interface RepoInterface {
     name: string;
     description: string;
     createdDate: string;
+    allowAnonymousFileRead: boolean;
     overallFileCount: number;
     overallRepositorySize: number;
 }
