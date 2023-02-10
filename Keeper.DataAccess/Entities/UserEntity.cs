@@ -19,16 +19,12 @@ namespace Keeper.DataAccess.Entities
         public string Firstname { get; set; }
         [Required, MaxLength(60)]
         public string Lastname { get; set; }
-        public int StorageCapacityMb { get; set; }
+        public long BytesMaxStorage { get; set; }
         [Required, MaxLength(40)]
         public string RegisterIp { get; set; }
         [Required, MaxLength(40)]
         public string LastAccessIp { get; set; }
         public virtual ICollection<RepositoryEntity> Repositories { get; set; }
         public virtual ICollection<RefreshTokenEntity> RefreshTokens { get; set; }
-#nullable enable
-        [MaxLength(256)]
-        public string? PrivateAccessApiKey { get; set; }
-
     }
 }

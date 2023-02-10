@@ -1,9 +1,11 @@
-﻿using Keeper.DataAccess.Entities;
+﻿using Keeper.DataAccess.Context;
+using Keeper.DataAccess.Entities;
 using Keeper.DataAccess.Factories;
 using Keeper.Server.DTOs;
 using Keeper.Server.Models;
 using Keeper.Server.Utils;
 using MapsterMapper;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -18,6 +20,7 @@ namespace Keeper.Server.JwtSecurity
     {
         Task<JwtAccessToken?> CreateTokenAsync(AuthRequestDTO request);
         Task<JwtAccessToken?> CreateTokenAsync(string refreshToken);
+        Task DeleteExpiredRefreshTokens();
         JwtSettings JwtSettings { get; }
     }
 
@@ -75,6 +78,16 @@ namespace Keeper.Server.JwtSecurity
                     return new JwtAccessToken(jwtToken, refreshToken);
                 }
                 return default;
+            }
+        }
+
+        public async Task DeleteExpiredRefreshTokens()
+        {
+            using (var context = _keeperFactory.CreateDbContext())
+            {
+                await context.Database.ExecuteSqlRawAsync($@"DELETE FROM {nameof(KeeperDbContext.RefreshTokens)}
+                                                             WHERE {nameof(RefreshTokenEntity.Expires)} < @p0",
+                                                             new SqlParameter("@p0", DateTime.Now));
             }
         }
 

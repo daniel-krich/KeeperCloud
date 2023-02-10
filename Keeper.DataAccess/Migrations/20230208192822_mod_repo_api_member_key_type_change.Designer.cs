@@ -4,6 +4,7 @@ using Keeper.DataAccess.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Keeper.DataAccess.Migrations
 {
     [DbContext(typeof(KeeperDbContext))]
-    partial class KeeperDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230208192822_mod_repo_api_member_key_type_change")]
+    partial class mod_repo_api_member_key_type_change
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

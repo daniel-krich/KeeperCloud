@@ -14,6 +14,7 @@ namespace Keeper.DataAccess.Context
 #nullable disable
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<RepositoryEntity> Repositories { get; set; }
+        public DbSet<RepositoryApiMemberEntity> RepositoryApiMembers { get; set; }
         public DbSet<FileEntity> Files { get; set; }
         public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
 #nullable enable

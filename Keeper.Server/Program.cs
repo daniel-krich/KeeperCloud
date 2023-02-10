@@ -1,6 +1,7 @@
 using Keeper.DataAccess.Context;
 using Keeper.DataAccess.Extensions;
 using Keeper.RepositoriesMaster.Extensions;
+using Keeper.Server.HostedServices;
 using Keeper.Server.JwtSecurity;
 using Keeper.Server.Services;
 using Mapster;
@@ -53,6 +54,9 @@ try
     builder.Services.AddSingleton<IJwtService, JwtService>();
     builder.Services.AddSingleton<IAuthService, AuthService>();
     builder.Services.AddSingleton<IRepositoryService, RepositoryService>();
+    builder.Services.AddSingleton<IRepositoryApiMembersService, RepositoryApiMembersService>();
+
+    builder.Services.AddHostedService<AutomatedTimingActionHostedService>();
 
     builder.Services.AddRepositoriesMaster();
 

@@ -55,7 +55,8 @@ namespace Keeper.Server.Services
                             Id = repo.RepositoryId,
                             OwnerId = repo.OwnerId,
                             Name = request.Name,
-                            Description = request.Description
+                            Description = request.Description,
+                            AllowAnonymousFileRead = false
                         };
                         context.Repositories.Add(repoEntity);
                         await context.SaveChangesAsync();
@@ -140,17 +141,22 @@ namespace Keeper.Server.Services
             using (var context = _keeperFactory.CreateDbContext())
             {
 
-                var repositories = await (from repo in context.Repositories.Include(x => x.Files)
-                                          where repo.OwnerId == userId
-                                          select new RepositoryExtendedModel
-                                          {
-                                              Id = repo.Id,
-                                              Name = repo.Name,
-                                              Description = repo.Description,
-                                              CreatedDate = repo.CreatedDate,
-                                              OverallFileCount = repo.Files.Count(),
-                                              OverallRepositorySize = repo.Files.Sum(f => f.FileSize)
-                                          }).OrderByDescending(x => x.CreatedDate).Skip(batchOffset).Take(batchTakeLimit).ToListAsync();
+                var repositoriesFragments = await (from repo in context.Repositories
+                                                   where repo.OwnerId == userId
+                                                   select new
+                                                   {
+                                                       Repo = repo,
+                                                       OverallFileCount = repo.Files.Count(),
+                                                       OverallRepositorySize = repo.Files.Sum(f => f.FileSize)
+                                                   }).OrderByDescending(x => x.Repo.CreatedDate).Skip(batchOffset).Take(batchTakeLimit).ToListAsync();
+
+                var repositories = repositoriesFragments.Select(x =>
+                {
+                    var repo = _mapper.Map<RepositoryExtendedModel>(x.Repo);
+                    repo.OverallFileCount = x.OverallFileCount;
+                    repo.OverallRepositorySize = x.OverallRepositorySize;
+                    return repo;
+                }).ToList();
 
                 var howMuchReposLeftCount = (await context.Repositories.Where(x => x.OwnerId == userId).CountAsync()) - batchOffset - repositories.Count;
                 return new BatchWrapperModel<RepositoryExtendedModel>(repositories, batchOffset, howMuchReposLeftCount);
@@ -180,17 +186,25 @@ namespace Keeper.Server.Services
         {
             using (var context = _keeperFactory.CreateDbContext())
             {
-                return await (from repo in context.Repositories.Include(x => x.Files)
-                              where repo.OwnerId == userId && repo.Id == repositoryId
-                              select new RepositoryExtendedModel
-                              {
-                                  Id = repo.Id,
-                                  Name = repo.Name,
-                                  Description = repo.Description,
-                                  CreatedDate = repo.CreatedDate,
-                                  OverallFileCount = repo.Files.Count(),
-                                  OverallRepositorySize = repo.Files.Sum(f => f.FileSize)
-                              }).FirstOrDefaultAsync();
+                var repositoryFragments = await (from repo in context.Repositories.Include(x => x.Files)
+                                                 where repo.OwnerId == userId && repo.Id == repositoryId
+                                                 select new
+                                                 {
+                                                     Repo = repo,
+                                                     OverallFileCount = repo.Files.Count(),
+                                                     OverallRepositorySize = repo.Files.Sum(f => f.FileSize)
+                                                 }).FirstOrDefaultAsync();
+
+                if(repositoryFragments != null)
+                {
+                    var repository = _mapper.Map<RepositoryExtendedModel>(repositoryFragments.Repo);
+                    repository.OverallFileCount = repositoryFragments.OverallFileCount;
+                    repository.OverallRepositorySize = repositoryFragments.OverallRepositorySize;
+                    return repository;
+                }
+
+                return default;
+
             }
         }
 

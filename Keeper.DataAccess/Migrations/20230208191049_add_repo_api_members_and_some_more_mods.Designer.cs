@@ -4,6 +4,7 @@ using Keeper.DataAccess.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Keeper.DataAccess.Migrations
 {
     [DbContext(typeof(KeeperDbContext))]
-    partial class KeeperDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230208191049_add_repo_api_members_and_some_more_mods")]
+    partial class add_repo_api_members_and_some_more_mods
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -99,10 +101,9 @@ namespace Keeper.DataAccess.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Key")
+                    b.Property<byte[]>("Key")
                         .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<DateTime>("LastModified")
                         .HasColumnType("datetime2");
