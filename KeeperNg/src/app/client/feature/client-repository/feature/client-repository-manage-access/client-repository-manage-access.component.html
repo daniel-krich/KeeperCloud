@@ -1,3 +1,11 @@
-<div fadeInContent *ngIf="repository$ | async as repository">
-    <app-member-api-table [repositoryMembers]="repositoryApiMembers$ | async"></app-member-api-table>
-</div>
+<ng-container *ngIf="repository$ | async as repository">
+    <ng-container *ngIf="repositoryApiMembers$ | async as repositoryApiMembers; else loadingTemplate">
+        <div class="d-flex flex-column p-0 h-100" fadeInContent >
+            <app-member-api-table [repositoryMembers]="repositoryApiMembers"></app-member-api-table>
+        </div>
+    </ng-container>
+</ng-container>
+
+<ng-template #loadingTemplate>
+    <app-loading-centered></app-loading-centered>
+</ng-template>

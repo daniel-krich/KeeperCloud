@@ -12,6 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { FileUploadInputModule } from 'src/app/shared/ui/file-upload-input/file-upload-input.module';
 import { MatDialogModule } from '@angular/material/dialog';
 import { ConfirmDialogModule } from 'src/app/shared/ui/confirm-dialog/confirm-dialog.module';
+import { LoadingCenteredModule } from 'src/app/shared/ui/loading-centered/loading-centered.module';
 
 
 @NgModule({
@@ -24,6 +25,7 @@ import { ConfirmDialogModule } from 'src/app/shared/ui/confirm-dialog/confirm-di
     NgxSkeletonLoaderModule,
     FadeInContentModule,
     MatButtonModule,
+    LoadingCenteredModule,
     FileUploadInputModule,
     MatDialogModule,
     ConfirmDialogModule,

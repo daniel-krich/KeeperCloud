@@ -1,0 +1,16 @@
+[fadeInContent] {
+    opacity: 1;
+    transition: opacity 500ms ease-in-out;
+    &.ng-enter {
+      opacity: 0;
+    }
+    &.ng-enter-active {
+      opacity: 1;
+    }
+    &.ng-leave {
+      opacity: 1;
+    }
+    &.ng-leave-active {
+      opacity: 0;
+    }
+  }

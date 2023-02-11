@@ -14,7 +14,7 @@ const routes: Routes = [
                 path: '',
                 loadChildren: () => import('../client-repository-files/client-repository-files.module').then(m => m.ClientRepositoryFilesModule),
                 canActivate: [IsAuthenticatedGuard],
-                resolve: [RepositoryWithFilesResolver],
+                //resolve: [RepositoryWithFilesResolver],
                 pathMatch: 'full'
             },
             {

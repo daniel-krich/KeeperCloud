@@ -11,6 +11,7 @@ import { RepositoryMemberInterface } from './interfaces/repository-member.interf
   selector: 'app-client-repository-manage-access',
   templateUrl: './client-repository-manage-access.component.html',
   styleUrls: ['./client-repository-manage-access.component.scss'],
+  host: { 'class': 'flex-spacer' },
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ClientRepositoryManageAccessComponent {

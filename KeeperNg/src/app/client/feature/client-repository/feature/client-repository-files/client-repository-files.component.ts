@@ -9,7 +9,7 @@ import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
 import { downloadBegin, uploadBegin } from 'src/app/shared/data-access/state/file-transfer/file-transfer.actions';
 import { deleteRepoFilesBegin, loadRepoFilesBatchInit, loadRepoFilesBatchNext } from 'src/app/shared/data-access/state/repositories-files/repositories-files.actions';
 import { selectRepoFilesDescById, selectRepoFilesInterfaceByObservableId, selectRepoFileStateId } from 'src/app/shared/data-access/state/repositories-files/repositories-files.selectors';
-import { deleteRepositoryBegin, updateRepositoryBegin } from 'src/app/shared/data-access/state/repository/repository.actions';
+import { deleteRepositoryBegin, loadRepoStart, updateRepositoryBegin } from 'src/app/shared/data-access/state/repository/repository.actions';
 import { selectRepoById } from 'src/app/shared/data-access/state/repository/repository.selectors';
 import { RepoFileInterface } from 'src/app/shared/interfaces/repo-file.interface';
 import { RepoInterface } from 'src/app/shared/interfaces/repo.interface';
@@ -24,7 +24,7 @@ import { SearchFileInputComponent } from './ui/search-file-input/search-file-inp
     host: { 'class': 'flex-spacer' },
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ClientRepositoryFilesComponent {
+export class ClientRepositoryFilesComponent implements OnDestroy {
 
     @ViewChild('searchFileInput') searchFileInput?: SearchFileInputComponent;
 
@@ -43,9 +43,8 @@ export class ClientRepositoryFilesComponent {
     public repository$ = this.repoId$.pipe(
         switchMap(repoId =>
             this.store.select(selectRepoById(repoId)).pipe(
-                filter(x => x !== null),
-                //first()
-            )
+                filter(x => x !== null)
+            ),
         )
     );
 
@@ -73,12 +72,18 @@ export class ClientRepositoryFilesComponent {
         map(([repository, repositoryId]) => ({ repository, repositoryId }))
     );
 
+    public repositoryListenSubscribe?: Subscription;
+
     constructor(private route: ActivatedRoute,
         private router: Router,
         private repoService: RepositoryDataService,
         private fileRepoService: RepositoryFilesDataService,
         private dialog: MatDialog,
-        private store: Store<AppStateInterface>) { }
+        private store: Store<AppStateInterface>) {
+        this.repositoryListenSubscribe = this.repoId$.subscribe(x => 
+            this.store.dispatch(loadRepoFilesBatchInit({ repositoryId: x! }))
+        );
+    }
 
     onFilesChangeUpload(files: File[], repositoryId: string): void {
         this.store.dispatch(uploadBegin({ repositoryId: repositoryId, files: [...files] }))
@@ -116,6 +121,10 @@ export class ClientRepositoryFilesComponent {
 
     onSearchSubmit(search: string): void {
         this.searchFilter$.next(search.toLowerCase());
+    }
+
+    ngOnDestroy(): void {
+        this.repositoryListenSubscribe?.unsubscribe();
     }
 
 }

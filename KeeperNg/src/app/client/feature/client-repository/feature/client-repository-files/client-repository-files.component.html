@@ -1,6 +1,7 @@
 <ng-container *ngIf="repository$ | async as repository">
     <ng-container *ngIf="repositoryFileState$ | async as repositoryFileState">
-        <div class="d-flex flex-column p-0 h-100" fadeInContent *ngIf="repositoryFileState.files != null">
+
+        <div class="d-flex flex-column p-0 h-100" fadeInContent *ngIf="repositoryFileState.files != null; else loadingTemplate">
             
 
             <app-search-file-input (searchSubmit)="onSearchSubmit($event)" #searchFileInput></app-search-file-input>
@@ -23,3 +24,7 @@
         </div>
     </ng-container>
 </ng-container>
+
+<ng-template #loadingTemplate>
+    <app-loading-centered></app-loading-centered>
+</ng-template>

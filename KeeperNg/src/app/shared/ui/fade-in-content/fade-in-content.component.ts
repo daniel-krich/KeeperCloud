@@ -1,5 +1,7 @@
-import { animate, style, transition, trigger } from '@angular/animations';
-import { ChangeDetectionStrategy, Component, HostBinding } from '@angular/core';
+import { animate, AnimationEvent, state, style, transition, trigger } from '@angular/animations';
+import { ChangeDetectionStrategy, Component, HostBinding, HostListener } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: '[fadeInContent]',
@@ -7,7 +9,11 @@ import { ChangeDetectionStrategy, Component, HostBinding } from '@angular/core';
   template: `<ng-content></ng-content>`,
   animations: [
     trigger('fade', [
-        transition('void => *', [
+        transition('* => true', [
+            style({ opacity: 0 }),
+            animate(500, style({ opacity: 1 }))
+        ]),
+        transition('true => false', [
             style({ opacity: 0 }),
             animate(500, style({ opacity: 1 }))
         ])
@@ -15,5 +21,19 @@ import { ChangeDetectionStrategy, Component, HostBinding } from '@angular/core';
   ]
 })
 export class FadeInContentComponent {
-    @HostBinding('@fade') trigger: undefined;
+    @HostBinding('@fade') trigger: boolean = false;
+
+    private stopListeningForRoute$: Subject<void> = new Subject<void>();
+
+    constructor(private route: ActivatedRoute) {
+        this.route.params.pipe(
+            takeUntil(this.stopListeningForRoute$)
+        ).subscribe(() => {
+            this.trigger = !this.trigger;
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.stopListeningForRoute$.next();
+    }
 }
