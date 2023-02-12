@@ -45,9 +45,16 @@ namespace Keeper.Server.Controllers
             if (user is not null)
             {
                 var res = await _repositoryService.CreateFilesByForm(user.Id, repositoryId, files);
-                return Ok(res);
+                if(res != null)
+                {
+                    return Ok(res);
+                }
+                else
+                {
+                    return BadRequest("Repository not found");
+                }
             }
-            return Ok();
+            return BadRequest();
         }
 
         [HttpPost("delete")]

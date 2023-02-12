@@ -23,7 +23,7 @@ namespace Keeper.Server.Services
         Task<BatchWrapperModel<FileModel>> GetRepositoryFilesBatch(Guid userId, Guid repositoryId, int batchOffset, int batchCountLimit);
         Task<(FileEntity fileEntity, IRepositoryFile? file)?> GetFileAccessor(Guid userId, Guid repositoryId, Guid fileId);
         Task<IEnumerable<FileStreamWithMetaModel>> GetFilesReadStreams(Guid userId, Guid repositoryId, IEnumerable<Guid> fileIds);
-        Task<List<FileModel>> CreateFilesByForm(Guid userId, Guid repositoryId, IEnumerable<IFormFile> files);
+        Task<List<FileModel>?> CreateFilesByForm(Guid userId, Guid repositoryId, IEnumerable<IFormFile> files);
         Task<bool> DeleteFiles(Guid userId, Guid repositoryId, IEnumerable<Guid> fileIds);
         Task<bool> DeleteRepository(Guid userId, Guid repositoryId);
         Task<bool> UpdateRepository(Guid userId, Guid repositoryId, UpdateRepositoryRequestDTO updateRepositoryRequest);
@@ -85,7 +85,7 @@ namespace Keeper.Server.Services
             }
         }
 
-        public async Task<List<FileModel>> CreateFilesByForm(Guid userId, Guid repositoryId, IEnumerable<IFormFile> files)
+        public async Task<List<FileModel>?> CreateFilesByForm(Guid userId, Guid repositoryId, IEnumerable<IFormFile> files)
         {
             using (var context = _keeperFactory.CreateDbContext())
             {
@@ -132,7 +132,7 @@ namespace Keeper.Server.Services
                         return _mapper.Map<List<FileModel>>(fileEntities);
                     }
                 }
-                throw new ApplicationException("err...");
+                return default;
             }
         }
 
