@@ -27,16 +27,18 @@ import { RepositoryEditDialogComponent } from './ui/repository-edit-dialog/repos
                 <app-repository-info [repository]="repository" (repositoryEditOpen)="onRepoEditOpen(repository)"
                 (repositoryRemove)="onRepoRemove(repository)"></app-repository-info>
 
-                <nav mat-tab-nav-bar [tabPanel]="tabPanel">
-                    <a mat-tab-link 
-                        *ngFor="let link of links"
-                        [routerLink]="link.path"
-                        routerLinkActive
-                        [routerLinkActiveOptions]="{ exact: true }"
-                        #linkActive="routerLinkActive"
-                        [active]="linkActive.isActive">{{link.label}}</a>
-                </nav>
-                <mat-tab-nav-panel #tabPanel></mat-tab-nav-panel>
+                <div class="d-flex bg-light">
+                    <nav mat-tab-nav-bar [tabPanel]="tabPanel">
+                        <a mat-tab-link 
+                            *ngFor="let link of links"
+                            [routerLink]="link.path"
+                            routerLinkActive
+                            [routerLinkActiveOptions]="{ exact: true }"
+                            #linkActive="routerLinkActive"
+                            [active]="linkActive.isActive">{{link.label}}</a>
+                        <mat-tab-nav-panel #tabPanel></mat-tab-nav-panel>
+                    </nav>
+                </div>
 
                 <router-outlet></router-outlet>
             </ng-container>
@@ -46,7 +48,7 @@ import { RepositoryEditDialogComponent } from './ui/repository-edit-dialog/repos
 export class ClientRepositoryShellComponent {
 
     links = [
-        { path: './', label: 'Files' },
+        { path: './', label: 'Repository files' },
         { path: './manage-access', label: 'Manage access' },
     ];
 

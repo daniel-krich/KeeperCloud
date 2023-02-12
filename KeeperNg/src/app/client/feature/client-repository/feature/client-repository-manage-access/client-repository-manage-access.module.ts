@@ -6,6 +6,8 @@ import { FadeInContentModule } from 'src/app/shared/ui/fade-in-content/fade-in-c
 import { RouterModule } from '@angular/router';
 import { MemberApiTableModule } from './ui/member-api-table/member-api-table.module';
 import { LoadingCenteredModule } from 'src/app/shared/ui/loading-centered/loading-centered.module';
+import { MemberApiHeaderModule } from './ui/member-api-header/member-api-header.module';
+import { MatDividerModule } from '@angular/material/divider';
 
 
 @NgModule({
@@ -17,6 +19,8 @@ import { LoadingCenteredModule } from 'src/app/shared/ui/loading-centered/loadin
     RouterModule,
     FadeInContentModule,
     LoadingCenteredModule,
+    MemberApiHeaderModule,
+    MatDividerModule,
     ClientRepositoryManageAccessRoutingModule,
     MemberApiTableModule,
   ]

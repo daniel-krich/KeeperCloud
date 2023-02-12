@@ -15,13 +15,22 @@
         <td mat-cell *matCellDef="let member"> {{member.permissionFlags}} </td>
     </ng-container>
 
+    <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let member">
+            <button mat-button (click)="clickCopyApiToken.emit(member.combination)">Edit</button>
+            <button mat-button (click)="clickCopyApiToken.emit(member.combination)">Copy api token</button>
+            <button mat-button (click)="clickCopyApiToken.emit(member.combination)">Remove</button>
+        </td>
+    </ng-container>
+
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
 </table>
 
 <div *ngIf="repositoryMembers && repositoryMembers.length <= 0" class="empty-table">
-    <h2 class="m-3">No members were found...</h2>
+    <div class="fs-1 fw-lighter m-3">No members were found...</div>
 </div>
 
 <ng-template #loadingTable>

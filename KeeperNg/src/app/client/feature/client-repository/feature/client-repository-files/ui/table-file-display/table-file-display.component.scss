@@ -37,3 +37,12 @@ cdk-virtual-scroll-viewport {
         position: static;
     }
 }
+
+.mat-column-name {
+    flex: 0 0 50%;
+    word-break: break-all;
+}
+
+.mat-column-size, .mat-column-dateModified {
+    flex: 0 0 25%;
+}

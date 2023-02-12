@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { nameof } from 'src/app/client/util/nameof.util';
 import { RepositoryMemberInterface } from '../../interfaces/repository-member.interface';
 
@@ -11,6 +11,17 @@ import { RepositoryMemberInterface } from '../../interfaces/repository-member.in
 export class MemberApiTableComponent {
     @Input() public repositoryMembers?: RepositoryMemberInterface[] | null;
 
-    displayedColumns: string[] = [nameof<RepositoryMemberInterface>('name'), nameof<RepositoryMemberInterface>('role'), nameof<RepositoryMemberInterface>('permissionFlags')];
+    @Output() public clickEditMember: EventEmitter<string> = new EventEmitter<string>();
+
+    @Output() public clickCopyApiToken: EventEmitter<string> = new EventEmitter<string>();
+
+    @Output() public clickRemoveMember: EventEmitter<string> = new EventEmitter<string>();
+
+    displayedColumns: string[] = [
+        nameof<RepositoryMemberInterface>('name'),
+        nameof<RepositoryMemberInterface>('role'),
+        nameof<RepositoryMemberInterface>('permissionFlags'),
+        'actions'
+    ];
 
 }

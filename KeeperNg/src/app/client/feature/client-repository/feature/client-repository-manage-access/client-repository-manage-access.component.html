@@ -1,7 +1,9 @@
 <ng-container *ngIf="repository$ | async as repository">
     <ng-container *ngIf="repositoryApiMembers$ | async as repositoryApiMembers; else loadingTemplate">
-        <div class="d-flex flex-column p-0 h-100" fadeInContent >
-            <app-member-api-table [repositoryMembers]="repositoryApiMembers"></app-member-api-table>
+        <div class="d-flex flex-column p-0 h-100" fadeInContent>
+            <app-member-api-header [usersCount]="repositoryApiMembers.length"></app-member-api-header>
+            <mat-divider></mat-divider>
+            <app-member-api-table [repositoryMembers]="repositoryApiMembers" (clickCopyApiToken)="onClickApiToken($event)"></app-member-api-table>
         </div>
     </ng-container>
 </ng-container>

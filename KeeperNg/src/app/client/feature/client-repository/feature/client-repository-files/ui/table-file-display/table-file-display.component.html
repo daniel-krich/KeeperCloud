@@ -1,34 +1,31 @@
 <div #dragSelectionContainer class="drag-selection-container">
-    <app-context-menu [itemList]="itemList" [visible]="contextMenuVisible" [position]="contextMenuPosition" (itemClick)="onContextMenuItemClick($event)"></app-context-menu>
-    <div #dragSelectionArea
-        (mousedown)="startSelection($event)"
-        (mousemove)="updateSelection($event)"
-        (mouseup)="endSelection($event)"
-        (contextmenu)="openContextMenu($event)"
-        class="drag-selection-area">
+    <app-context-menu [itemList]="itemList" [visible]="contextMenuVisible" [position]="contextMenuPosition"
+        (itemClick)="onContextMenuItemClick($event)"></app-context-menu>
+    <div #dragSelectionArea (mousedown)="startSelection($event)" (mousemove)="updateSelection($event)"
+        (mouseup)="endSelection($event)" (contextmenu)="openContextMenu($event)" class="drag-selection-area">
 
         <cdk-virtual-scroll-viewport itemSize="52">
             <table mat-table [dataSource]="files" class="p-5" [trackBy]="trackByFileId">
                 <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef> File Name </th>
-                <td mat-cell *matCellDef="let file">
-                    <div class="d-flex align-items-center">
-                        <img src="assets/images/file-icon.png" alt="file">
-                        <span class="ms-2">{{file.name}}</span>
-                    </div>
-                </td>
+                    <th mat-header-cell *matHeaderCellDef> File Name </th>
+                    <td mat-cell *matCellDef="let file">
+                        <div class="d-flex align-items-center">
+                            <img src="assets/images/file-icon.png" alt="file">
+                            <span class="ms-2">{{file.name}}</span>
+                        </div>
+                    </td>
                 </ng-container>
-            
+
                 <ng-container matColumnDef="size">
-                <th mat-header-cell *matHeaderCellDef> Size </th>
-                <td mat-cell *matCellDef="let file"> {{file.fileSize | convertByteSizeToString}} </td>
+                    <th mat-header-cell *matHeaderCellDef> Size </th>
+                    <td mat-cell *matCellDef="let file"> {{file.fileSize | convertByteSizeToString}} </td>
                 </ng-container>
-            
+
                 <ng-container matColumnDef="dateModified">
-                <th mat-header-cell *matHeaderCellDef> Date Modified </th>
-                <td mat-cell *matCellDef="let file"> {{file.lastModified | date: 'dd/MM/yyyy HH:mm'}} </td>
+                    <th mat-header-cell *matHeaderCellDef> Date Modified </th>
+                    <td mat-cell *matCellDef="let file"> {{file.lastModified | date: 'dd/MM/yyyy HH:mm'}} </td>
                 </ng-container>
-                
+
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
                 <tr #fileRows mat-row *matRowDef="let row; columns: displayedColumns;" [id]="'file-' + row.id"></tr>
@@ -37,10 +34,10 @@
         </cdk-virtual-scroll-viewport>
 
         <div *ngIf="files.length <= 0" class="empty-table">
-            <h2 class="m-3">Nothing was found...</h2>
+            <div class="fs-1 fw-lighter m-3">Nothing was found...</div>
             <p>You can use drag and drop to add files.</p>
         </div>
-        
+
         <div class="drag-selection-rectangle hide-border" #dragSelectionRectangle></div>
 
     </div>

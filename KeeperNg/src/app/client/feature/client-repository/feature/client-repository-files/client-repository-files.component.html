@@ -6,6 +6,7 @@
 
             <app-search-file-input (searchSubmit)="onSearchSubmit($event)" #searchFileInput></app-search-file-input>
 
+            <mat-divider></mat-divider>
             <!--<button mat-flat-button color="primary" class="w-100 rounded-0" (click)="triggerFileUpload.emit()">Select files for upload</button>-->
             
             <app-file-upload-input class="d-block h-100" [triggerUpload]="triggerFileUpload" (filesChange)="onFilesChangeUpload($event, repository.id)">

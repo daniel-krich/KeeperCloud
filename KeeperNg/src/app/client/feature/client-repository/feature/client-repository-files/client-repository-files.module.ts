@@ -13,6 +13,7 @@ import { FileUploadInputModule } from 'src/app/shared/ui/file-upload-input/file-
 import { MatDialogModule } from '@angular/material/dialog';
 import { ConfirmDialogModule } from 'src/app/shared/ui/confirm-dialog/confirm-dialog.module';
 import { LoadingCenteredModule } from 'src/app/shared/ui/loading-centered/loading-centered.module';
+import { MatDividerModule } from '@angular/material/divider';
 
 
 @NgModule({
@@ -26,6 +27,7 @@ import { LoadingCenteredModule } from 'src/app/shared/ui/loading-centered/loadin
     FadeInContentModule,
     MatButtonModule,
     LoadingCenteredModule,
+    MatDividerModule,
     FileUploadInputModule,
     MatDialogModule,
     ConfirmDialogModule,

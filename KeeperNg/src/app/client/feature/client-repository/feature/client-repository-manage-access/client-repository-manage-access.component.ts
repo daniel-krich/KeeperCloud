@@ -32,6 +32,10 @@ export class ClientRepositoryManageAccessComponent {
         switchMap(x => this.memberManageApi.fetchAllMembers(x?.id!))
     );
 
+    public onClickApiToken(token: string): void {
+        
+    }
+
     constructor(private route: ActivatedRoute,
                 private store: Store<AppStateInterface>,
                 private memberManageApi: MemberManageApiService) { }

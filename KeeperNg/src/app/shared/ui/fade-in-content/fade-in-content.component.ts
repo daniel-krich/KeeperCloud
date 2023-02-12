@@ -1,5 +1,5 @@
-import { animate, AnimationEvent, state, style, transition, trigger } from '@angular/animations';
-import { ChangeDetectionStrategy, Component, HostBinding, HostListener } from '@angular/core';
+import { animate, style, transition, trigger } from '@angular/animations';
+import { ChangeDetectionStrategy, Component, HostBinding } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -10,10 +10,12 @@ import { Subject, takeUntil } from 'rxjs';
   animations: [
     trigger('fade', [
         transition('* => true', [
+            animate(0, style({ opacity: 0 })),
             style({ opacity: 0 }),
             animate(500, style({ opacity: 1 }))
         ]),
         transition('true => false', [
+            animate(0, style({ opacity: 0 })),
             style({ opacity: 0 }),
             animate(500, style({ opacity: 1 }))
         ])

@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { Store } from "@ngrx/store";
@@ -32,7 +33,7 @@ export class FileTransferEffects {
                                 return of(downloadProgress({ progress: response.progress ?? 0 }));
                             }
                         }),
-                        catchError((err: Error) => of(downloadError({ error: err.message })))
+                        catchError((err: HttpErrorResponse) => of(downloadError({ error: (typeof err.error === 'string') ? err.error : err.message })))
                     );
                 }
                 return of(downloadError({ error: 'repo id is null' }));
@@ -74,7 +75,7 @@ export class FileTransferEffects {
                                 return of(uploadProgress({ progress: response.progress ?? 0 }));
                             }
                         }),
-                        catchError((err: Error) => of(uploadError({ error: err.message })))
+                        catchError((err: HttpErrorResponse) => of(uploadError({ error: (typeof err.error === 'string') ? err.error : err.message })))
                     );
                 }
                 return of(uploadError({ error: 'repo id is null' }));
