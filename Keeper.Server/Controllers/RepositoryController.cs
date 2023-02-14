@@ -58,7 +58,7 @@ namespace Keeper.Server.Controllers
             return BadRequest();
         }
 
-        [HttpGet("all")]
+        [HttpGet("repositories-batch")]
         public async Task<IActionResult> GetRepositoriesBatched(int batchOffset = 0)
         {
             if (batchOffset < 0)
