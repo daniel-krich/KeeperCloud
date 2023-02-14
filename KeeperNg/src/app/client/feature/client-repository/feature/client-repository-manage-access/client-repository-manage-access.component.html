@@ -1,9 +1,20 @@
 <ng-container *ngIf="repository$ | async as repository">
-    <ng-container *ngIf="repositoryApiMembers$ | async as repositoryApiMembers; else loadingTemplate">
+    <ng-container
+        *ngIf="repositoryAllMembersMemoryWithApiCall$ | async as repositoryAllMembersMemoryWithApiCall; else loadingTemplate">
         <div class="d-flex flex-column p-0 h-100" fadeInContent>
-            <app-member-api-header [usersCount]="repositoryApiMembers.length"></app-member-api-header>
-            <mat-divider></mat-divider>
-            <app-member-api-table [repositoryMembers]="repositoryApiMembers" (clickCopyApiToken)="onClickApiToken($event)"></app-member-api-table>
+            <div class="row flex-row-reverse g-0 h-100">
+                <div class="col-lg-4 col-xl-3 p-0">
+                    <app-manage-access-menu [apiMembersCount]="repositoryAllMembersMemoryWithApiCall.length"
+                        (clickAddApiMember)="onClickAddApiMember(repository.id)"></app-manage-access-menu>
+                </div>
+                <div class="col-lg-8 col-xl-9 p-0">
+                    <app-member-api-table [repositoryMembers]="repositoryAllMembersMemoryWithApiCall"
+                        (clickRemoveMember)="onRemoveApiMember(repository.id, repositoryAllMembersMemoryWithApiCall, $event)"
+                        (clickCopyApiToken)="onClickCopyApiToken($event)"
+                        (clickEditMember)="onUpdateApiMember(repository.id, repositoryAllMembersMemoryWithApiCall, $event)"></app-member-api-table>
+                </div>
+                
+            </div>
         </div>
     </ng-container>
 </ng-container>

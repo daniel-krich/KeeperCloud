@@ -6,8 +6,11 @@ import { FadeInContentModule } from 'src/app/shared/ui/fade-in-content/fade-in-c
 import { RouterModule } from '@angular/router';
 import { MemberApiTableModule } from './ui/member-api-table/member-api-table.module';
 import { LoadingCenteredModule } from 'src/app/shared/ui/loading-centered/loading-centered.module';
-import { MemberApiHeaderModule } from './ui/member-api-header/member-api-header.module';
 import { MatDividerModule } from '@angular/material/divider';
+import { MemberHolderDialogModule } from './ui/member-holder-dialog/member-holder-dialog.module';
+import { ManageAccessMenuModule } from './ui/manage-access-menu/manage-access-menu.module';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { ConfirmDialogModule } from 'src/app/shared/ui/confirm-dialog/confirm-dialog.module';
 
 
 @NgModule({
@@ -19,7 +22,10 @@ import { MatDividerModule } from '@angular/material/divider';
     RouterModule,
     FadeInContentModule,
     LoadingCenteredModule,
-    MemberApiHeaderModule,
+    ManageAccessMenuModule,
+    MatSnackBarModule,
+    ConfirmDialogModule,
+    MemberHolderDialogModule,
     MatDividerModule,
     ClientRepositoryManageAccessRoutingModule,
     MemberApiTableModule,
