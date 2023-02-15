@@ -27,6 +27,7 @@ namespace Keeper.Server.Services
         Task<bool> DeleteFiles(Guid userId, Guid repositoryId, IEnumerable<Guid> fileIds);
         Task<bool> DeleteRepository(Guid userId, Guid repositoryId);
         Task<bool> UpdateRepository(Guid userId, Guid repositoryId, UpdateRepositoryRequestDTO updateRepositoryRequest);
+        Task<bool> UpdateRepositoryAllowAnonymousFileRead(Guid userId, Guid repositoryId, bool allow);
     }
 
     public class RepositoryService : IRepositoryService
@@ -294,6 +295,22 @@ namespace Keeper.Server.Services
                 {
                     repo.Name = updateRepositoryRequest.Name;
                     repo.Description = updateRepositoryRequest.Description;
+                    context.Repositories.Update(repo);
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateRepositoryAllowAnonymousFileRead(Guid userId, Guid repositoryId, bool allow)
+        {
+            using (var context = _keeperFactory.CreateDbContext())
+            {
+                var repo = await context.Repositories.FirstOrDefaultAsync(x => x.Id == repositoryId && x.OwnerId == userId);
+                if (repo is not null)
+                {
+                    repo.AllowAnonymousFileRead = allow;
                     context.Repositories.Update(repo);
                     await context.SaveChangesAsync();
                     return true;

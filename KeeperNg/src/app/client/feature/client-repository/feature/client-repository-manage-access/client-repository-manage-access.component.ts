@@ -15,6 +15,7 @@ import { MemberHolderDialogModel } from './ui/member-holder-dialog/member-holder
 import { Clipboard } from '@angular/cdk/clipboard';
 import { ConfirmDialogModel } from 'src/app/shared/ui/confirm-dialog/confirm-dialog.model';
 import { ConfirmDialogComponent } from 'src/app/shared/ui/confirm-dialog/confirm-dialog.component';
+import { toggleRepositoryAllowAnonymousFileReadBegin, toggleRepositoryAllowAnonymousFileReadSuccess } from 'src/app/shared/data-access/state/repository/repository.actions';
 
 @Component({
     selector: 'app-client-repository-manage-access',
@@ -136,6 +137,28 @@ export class ClientRepositoryManageAccessComponent {
             }
 
         });
+    }
+
+    public onToggleAllowAnonymousFileRead(repositoryId: string, toggle: boolean): void {
+        if(toggle) {
+            const dialogData = new ConfirmDialogModel('Repository open confirm', `
+                Are you sure you want to open the repository for the public? this will enable anyone to access
+                and download your files from this repository.
+            `);
+
+            const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+                maxWidth: "400px",
+                data: dialogData
+            });
+            dialogRef.afterClosed().subscribe((isOk: boolean) => {
+                if (isOk) {
+                    this.store.dispatch(toggleRepositoryAllowAnonymousFileReadBegin({ repositoryId: repositoryId, toggle: toggle}));
+                }
+            });
+        }
+        else {
+            this.store.dispatch(toggleRepositoryAllowAnonymousFileReadBegin({ repositoryId: repositoryId, toggle: toggle}));
+        }
     }
 
     public onRemoveApiMember(repositoryId: string, repositoryMembers: RepositoryMemberInterface[], memberId: string): void {

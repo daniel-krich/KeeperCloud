@@ -104,3 +104,19 @@ export const increaseRepositoryFilesStats = createAction(
     '[Repository Stats Update] Increase Repository Files Stats',
     props<{ repositoryId: string, files: RepoFileInterface[] }>()
 );
+
+//
+
+export const toggleRepositoryAllowAnonymousFileReadBegin = createAction(
+    '[Repository Access Update] Toggle Repository Allow Anonymous File Read Begin',
+    props<{ repositoryId: string, toggle: boolean }>()
+);
+
+export const toggleRepositoryAllowAnonymousFileReadSuccess = createAction(
+    '[Repository Access Update] Toggle Repository Allow Anonymous File Read Success',
+    props<{ repositoryId: string, toggle: boolean }>()
+);
+
+export const toggleRepositoryAllowAnonymousFileReadError = createAction(
+    '[Repository Access Update] Toggle Repository Allow Anonymous File Read Error'
+);

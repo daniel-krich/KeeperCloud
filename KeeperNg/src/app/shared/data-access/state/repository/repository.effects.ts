@@ -23,6 +23,9 @@ import {
     loadRepoStart,
     loadRepoSuccess,
     loadRepoSuccessEmpty,
+    toggleRepositoryAllowAnonymousFileReadBegin,
+    toggleRepositoryAllowAnonymousFileReadError,
+    toggleRepositoryAllowAnonymousFileReadSuccess,
     updateRepositoryBegin,
     updateRepositoryError,
     updateRepositorySuccess
@@ -168,6 +171,30 @@ export class RepositoryEffects {
             ofType(createRepositoryError),
             tap(_ => {
                 this.snackbar.open("Repository creation resulted in failure.", 'Close', {
+                    duration: 2000,
+                    panelClass: ['error-snackbar']
+                });
+            })
+        )
+    , { dispatch: false });
+
+    toggleRepositoryAllowAnonymousFileReadBegin$ = createEffect(() => 
+        this.actions$.pipe(
+            ofType(toggleRepositoryAllowAnonymousFileReadBegin),
+            switchMap(action => 
+                this.repoDataService.updateRepositoryAllowAnonymousFileRead(action.repositoryId, action.toggle).pipe(
+                    map(_ => toggleRepositoryAllowAnonymousFileReadSuccess({ repositoryId: action.repositoryId, toggle: action.toggle })),
+                    catchError(() => of(toggleRepositoryAllowAnonymousFileReadError()))
+                )
+            )
+        )
+    );
+
+    toggleRepositoryAllowAnonymousFileReadError$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(toggleRepositoryAllowAnonymousFileReadError),
+            tap(_ => {
+                this.snackbar.open("Failed to change allow anonymous file read rules.", 'Close', {
                     duration: 2000,
                     panelClass: ['error-snackbar']
                 });

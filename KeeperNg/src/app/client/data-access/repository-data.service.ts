@@ -31,6 +31,10 @@ export class RepositoryDataService {
         });
     }
 
+    public updateRepositoryAllowAnonymousFileRead(repositoryId: string, toggle: boolean): Observable<void> {
+        return this.httpClient.put<void>(this.baseUrl + `/api/repository/${repositoryId}/allow-anonymous-file-read`, null, { params: { allow: toggle } });
+    }
+
     public updateRepository(repositoryId: string, updateRepo: UpdateRepositoryDTOInterface): Observable<void> {
         return this.httpClient.put<void>(this.baseUrl + '/api/repository/' + repositoryId, updateRepo);
     }

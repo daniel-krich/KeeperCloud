@@ -2,7 +2,7 @@ import { state } from "@angular/animations";
 import { createReducer, on } from "@ngrx/store";
 import { RepositoryFilesStateInterface } from "../interfaces/repository-files-state.interface";
 import { RepositoryStateInterface } from "../interfaces/repository-state.interface";
-import { loadRepoBatchSuccess, loadRepoBatchError, loadRepoBatchNext, loadRepoBatchInit, loadRepoSuccess, loadRepoStart, loadRepoError, loadRepoSuccessEmpty, deleteRepositorySuccess, updateRepositorySuccess, createRepositorySuccess, decreaseRepositoryFilesStats, increaseRepositoryFilesStats } from './repository.actions';
+import { loadRepoBatchSuccess, loadRepoBatchError, loadRepoBatchNext, loadRepoBatchInit, loadRepoSuccess, loadRepoStart, loadRepoError, loadRepoSuccessEmpty, deleteRepositorySuccess, updateRepositorySuccess, createRepositorySuccess, decreaseRepositoryFilesStats, increaseRepositoryFilesStats, toggleRepositoryAllowAnonymousFileReadSuccess } from './repository.actions';
 
 
 const initState: RepositoryStateInterface = {
@@ -138,6 +138,16 @@ export const repositoryReducer = createReducer(
         return {
             ...state,
             repositories: [...repositoriesCopy, currentRepo]
-        }
+        };
     }),
+
+    on(toggleRepositoryAllowAnonymousFileReadSuccess, (state, { repositoryId, toggle }) => {
+        const repositoriesCopy = [...state.repositories.filter(x => x.id !== repositoryId)];
+        const currentRepo = {...state.repositories.find(x => x.id === repositoryId)!};
+        currentRepo.allowAnonymousFileRead = toggle;
+        return {
+            ...state,
+            repositories: [...repositoriesCopy, currentRepo]
+        };
+    })
 );

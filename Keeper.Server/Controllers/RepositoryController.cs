@@ -115,5 +115,19 @@ namespace Keeper.Server.Controllers
             }
             return BadRequest();
         }
+
+        [HttpPut("{repositoryId:guid}/allow-anonymous-file-read")]
+        public async Task<IActionResult> RepositoryAllowAnonymousFileReadUpdate(Guid repositoryId, bool allow)
+        {
+            UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
+            if (user != null)
+            {
+                if(await _repoService.UpdateRepositoryAllowAnonymousFileRead(user.Id, repositoryId, allow))
+                {
+                    return Ok();
+                }
+            }
+            return BadRequest();
+        }
     }
 }

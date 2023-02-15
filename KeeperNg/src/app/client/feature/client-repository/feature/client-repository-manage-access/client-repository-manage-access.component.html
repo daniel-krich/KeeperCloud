@@ -4,8 +4,10 @@
         <div class="d-flex flex-column p-0 h-100" fadeInContent>
             <div class="row flex-row-reverse g-0 h-100">
                 <div class="col-lg-4 col-xl-3 p-0">
-                    <app-manage-access-menu [apiMembersCount]="repositoryAllMembersMemoryWithApiCall.length"
-                        (clickAddApiMember)="onClickAddApiMember(repository.id)"></app-manage-access-menu>
+                    <app-manage-access-menu [repository]="repository"
+                        [apiMembersCount]="repositoryAllMembersMemoryWithApiCall.length"
+                        (clickAddApiMember)="onClickAddApiMember(repository.id)"
+                        (toggleAllowAnonymousFileRead)="onToggleAllowAnonymousFileRead(repository.id, $event)"></app-manage-access-menu>
                 </div>
                 <div class="col-lg-8 col-xl-9 p-0">
                     <app-member-api-table [repositoryMembers]="repositoryAllMembersMemoryWithApiCall"
@@ -13,7 +15,7 @@
                         (clickCopyApiToken)="onClickCopyApiToken($event)"
                         (clickEditMember)="onUpdateApiMember(repository.id, repositoryAllMembersMemoryWithApiCall, $event)"></app-member-api-table>
                 </div>
-                
+
             </div>
         </div>
     </ng-container>
