@@ -6,14 +6,20 @@
     <mat-divider class="mt-4 mb-4"></mat-divider>
     <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item">
-            <button mat-button class="d-flex justify-content-center w-100 mb-2" (click)="toggleAllowAnonymousFileRead.emit(!repository.allowAnonymousFileRead)">
-                <mat-icon [innerText]="repository.allowAnonymousFileRead ? 'lock' : 'lock_open'"></mat-icon>
+            <button mat-flat-button color="accent" class="d-flex justify-content-center w-100 mb-2"
+                (click)="toggleAllowAnonymousFileRead.emit(!repository.allowAnonymousFileRead)">
                 <span [innerText]="repository.allowAnonymousFileRead ? 'Close repository' : 'Open repository'"></span>
             </button>
-            <p class="mt-3 mb-3">Repository is <b [innerText]="repository.allowAnonymousFileRead ? 'Open' : 'Closed'"></b>.</p>
+            <p class="d-flex align-items-center mt-3 mb-3">
+                <span class="me-1">Repository is</span>
+                <b class="me-1" [innerText]="repository.allowAnonymousFileRead ? 'Open' : 'Closed'"></b>
+                <mat-icon [class.text-success]="repository.allowAnonymousFileRead"
+                    [class.text-danger]="!repository.allowAnonymousFileRead"
+                    [innerText]="repository.allowAnonymousFileRead ? 'lock_open' : 'lock_outline'"></mat-icon>
+            </p>
             <small class="text-secondary">
-                By toggling this option you will enable everyone to download files from the
-                repository by specifying the repository id and the file id.
+                By enabling this option everyone will be able to download files from this
+                repository by specifying the repository id and file id, without any authentication.
             </small>
         </li>
     </ul>

@@ -5,7 +5,9 @@
             <a mat-button class="nav-item" *ngFor="let repository of repositoriesState.repositories"
                 [routerLink]="'/client/repository/' + repository.id" routerLinkActive="nav-link-active"
                 [title]="repository.name">
-                <mat-icon [innerText]="repository.allowAnonymousFileRead ? 'lock_open' : 'lock'"></mat-icon>
+                <mat-icon [class.text-success]="repository.allowAnonymousFileRead"
+                    [class.text-danger]="!repository.allowAnonymousFileRead"
+                    [innerText]="repository.allowAnonymousFileRead ? 'lock_open' : 'lock_outline'"></mat-icon>
                 <span>{{repository.name}}</span>
             </a>
 
