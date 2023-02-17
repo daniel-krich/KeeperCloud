@@ -13,19 +13,19 @@ export class MemberManageApiService {
     constructor(private httpClient: HttpClient, @Inject(BASE_URL) private baseUrl: string) { }
 
     public fetchAllMembers(repositoryId: string): Observable<RepositoryMemberInterface[]> {
-        return this.httpClient.get<RepositoryMemberInterface[]>(this.baseUrl + '/api/repositorymember/members', { params: { repositoryId: repositoryId } });
+        return this.httpClient.get<RepositoryMemberInterface[]>(this.baseUrl + `/api/repository/${repositoryId}/members`);
     }
 
     public createMember(repositoryId: string, repoMemberDto: RepositoryMemberCreateDtoInterface): Observable<RepositoryMemberInterface> {
-        return this.httpClient.post<RepositoryMemberInterface>(this.baseUrl + '/api/repositorymember', repoMemberDto, { params: { repositoryId: repositoryId } });
+        return this.httpClient.post<RepositoryMemberInterface>(this.baseUrl + `/api/repository/${repositoryId}/members`, repoMemberDto);
     }
 
     public updateMember(repositoryId: string, memberId: string, repoMemberDto: RepositoryMemberCreateDtoInterface): Observable<RepositoryMemberInterface> {
-        return this.httpClient.put<RepositoryMemberInterface>(this.baseUrl + '/api/repositorymember', repoMemberDto, { params: { repositoryId: repositoryId, memberId: memberId } });
+        return this.httpClient.put<RepositoryMemberInterface>(this.baseUrl + `/api/repository/${repositoryId}/members/${memberId}`, repoMemberDto);
     }
 
     public deleteMember(repositoryId: string, memberId: string): Observable<void> {
-        return this.httpClient.delete<void>(this.baseUrl + '/api/repositorymember', { params: { repositoryId: repositoryId, memberId: memberId } });
+        return this.httpClient.delete<void>(this.baseUrl + `/api/repository/${repositoryId}/members/${memberId}`);
     }
 
 }

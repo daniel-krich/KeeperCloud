@@ -9,15 +9,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Keeper.Server.Controllers
+namespace Keeper.Server.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthenticationController : ControllerBase
     {
         private readonly IJwtService _jwtService;
         private readonly IAuthService _authService;
-        public AuthController(IJwtService jwtService, IAuthService authService)
+        public AuthenticationController(IJwtService jwtService, IAuthService authService)
         {
             _jwtService = jwtService;
             _authService = authService;

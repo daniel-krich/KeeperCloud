@@ -21,7 +21,7 @@ export class RepositoryDataService {
     }
 
     public loadRepositories(batchOffset: number = 0): Observable<BatchWrapperInterface<RepoInterface>> {
-        return this.httpClient.get<BatchWrapperInterface<RepoInterface>>(this.baseUrl + '/api/repository/repositories-batch', {params: { batchOffset: batchOffset }});
+        return this.httpClient.get<BatchWrapperInterface<RepoInterface>>(this.baseUrl + '/api/repositories', {params: { offset: batchOffset }});
     }
 
     public createRepository(createModel: CreateRepositoryModel): Observable<RepoInterface> {

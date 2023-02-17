@@ -7,25 +7,25 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Keeper.Server.Controllers
+namespace Keeper.Server.Controllers.Api
 {
-    [Route("api/[controller]")]
+    [Route("api/repository/{repositoryId:guid}/members")]
     [ApiController]
     [Authorize]
-    public class RepositoryMemberController : ControllerBase
+    public class RepositoryMembersController : ControllerBase
     {
         private readonly IRepositoryApiMembersService _repoMembersService;
         private readonly IMapper _mapper;
 
-        public RepositoryMemberController(IRepositoryApiMembersService repoMembersService, IMapper mapper)
+        public RepositoryMembersController(IRepositoryApiMembersService repoMembersService, IMapper mapper)
         {
             _repoMembersService = repoMembersService;
             _mapper = mapper;
         }
 
 
-        [HttpGet("members")]
-        public async Task<IActionResult> RetrieveAllMembers(Guid repositoryId)
+        [HttpGet]
+        public async Task<IActionResult> GetAllMembers([FromRoute] Guid repositoryId)
         {
             UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
             if (user != null)
@@ -40,7 +40,7 @@ namespace Keeper.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateApiMember(Guid repositoryId, [FromBody] CreateOrUpdateApiMemberRequestDTO apiMemberRequest)
+        public async Task<IActionResult> PostApiMember([FromRoute] Guid repositoryId, [FromBody] CreateOrUpdateApiMemberRequestDTO apiMemberRequest)
         {
             UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
             if (user != null)
@@ -58,8 +58,8 @@ namespace Keeper.Server.Controllers
             return BadRequest();
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateApiMember(Guid repositoryId, Guid memberId, [FromBody] CreateOrUpdateApiMemberRequestDTO apiMemberRequest)
+        [HttpPut("{memberId:guid}")]
+        public async Task<IActionResult> PutApiMember([FromRoute] Guid repositoryId, [FromRoute] Guid memberId, [FromBody] CreateOrUpdateApiMemberRequestDTO apiMemberRequest)
         {
             UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
             if (user != null)
@@ -77,8 +77,8 @@ namespace Keeper.Server.Controllers
             return BadRequest();
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> DeleteApiMember(Guid repositoryId, Guid memberId)
+        [HttpDelete("{memberId:guid}")]
+        public async Task<IActionResult> DeleteApiMember([FromRoute] Guid repositoryId, [FromRoute] Guid memberId)
         {
             UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
             if (user != null)

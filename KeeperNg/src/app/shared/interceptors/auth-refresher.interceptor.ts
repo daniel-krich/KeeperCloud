@@ -17,10 +17,8 @@ export class AuthRefresherInterceptor implements HttpInterceptor {
 
     intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
         if(request.url.startsWith(this.baseUrl) || request.url.startsWith('/')) { // check domain to prevent token leak.
-
             return next.handle(request).pipe(
                 catchError((error) => {
-
                     if (error.status === 401) {
                         console.log("[Auth] Auth token invalidated, trying to get a brand new token...");
                         let finishedWithError = false;
@@ -34,13 +32,13 @@ export class AuthRefresherInterceptor implements HttpInterceptor {
                                 });
                                 return next.handle(newRequest);
                             }),
-                            catchError(refreshError => { // Retreive refresh token error will trigger logout and a redirect.
+                            catchError(() => { // Retreive refresh token error will trigger logout and a redirect.
                                 this.store.dispatch(signoutFinished());
                                 this.authService.removeJwtFromStorage();
                                 this.router.navigate(['/auth']);
                                 console.log("[Auth] Failed to get a new token, redirecting to auth.");
                                 finishedWithError = true;
-                                return throwError(() => refreshError);
+                                return EMPTY;
                             }),
                             finalize(() => {
                                 if(!finishedWithError) {
@@ -50,9 +48,10 @@ export class AuthRefresherInterceptor implements HttpInterceptor {
                             
                         );
                     }
-                    else if(error.status.toString().startsWith('4') && request.url.includes('/auth')) return throwError(() => of(this.authService.removeJwtFromStorage()));
-                    else return throwError(() => error);
-                    
+                    else if(error.status.toString().startsWith('4') && request.url.includes('/auth')) {
+                        this.authService.removeJwtFromStorage()
+                    }
+                    return EMPTY;
                 })
             );
         }

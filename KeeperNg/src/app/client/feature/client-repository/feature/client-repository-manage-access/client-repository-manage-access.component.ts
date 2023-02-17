@@ -27,7 +27,8 @@ import { toggleRepositoryAllowAnonymousFileReadBegin, toggleRepositoryAllowAnony
 export class ClientRepositoryManageAccessComponent {
 
     public repoId$: Observable<string | null> = this.route.parent!.parent!.paramMap.pipe(
-        map(x => x.get('repositoryId'))
+        map(x => x.get('repositoryId')),
+        filter(x => x !== null)
     );
 
     public repository$ = this.repoId$.pipe(
@@ -40,8 +41,8 @@ export class ClientRepositoryManageAccessComponent {
 
     private repositoryApiMembersMemory$: BehaviorSubject<RepositoryMemberInterface[]> = new BehaviorSubject<RepositoryMemberInterface[]>([]);
 
-    private repositoryApiCallMembers$: Observable<RepositoryMemberInterface[]> = this.repository$.pipe(
-        switchMap(x => this.memberManageApi.fetchAllMembers(x?.id!).pipe(
+    private repositoryApiCallMembers$: Observable<RepositoryMemberInterface[]> = this.repoId$.pipe(
+        switchMap(x => this.memberManageApi.fetchAllMembers(x!).pipe(
             tap(members => this.repositoryApiMembersMemory$.next(members))
         ))
     );

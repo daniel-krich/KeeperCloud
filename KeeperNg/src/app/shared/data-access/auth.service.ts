@@ -22,7 +22,7 @@ export class AuthService {
                 private localService: LocalStorageService) { }
 
     public authenticateViaCredentials(signin: SignInModel): Observable<JwtTokenDTOInterface> {
-        return this.httpClient.post<JwtTokenDTOInterface>(this.baseUrl + '/api/auth/sign-in', <SigninDTOInterface>{ email: signin.email, password: signin.password }).pipe(
+        return this.httpClient.post<JwtTokenDTOInterface>(this.baseUrl + '/api/authentication/sign-in', <SigninDTOInterface>{ email: signin.email, password: signin.password }).pipe(
             throwIfEmpty(() => new Error('Error while getting Jwt token')),
             tap(jwt => this.setJwtToStorage(jwt)),
             catchError(_ => {
@@ -32,7 +32,7 @@ export class AuthService {
     }
 
     public signUp(signUp: SignupModel): Observable<void> {
-        return this.httpClient.post<void>(this.baseUrl + '/api/auth/sign-up',
+        return this.httpClient.post<void>(this.baseUrl + '/api/authentication/sign-up',
             <SignupDTOInterface>{
                 email: signUp.email,
                 password: signUp.password,
@@ -42,7 +42,7 @@ export class AuthService {
     }
 
     public signOut(): Observable<void> {
-        return this.httpClient.get<void>(this.baseUrl + '/api/auth/exit').pipe(
+        return this.httpClient.get<void>(this.baseUrl + '/api/authentication/exit').pipe(
             tap(_ => this.removeJwtFromStorage())
         );
     }
@@ -50,7 +50,7 @@ export class AuthService {
     public refreshTokens(): Observable<JwtTokenDTOInterface> {
         let refreshToken = this.getJwtFromStorage()?.refreshToken;
         if (refreshToken) {
-            return this.httpClient.post<JwtTokenDTOInterface>(this.baseUrl + '/api/auth/refresh', { RefreshToken: refreshToken }).pipe(
+            return this.httpClient.post<JwtTokenDTOInterface>(this.baseUrl + '/api/authentication/refresh', { RefreshToken: refreshToken }).pipe(
                 throwIfEmpty(() => new Error('Refresh token is missing'))
             );
         }
@@ -59,7 +59,7 @@ export class AuthService {
 
     public authenticateViaBearer(): Observable<UserInterface> {
         if (!this.getJwtFromStorage()) return throwError(() => new Error('Jwt is missing'));
-        return this.httpClient.get(this.baseUrl + '/api/auth/validate').pipe(
+        return this.httpClient.get(this.baseUrl + '/api/authentication/validate').pipe(
             switchMap(_ => {
                 let user = this.getUserFromStorage();
                 if (user) return of(user);

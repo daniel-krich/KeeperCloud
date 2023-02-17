@@ -10,26 +10,23 @@ using Keeper.Server.Models;
 using Keeper.Server.Services;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using SharpCompress.Common;
-using SharpCompress.Writers;
 
-namespace Keeper.Server.Controllers
+namespace Keeper.Server.Controllers.Api
 {
-    [Route("api/[controller]")]
+    [Route("api/repository/{repositoryId:guid}/[controller]")]
     [ApiController]
     [Authorize]
-    public class FileController : ControllerBase
+    public class StorageController : ControllerBase
     {
         private readonly IRepositoriesMaster _repoMaster;
         private readonly IRepositoryService _repositoryService;
         private readonly IMapper _mapper;
-        private readonly ILogger<FileController> _logger;
+        private readonly ILogger<StorageController> _logger;
 
-        public FileController(IRepositoriesMaster repoMaster, IRepositoryService repositoryService, IMapper mapper, ILogger<FileController> logger)
+        private const int _batchTakeRepositoryFilesLimit = 200;
+
+        public StorageController(IRepositoriesMaster repoMaster, IRepositoryService repositoryService, IMapper mapper, ILogger<StorageController> logger)
         {
             _repoMaster = repoMaster;
             _repositoryService = repositoryService;
@@ -37,9 +34,27 @@ namespace Keeper.Server.Controllers
             _logger = logger;
         }
 
+        [HttpGet("records")]
+        public async Task<IActionResult> GetRepositoryFilesBatched([FromRoute] Guid repositoryId, int offset = 0, int take = _batchTakeRepositoryFilesLimit)
+        {
+            if (offset < 0)
+                offset = 0;
+
+            if (take > _batchTakeRepositoryFilesLimit || take < 0)
+                take = _batchTakeRepositoryFilesLimit;
+
+            UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
+            if (user != null)
+            {
+                BatchWrapperModel<FileModel> filesBatch = await _repositoryService.GetRepositoryFilesBatch(user.Id, repositoryId, offset, take);
+                return Ok(filesBatch);
+            }
+            return BadRequest();
+        }
+
         [HttpPost("upload")]
         [DisableRequestSizeLimit]
-        public async Task<IActionResult> UploadFiles(Guid repositoryId, [FromForm] IEnumerable<IFormFile> files)
+        public async Task<IActionResult> UploadFiles([FromRoute] Guid repositoryId, [FromForm] IEnumerable<IFormFile> files)
         {
             UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
             if (user is not null)
@@ -57,8 +72,8 @@ namespace Keeper.Server.Controllers
             return BadRequest();
         }
 
-        [HttpPost("delete")]
-        public async Task<IActionResult> DeleteFiles(Guid repositoryId, [FromBody] IEnumerable<Guid> fileIds)
+        [HttpPost("delete-many")]
+        public async Task<IActionResult> DeleteFiles([FromRoute] Guid repositoryId, [FromBody] IEnumerable<Guid> fileIds)
         {
             UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
             if (user is not null)
@@ -72,8 +87,8 @@ namespace Keeper.Server.Controllers
         }
 
 
-        [HttpPost("download")]
-        public async Task DownloadFiles(Guid repositoryId, [FromBody] IEnumerable<Guid> fileIds)
+        [HttpPost("download-many")]
+        public async Task DownloadFiles([FromRoute] Guid repositoryId, [FromBody] IEnumerable<Guid> fileIds)
         {
             UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
             if (user is not null)
