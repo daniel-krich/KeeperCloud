@@ -4,7 +4,8 @@
         <ng-container *ngIf="repositoriesState.repositories.length > 0; else noReposTemplate">
             <a mat-button class="nav-item" *ngFor="let repository of repositoriesState.repositories"
                 [routerLink]="'/client/repository/' + repository.id" routerLinkActive="nav-link-active"
-                [title]="repository.name">
+                [matTooltip]="repository.name"
+                matTooltipShowDelay="500">
                 <mat-icon [class.text-success]="repository.allowAnonymousFileRead"
                     [class.text-danger]="!repository.allowAnonymousFileRead"
                     [innerText]="repository.allowAnonymousFileRead ? 'lock_open' : 'lock_outline'"></mat-icon>

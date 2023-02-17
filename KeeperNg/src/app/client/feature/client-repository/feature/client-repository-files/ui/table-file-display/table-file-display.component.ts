@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Input, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { RepoFileInterface } from 'src/app/shared/interfaces/repo-file.interface';
 import { RepoInterface } from 'src/app/shared/interfaces/repo.interface';
 

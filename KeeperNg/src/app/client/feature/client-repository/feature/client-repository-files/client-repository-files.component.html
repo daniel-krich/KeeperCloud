@@ -3,11 +3,13 @@
 
         <div class="d-flex flex-column p-0 h-100" fadeInContent *ngIf="repositoryFileState.files != null; else loadingTemplate">
             
-
             <app-search-file-input (searchSubmit)="onSearchSubmit($event)" #searchFileInput></app-search-file-input>
+            
+            <div class="d-flex justify-content-end m-2 mt-0">
+                <button mat-raised-button color="accent" (click)="triggerFileUpload.emit()">Upload file(s)...</button>
+            </div>
 
             <mat-divider></mat-divider>
-            <!--<button mat-flat-button color="primary" class="w-100 rounded-0" (click)="triggerFileUpload.emit()">Select files for upload</button>-->
             
             <app-file-upload-input class="d-block h-100" [triggerUpload]="triggerFileUpload" (filesChange)="onFilesChangeUpload($event, repository.id)">
                 <app-table-file-display class="d-block h-100" [files]="(repositoryFiles$ | async)!"

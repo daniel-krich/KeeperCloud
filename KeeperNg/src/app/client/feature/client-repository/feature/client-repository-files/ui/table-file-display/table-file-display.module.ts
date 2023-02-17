@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { ContextMenuModule } from 'src/app/shared/ui/context-menu/context-menu.module';
 import { ConvertByteSizeToStringModule } from 'src/app/shared/pipes/convert-byte-size-to-string/convert-byte-size-to-string.module';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import { MatDividerModule } from '@angular/material/divider';
 
 
 @NgModule({
@@ -22,17 +23,11 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
     MatButtonModule,
     ConvertByteSizeToStringModule,
     ScrollingModule,
+    MatDividerModule,
     MatMenuModule
   ],
   exports: [
-    TableFileDisplayComponent,
-    ContextMenuModule,
-    MatTableModule,
-    MatIconModule,
-    MatButtonModule,
-    ConvertByteSizeToStringModule,
-    ScrollingModule,
-    MatMenuModule
+    TableFileDisplayComponent
   ]
 })
 export class TableFileDisplayModule { }

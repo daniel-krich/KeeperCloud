@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ContextMenuComponent } from './context-menu.component';
 import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
 
 
 
@@ -11,7 +12,8 @@ import { MatButtonModule } from '@angular/material/button';
   ],
   imports: [
     CommonModule,
-    MatButtonModule
+    MatButtonModule,
+    MatMenuModule
   ],
   exports: [ContextMenuComponent]
 })

@@ -14,6 +14,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { ConfirmDialogModule } from 'src/app/shared/ui/confirm-dialog/confirm-dialog.module';
 import { LoadingCenteredModule } from 'src/app/shared/ui/loading-centered/loading-centered.module';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
 
 
 @NgModule({
@@ -26,6 +27,7 @@ import { MatDividerModule } from '@angular/material/divider';
     NgxSkeletonLoaderModule,
     FadeInContentModule,
     MatButtonModule,
+    MatIconModule,
     LoadingCenteredModule,
     MatDividerModule,
     FileUploadInputModule,
