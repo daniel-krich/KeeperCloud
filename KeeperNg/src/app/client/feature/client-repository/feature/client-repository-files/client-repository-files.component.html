@@ -19,7 +19,7 @@
 
             <ng-container *ngIf="repoFileBatchInfo$ | async as repoFileBatchInfo">
                 <div *ngIf="repoFileBatchInfo.canLoadMore" class="d-flex justify-content-center bg-white">
-                    <button mat-button class="mt-3 mb-3" color="primary" (click)="onLoadMoreFiles(repository.id)">
+                    <button mat-button [appAsyncButton]="[this, onLoadMoreFiles, [repository.id]]" class="mt-3 mb-3" color="primary">
                         Load more ({{repoFileBatchInfo.HowMuchLeft}})
                     </button>
                 </div>

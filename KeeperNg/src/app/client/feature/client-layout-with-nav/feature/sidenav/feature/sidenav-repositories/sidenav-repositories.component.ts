@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { map } from 'rxjs';
+import { first, map, Observable } from 'rxjs';
 import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
-import { loadRepoBatchNext } from 'src/app/shared/data-access/state/repository/repository.actions';
+import { loadRepoBatchError, loadRepoBatchNext, loadRepoBatchSuccess } from 'src/app/shared/data-access/state/repository/repository.actions';
 import { selectRepoStateDesc } from 'src/app/shared/data-access/state/repository/repository.selectors';
 
 @Component({
@@ -21,10 +22,16 @@ export class SidenavRepositoriesComponent {
     );
 
     constructor(private store: Store<AppStateInterface>,
+                private actions: Actions,
                 public router: Router) { }
     
 
-    public loadMoreRepositories(): void {
+    public loadMoreRepositories(): Observable<any> {
         this.store.dispatch(loadRepoBatchNext());
+
+        return this.actions.pipe(
+            ofType(loadRepoBatchSuccess, loadRepoBatchError),
+            first()
+        );
     }
 }

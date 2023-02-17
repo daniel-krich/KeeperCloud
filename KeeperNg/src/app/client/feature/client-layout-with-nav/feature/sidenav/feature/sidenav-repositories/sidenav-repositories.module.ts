@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { RouterModule } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { AsyncButtonModule } from 'src/app/shared/directives/async-button/async-button.module';
 
 
 
@@ -21,6 +22,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
         MatTooltipModule,
         MatIconModule,
         NgxSkeletonLoaderModule,
+        AsyncButtonModule,
         MatListModule
     ],
     exports: [

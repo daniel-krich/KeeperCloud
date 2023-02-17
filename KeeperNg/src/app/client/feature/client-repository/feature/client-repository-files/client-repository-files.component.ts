@@ -1,13 +1,14 @@
 import { Component, OnDestroy, ViewChild, ChangeDetectionStrategy, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { BehaviorSubject, combineLatest, concatMap, filter, first, map, Observable, Subscription, switchMap, tap, throwIfEmpty, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, combineLatest, concatMap, delay, filter, first, map, Observable, of, Subject, Subscription, switchMap, takeUntil, tap, throwIfEmpty, withLatestFrom } from 'rxjs';
 import { RepositoryDataService } from 'src/app/client/data-access/repository-data.service';
 import { RepositoryFilesDataService } from 'src/app/client/data-access/repository-files-data.service';
 import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
 import { downloadBegin, uploadBegin } from 'src/app/shared/data-access/state/file-transfer/file-transfer.actions';
-import { deleteRepoFilesBegin, loadRepoFilesBatchInit, loadRepoFilesBatchNext } from 'src/app/shared/data-access/state/repositories-files/repositories-files.actions';
+import { deleteRepoFilesBegin, loadRepoFilesBatchError, loadRepoFilesBatchInit, loadRepoFilesBatchNext, loadRepoFilesBatchSuccess, loadRepoFilesBatchSuccessEmpty } from 'src/app/shared/data-access/state/repositories-files/repositories-files.actions';
 import { selectRepoFilesDescById, selectRepoFilesInterfaceByObservableId, selectRepoFileStateId } from 'src/app/shared/data-access/state/repositories-files/repositories-files.selectors';
 import { deleteRepositoryBegin, loadRepoStart, updateRepositoryBegin } from 'src/app/shared/data-access/state/repository/repository.actions';
 import { selectRepoById } from 'src/app/shared/data-access/state/repository/repository.selectors';
@@ -72,15 +73,18 @@ export class ClientRepositoryFilesComponent implements OnDestroy {
         map(([repository, repositoryId]) => ({ repository, repositoryId }))
     );
 
-    public repositoryListenSubscribe?: Subscription;
+    public destroyed$: Subject<void> = new Subject<void>();
 
     constructor(private route: ActivatedRoute,
         private router: Router,
+        private actions: Actions,
         private repoService: RepositoryDataService,
         private fileRepoService: RepositoryFilesDataService,
         private dialog: MatDialog,
         private store: Store<AppStateInterface>) {
-        this.repositoryListenSubscribe = this.repoId$.subscribe(x => 
+        this.repoId$.pipe(
+            takeUntil(this.destroyed$)
+        ).subscribe(x => 
             this.store.dispatch(loadRepoFilesBatchInit({ repositoryId: x! }))
         );
     }
@@ -115,8 +119,13 @@ export class ClientRepositoryFilesComponent implements OnDestroy {
         }
     }
 
-    onLoadMoreFiles(repositoryId: string): void {
+    onLoadMoreFiles(repositoryId: string): Observable<any> {
         this.store.dispatch(loadRepoFilesBatchNext({ repositoryId: repositoryId }));
+
+        return this.actions.pipe(
+            ofType(loadRepoFilesBatchSuccess, loadRepoFilesBatchSuccessEmpty, loadRepoFilesBatchError),
+            first()
+        );
     }
 
     onSearchSubmit(search: string): void {
@@ -124,7 +133,7 @@ export class ClientRepositoryFilesComponent implements OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.repositoryListenSubscribe?.unsubscribe();
+        this.destroyed$.next();
     }
 
 }

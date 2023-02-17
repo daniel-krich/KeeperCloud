@@ -15,6 +15,7 @@ import { ConfirmDialogModule } from 'src/app/shared/ui/confirm-dialog/confirm-di
 import { LoadingCenteredModule } from 'src/app/shared/ui/loading-centered/loading-centered.module';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
+import { AsyncButtonModule } from 'src/app/shared/directives/async-button/async-button.module';
 
 
 @NgModule({
@@ -35,7 +36,8 @@ import { MatIconModule } from '@angular/material/icon';
     ConfirmDialogModule,
     SearchFileInputModule,
     TableFileDisplayModule,
-    ClientRepositoryFilesRoutingModule
+    ClientRepositoryFilesRoutingModule,
+    AsyncButtonModule
   ]
 })
 export class ClientRepositoryFilesModule { }

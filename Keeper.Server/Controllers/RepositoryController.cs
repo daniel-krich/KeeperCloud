@@ -17,7 +17,7 @@ namespace Keeper.Server.Controllers
         private readonly IRepositoryService _repoService;
         private readonly IMapper _mapper;
 
-        private const int _batchTakeRepositoryLimit = 50;
+        private const int _batchTakeRepositoryLimit = 20;
 
         private const int _batchTakeRepositoryFilesLimit = 200;
 
