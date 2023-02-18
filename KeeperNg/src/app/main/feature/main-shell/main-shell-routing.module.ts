@@ -8,19 +8,23 @@ const routes: Routes = [{
     children: [
         { 
             path: 'home',
-            loadChildren: () => import('../home/feature/home-page.module').then(x => x.HomePageModule)
+            loadChildren: () => import('../home/feature/home-page.module').then(x => x.HomePageModule),
+            title: 'Home'
         },
         { 
             path: 'pricing',
-            loadChildren: () => import('../pricing/feature/pricing-page.module').then(x => x.PricingPageModule)
+            loadChildren: () => import('../pricing/feature/pricing-page.module').then(x => x.PricingPageModule),
+            title: 'Pricing'
         },
         { 
             path: 'developers',
-            loadChildren: () => import('../developers/feature/developers-page.module').then(m => m.DevelopersPageModule)
+            loadChildren: () => import('../developers/feature/developers-page.module').then(m => m.DevelopersPageModule),
+            title: 'Developers'
         },
         {
             path: 'contact',
-            loadChildren: () => import('../contact/feature/contact-page.module').then(m => m.ContactPageModule)
+            loadChildren: () => import('../contact/feature/contact-page.module').then(m => m.ContactPageModule),
+            title: 'Contact'
         },
         {
             path: 'auth',

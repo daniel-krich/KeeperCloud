@@ -6,7 +6,7 @@ import { RepositoriesInitResolver } from './shared/resolvers/repositories-init.r
 const routes: Routes = [
     {
         path: '',
-        loadChildren: () => import('./main/feature/main-shell/main-shell.module').then(m => m.MainShellModule),
+        loadChildren: () => import('./main/feature/main-shell/main-shell.module').then(m => m.MainShellModule)
     },
     {
         path: 'client',
@@ -14,7 +14,11 @@ const routes: Routes = [
         canLoad: [IsAuthenticatedGuard],
         resolve: [RepositoriesInitResolver]
     },
-    { path: '**', loadChildren: () => import('./not-found/feature/not-found-page.module').then(m => m.NotFoundPageModule) }
+    {
+        path: '**',
+        loadChildren: () => import('./not-found/feature/not-found-page.module').then(m => m.NotFoundPageModule),
+        title: '404'
+    }
 ];
 
 @NgModule({

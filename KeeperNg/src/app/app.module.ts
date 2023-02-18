@@ -20,10 +20,14 @@ import { RepositoryFilesEffects } from './shared/data-access/state/repositories-
 import { fileTransferReducer } from './shared/data-access/state/file-transfer/file-transfer.reducers';
 import { FileTransferEffects } from './shared/data-access/state/file-transfer/file-transfer.effects';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-
 import { environment } from 'src/environments/environment';
+import { PageTitleStrategy } from './shared/data-access/page-title.strategy';
+import { TitleStrategy } from '@angular/router';
 
 export const BASE_URL = new InjectionToken<string>('base_url');
+export const APP_NAME = new InjectionToken<string>('app_name');
+
+const AppName = 'KeeperCloud';
 
 @NgModule({
     declarations: [
@@ -55,8 +59,13 @@ export const BASE_URL = new InjectionToken<string>('base_url');
     ],
     providers: [
         { provide: BASE_URL, useValue: environment.baseUrl },
+        { provide: APP_NAME, useValue: AppName },
         { provide: HTTP_INTERCEPTORS, useClass: AuthBearerInterceptor, multi: true },
-        { provide: HTTP_INTERCEPTORS, useClass: AuthRefresherInterceptor, multi: true }
+        { provide: HTTP_INTERCEPTORS, useClass: AuthRefresherInterceptor, multi: true },
+        {
+            provide: TitleStrategy,
+            useClass: PageTitleStrategy
+        }
     ],
     bootstrap: [AppComponent]
 })

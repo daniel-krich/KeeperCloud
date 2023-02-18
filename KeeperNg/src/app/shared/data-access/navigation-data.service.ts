@@ -4,9 +4,7 @@ import { Injectable } from '@angular/core';
     providedIn: 'root'
 })
 export class NavigationDataService {
-
-    public readonly menuTitle: string = 'KeeperCloud';
-
+    
     public readonly commonLinks: { path: string, icon: string, label: string }[] = [
         {
             path: '/home',

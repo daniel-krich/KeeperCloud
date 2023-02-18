@@ -12,7 +12,8 @@ const routes: Route[] = [
                 path: '',
                 loadChildren: () => import('../client-main-page/client-main-page.module').then(m => m.ClientMainPageModule),
                 canActivate: [IsAuthenticatedGuard],
-                pathMatch: 'full'
+                pathMatch: 'full',
+                title: 'Client / Main'
             },
             {
                 path: 'repository',
@@ -23,11 +24,13 @@ const routes: Route[] = [
                 path: 'files',
                 loadChildren: () => import('../client-files-page/client-files-page.module').then(m => m.ClientFilesPageModule),
                 canActivate: [IsAuthenticatedGuard],
+                title: 'Client / Unknown'
             },
             {
                 path: 'settings',
                 loadChildren: () => import('../client-settings-page/client-settings-page.module').then(m => m.ClientSettingsPageModule),
                 canActivate: [IsAuthenticatedGuard],
+                title: 'Client / Settings'
             }
         ]
     },

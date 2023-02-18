@@ -14,13 +14,14 @@ const routes: Routes = [
                 path: '',
                 loadChildren: () => import('../client-repository-files/client-repository-files.module').then(m => m.ClientRepositoryFilesModule),
                 canActivate: [IsAuthenticatedGuard],
-                //resolve: [RepositoryWithFilesResolver],
-                pathMatch: 'full'
+                pathMatch: 'full',
+                title: 'Client / Files'
             },
             {
                 path: 'manage-access',
                 loadChildren: () => import('../client-repository-manage-access/client-repository-manage-access.module').then(m => m.ClientRepositoryManageAccessModule),
-                canActivate: [IsAuthenticatedGuard]
+                canActivate: [IsAuthenticatedGuard],
+                title: 'Client / Manage access'
             }
         ],
         resolve: [RepositoryResolver]

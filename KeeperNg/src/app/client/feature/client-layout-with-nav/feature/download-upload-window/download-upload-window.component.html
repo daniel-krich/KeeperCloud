@@ -9,7 +9,10 @@
         <ng-container *ngIf="downloadState$ | async as downloadState">
             <div class="body" *ngIf="downloadState.files.length > 0">
                 <div class="d-flex align-items-center justify-content-between mb-2">
-                    <span>Downloading {{downloadState.files.length}} file(s) ({{downloadState.files | convertFilesSizeToString}})...</span>
+                    <div class="d-flex flex-column">
+                        <div>Downloading {{downloadState.files.length}} file(s)...</div>
+                        <small class="ms-1 text-secondary">({{downloadState.files | convertRepoFilesSizeWithProgressToString: downloadState.progress}})</small>
+                    </div>
                     <mat-icon class="success-color" *ngIf="downloadState.status == 'done'">done</mat-icon>
                     <mat-icon class="error-color" *ngIf="downloadState.status == 'error'">error</mat-icon>
                 </div>
@@ -22,7 +25,10 @@
         <ng-container *ngIf="uploadState$ | async as uploadState">
             <div class="body" *ngIf="uploadState.files.length > 0">
                 <div class="d-flex align-items-center justify-content-between mb-2">
-                    <span>Uploading {{uploadState.files.length}} file(s) ({{uploadState.files | convertUploadFilesSizeToString}})...</span>
+                    <div class="d-flex flex-column">
+                        <div>Uploading {{uploadState.files.length}} file(s)...</div>
+                        <small class="ms-1 text-secondary">({{uploadState.files | convertFilesSizeWithProgressToString: uploadState.progress}})</small>
+                    </div>
                     <mat-icon class="success-color" *ngIf="uploadState.status == 'done'">done</mat-icon>
                     <mat-icon class="error-color" *ngIf="uploadState.status == 'error'">error</mat-icon>
                 </div>

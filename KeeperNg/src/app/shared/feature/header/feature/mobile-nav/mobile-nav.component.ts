@@ -1,9 +1,10 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, Event as NavigationEvent } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
+import { APP_NAME } from 'src/app/app.module';
 import { NavigationDataService } from 'src/app/shared/data-access/navigation-data.service';
 import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
 import { signoutBegin } from 'src/app/shared/data-access/state/authentication/authentication.actions';
@@ -41,7 +42,8 @@ export class MobileNavComponent implements OnInit, OnDestroy {
     constructor(public navData: NavigationDataService,
                 private store: Store<AppStateInterface>,
                 private snackBar: MatSnackBar,
-                private router: Router) { }
+                private router: Router,
+                @Inject(APP_NAME) public readonly appName: string) { }
     
 
     ngOnInit(): void {

@@ -8,12 +8,14 @@ const routes: Route[] = [
     {
         path: 'sign-in',
         loadChildren: () => import('../sign-in-page/sign-in-page.module').then(m => m.SignInPageModule),
-        canActivate: [IsGuestGuard]
+        canActivate: [IsGuestGuard],
+        title: 'Sign-in'
     },
     {
         path: 'sign-up',
         loadChildren: () => import('../sign-up-page/sign-up-page.module').then(m => m.SignUpPageModule),
-        canActivate: [IsGuestGuard]
+        canActivate: [IsGuestGuard],
+        title: 'Sign-up'
     },
     {
         path: '',

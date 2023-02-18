@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Store } from '@ngrx/store';
+import { APP_NAME } from 'src/app/app.module';
 import { NavigationDataService } from 'src/app/shared/data-access/navigation-data.service';
 import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
 import { signoutBegin } from 'src/app/shared/data-access/state/authentication/authentication.actions';
@@ -18,7 +19,8 @@ export class DesktopNavComponent {
 
     constructor(public navData: NavigationDataService,
                 private store: Store<AppStateInterface>,
-                private snackBar: MatSnackBar) { }
+                private snackBar: MatSnackBar,
+                @Inject(APP_NAME) public readonly appName: string) { }
 
     public logout(): void {
         this.store.dispatch(signoutBegin());
