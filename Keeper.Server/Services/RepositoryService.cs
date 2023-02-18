@@ -19,7 +19,8 @@ namespace Keeper.Server.Services
     {
         Task<RepositoryExtendedModel?> CreateRepository(Guid userId, CreateRepositoryRequestDTO request);
         Task<BatchWrapperModel<RepositoryExtendedModel>> GetRepositoriesBatch(Guid userId, int batchOffset, int batchCountLimit);
-        Task<RepositoryExtendedModel?> GetRepository(Guid userId, Guid repositoryId);
+        Task<RepositoryEntity?> GetRepository(Guid repositoryId);
+        Task<RepositoryExtendedModel?> GetRepositoryByUser(Guid userId, Guid repositoryId);
         Task<BatchWrapperModel<FileModel>> GetRepositoryFilesBatch(Guid userId, Guid repositoryId, int batchOffset, int batchCountLimit);
         Task<(FileEntity fileEntity, IRepositoryFile? file)?> GetFileAccessor(Guid userId, Guid repositoryId, Guid fileId);
         Task<IEnumerable<FileStreamWithMetaModel>> GetFilesReadStreams(Guid userId, Guid repositoryId, IEnumerable<Guid> fileIds);
@@ -183,11 +184,20 @@ namespace Keeper.Server.Services
             }
         }
 
-        public async Task<RepositoryExtendedModel?> GetRepository(Guid userId, Guid repositoryId)
+        public async Task<RepositoryEntity?> GetRepository(Guid repositoryId)
         {
             using (var context = _keeperFactory.CreateDbContext())
             {
-                var repositoryFragments = await (from repo in context.Repositories.Include(x => x.Files)
+                var repository = await context.Repositories.FindAsync(repositoryId);
+                return repository;
+            }
+        }
+
+        public async Task<RepositoryExtendedModel?> GetRepositoryByUser(Guid userId, Guid repositoryId)
+        {
+            using (var context = _keeperFactory.CreateDbContext())
+            {
+                var repositoryFragments = await (from repo in context.Repositories
                                                  where repo.OwnerId == userId && repo.Id == repositoryId
                                                  select new
                                                  {

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Keeper.Server.Controllers.Api
+namespace Keeper.Server.Controllers.WebApi
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -29,7 +29,7 @@ namespace Keeper.Server.Controllers.Api
             UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
             if (user != null)
             {
-                RepositoryModel? repositoriesBatch = await _repoService.GetRepository(user.Id, repositoryId);
+                RepositoryModel? repositoriesBatch = await _repoService.GetRepositoryByUser(user.Id, repositoryId);
                 if (repositoriesBatch != null) return Ok(repositoriesBatch);
                 else return NotFound();
             }

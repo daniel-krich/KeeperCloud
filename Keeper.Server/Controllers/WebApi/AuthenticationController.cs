@@ -1,7 +1,7 @@
 ﻿using Keeper.DataAccess.Entities;
 using Keeper.DataAccess.Factories;
 using Keeper.Server.DTOs;
-using Keeper.Server.JwtSecurity;
+using Keeper.Server.JwtAuth;
 using Keeper.Server.Services;
 using Keeper.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Keeper.Server.Controllers.Api
+namespace Keeper.Server.Controllers.WebApi
 {
     [Route("api/[controller]")]
     [ApiController]

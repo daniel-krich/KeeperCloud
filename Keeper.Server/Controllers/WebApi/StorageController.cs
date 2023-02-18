@@ -12,7 +12,7 @@ using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Keeper.Server.Controllers.Api
+namespace Keeper.Server.Controllers.WebApi
 {
     [Route("api/repository/{repositoryId:guid}/[controller]")]
     [ApiController]

@@ -1,4 +1,4 @@
-﻿namespace Keeper.Server.JwtSecurity
+﻿namespace Keeper.Server.JwtAuth
 {
     public class JwtAccessToken
     {

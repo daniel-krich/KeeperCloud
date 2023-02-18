@@ -1,7 +1,7 @@
 ﻿using Keeper.DataAccess.Entities;
 using Keeper.DataAccess.Factories;
 using Keeper.Server.DTOs;
-using Keeper.Server.JwtSecurity;
+using Keeper.Server.JwtAuth;
 using Keeper.Server.Utils;
 using Microsoft.EntityFrameworkCore;
 

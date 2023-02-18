@@ -1,8 +1,9 @@
 using Keeper.DataAccess.Context;
 using Keeper.DataAccess.Extensions;
 using Keeper.RepositoriesMaster.Extensions;
+using Keeper.Server.MemberKeyAuth;
 using Keeper.Server.HostedServices;
-using Keeper.Server.JwtSecurity;
+using Keeper.Server.JwtAuth;
 using Keeper.Server.Services;
 using Mapster;
 using MapsterMapper;
@@ -85,9 +86,9 @@ try
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    }).AddJwtBearer(options =>
+    })
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
     {
-
         options.RequireHttpsMetadata = true;
         options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
@@ -101,7 +102,8 @@ try
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"])),
             ClockSkew = TimeSpan.Zero
         };
-    });
+    })
+    .AddScheme<MemberKeyAuthenticationOptions, MemberKeyAuthenticationHandler>(MemberKeyAuthenticationOptions.DefaultScheme, options => { });
 
     var app = builder.Build();
 

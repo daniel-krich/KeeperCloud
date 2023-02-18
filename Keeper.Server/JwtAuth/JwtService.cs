@@ -14,7 +14,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
-namespace Keeper.Server.JwtSecurity
+namespace Keeper.Server.JwtAuth
 {
     public interface IJwtService
     {
