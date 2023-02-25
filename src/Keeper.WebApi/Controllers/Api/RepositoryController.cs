@@ -5,7 +5,7 @@ using Keeper.WebApi.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Keeper.WebApi.Controllers.WebApi;
+namespace Keeper.WebApi.Controllers.Api;
 
 [Route("api/[controller]")]
 [ApiController]

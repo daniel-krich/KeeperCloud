@@ -6,7 +6,7 @@ using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Keeper.WebApi.Controllers.WebApi;
+namespace Keeper.WebApi.Controllers.Api;
 
 [Route("api/repository/{repositoryId:guid}/members")]
 [ApiController]

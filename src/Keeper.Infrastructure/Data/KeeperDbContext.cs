@@ -1,7 +1,7 @@
 ﻿using Keeper.Application.Interfaces;
 using Keeper.Domain.Entities;
+using Keeper.Infrastructure.Data.Interceptors;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace Keeper.Infrastructure.Data;
 
@@ -16,8 +16,12 @@ public class KeeperDbContext : DbContext, IKeeperDbContext
     public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
 #nullable enable
 
-    public KeeperDbContext(DbContextOptions options): base(options) { }
+    public KeeperDbContext(DbContextOptions<KeeperDbContext> options) : base(options) { }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.AddInterceptors(new LastModifiedInterceptor());
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

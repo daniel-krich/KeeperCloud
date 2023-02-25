@@ -23,27 +23,27 @@ public static class ConfigureServices
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-
-        services.AddScoped<LastModifiedInterceptor>();
-
         if (configuration.GetValue<bool>("UseInMemoryDatabase"))
         {
-            services.AddSingleton<IKeeperDbContextFactory, KeeperDbContextFactory>(provider =>
-                new KeeperDbContextFactory(new DbContextOptionsBuilder().UseInMemoryDatabase("KeeperDb").Options)
+            services.AddSingleton<DbContextOptions<KeeperDbContext>>(provider =>
+                new DbContextOptionsBuilder<KeeperDbContext>().UseInMemoryDatabase("KeeperDb").Options
             );
         }
         else
         {
-            services.AddSingleton<IKeeperDbContextFactory, KeeperDbContextFactory>(provider =>
-                new KeeperDbContextFactory(new DbContextOptionsBuilder().UseSqlServer(configuration.GetConnectionString("KeeperDb"), b => b.MigrationsAssembly(typeof(KeeperDbContext).Assembly.FullName)).Options)
+            services.AddSingleton<DbContextOptions<KeeperDbContext>>(provider =>
+                new DbContextOptionsBuilder<KeeperDbContext>().UseSqlServer(configuration.GetConnectionString("KeeperDb")!, b => b.MigrationsAssembly(typeof(KeeperDbContext).Assembly.FullName)).Options
             );
         }
+
+        services.AddSingleton<IKeeperDbContextFactory, KeeperDbContextFactory>();
 
         services.AddHostedService<AutomatedTimingActionHostedService>();
 
         services.AddSingleton<IJwtService, JwtService>();
         services.AddSingleton<IAuthService, AuthService>();
         services.AddSingleton<IRepositoryService, RepositoryService>();
+        services.AddSingleton<IRepositoryActivitiesService, RepositoryActivitiesService>();
         services.AddSingleton<IRepositoryApiMembersService, RepositoryApiMembersService>();
 
         services.AddRepositoriesAccess(options =>

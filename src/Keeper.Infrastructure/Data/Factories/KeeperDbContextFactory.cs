@@ -1,4 +1,5 @@
 ﻿using Keeper.Application.Interfaces;
+using Keeper.Infrastructure.Data.Interceptors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -6,8 +7,8 @@ namespace Keeper.Infrastructure.Data.Factories;
 
 public class KeeperDbContextFactory : IKeeperDbContextFactory
 {
-    private readonly DbContextOptions _options;
-    public KeeperDbContextFactory(DbContextOptions options)
+    private readonly DbContextOptions<KeeperDbContext> _options;
+    public KeeperDbContextFactory(DbContextOptions<KeeperDbContext> options)
     {
         _options = options;
     }

@@ -4,7 +4,7 @@ using Keeper.Application.Security.Jwt.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Keeper.WebApi.Controllers.WebApi;
+namespace Keeper.WebApi.Controllers.Api;
 
 [Route("api/[controller]")]
 [ApiController]
