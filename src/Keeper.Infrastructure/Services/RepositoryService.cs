@@ -2,6 +2,7 @@
 using Keeper.Application.Interfaces;
 using Keeper.Application.Models;
 using Keeper.Domain.Entities;
+using Keeper.Domain.Enums;
 using Keeper.Domain.Models;
 using Keeper.RepositoriesAccess.Enums;
 using Keeper.RepositoriesAccess.Interfaces;
@@ -17,7 +18,7 @@ public class RepositoryService : IRepositoryService
     private readonly IKeeperDbContextFactory _keeperFactory;
     private readonly IRepositoriesAccessor _repositoriesAccessor;
     private readonly IMapper _mapper;
-    public RepositoryService(IKeeperDbContextFactory keeperFactory, IRepositoriesAccessor repositoriesAccessor, IMapper mapper)
+    public RepositoryService(IKeeperDbContextFactory keeperFactory, IRepositoriesAccessor repositoriesAccessor,  IMapper mapper)
     {
         _keeperFactory = keeperFactory;
         _repositoriesAccessor = repositoriesAccessor;
@@ -33,6 +34,7 @@ public class RepositoryService : IRepositoryService
                 var repo = _repositoriesAccessor.CreateRepository(userId);
                 if (repo != null)
                 {
+                    
                     var repoEntity = new RepositoryEntity
                     {
                         Id = repo.RepositoryId,
@@ -43,6 +45,11 @@ public class RepositoryService : IRepositoryService
                     };
                     context.Repositories.Add(repoEntity);
                     await context.SaveChangesAsync();
+
+                    //
+
+                    
+
                     return _mapper.Map<RepositoryExtendedModel>(repoEntity);
                 }
             }
@@ -225,11 +232,11 @@ public class RepositoryService : IRepositoryService
         }
     }
 
-    public async Task<bool> DeleteFiles(Guid userId, Guid repositoryId, IEnumerable<Guid> fileIds)
+    public async Task<int> DeleteFiles(Guid userId, Guid repositoryId, IEnumerable<Guid> fileIds)
     {
         using (var context = _keeperFactory.CreateDbContext())
         {
-            var repo = await context.Repositories.FirstOrDefaultAsync(x => x.Id == repositoryId && x.OwnerId == userId);
+            var repo = await context.Repositories.Include(x => x.Owner).FirstOrDefaultAsync(x => x.Id == repositoryId && x.OwnerId == userId);
             if (repo is not null)
             {
                 var fileEntities = await context.Files.Where(x => fileIds.Contains(x.Id) && x.RepositoryId == repositoryId).ToListAsync();
@@ -247,11 +254,10 @@ public class RepositoryService : IRepositoryService
                     }
 
                     context.Files.RemoveRange(fileEntities);
-                    await context.SaveChangesAsync();
-                    return true;
+                    return await context.SaveChangesAsync();
                 }
             }
-            return false;
+            return 0;
         }
     }
 
@@ -281,7 +287,7 @@ public class RepositoryService : IRepositoryService
     {
         using (var context = _keeperFactory.CreateDbContext())
         {
-            var repo = await context.Repositories.FirstOrDefaultAsync(x => x.Id == repositoryId && x.OwnerId == userId);
+            var repo = await context.Repositories.Include(x => x.Owner).FirstOrDefaultAsync(x => x.Id == repositoryId && x.OwnerId == userId);
             if (repo is not null)
             {
                 repo.Name = updateRepositoryRequest.Name;
@@ -298,7 +304,7 @@ public class RepositoryService : IRepositoryService
     {
         using (var context = _keeperFactory.CreateDbContext())
         {
-            var repo = await context.Repositories.FirstOrDefaultAsync(x => x.Id == repositoryId && x.OwnerId == userId);
+            var repo = await context.Repositories.Include(x => x.Owner).FirstOrDefaultAsync(x => x.Id == repositoryId && x.OwnerId == userId);
             if (repo is not null)
             {
                 repo.AllowAnonymousFileRead = allow;

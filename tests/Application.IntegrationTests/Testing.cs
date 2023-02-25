@@ -33,10 +33,10 @@ public partial class Testing
         Mapper = _factory.Services.GetRequiredService<IMapper>();
     }
 
-    public static async Task<PaginationWrapperModel<RepositoryActivityModel>> GetActivitiesPaginated(Guid repositoryId, int page, int maxItemsPerPage)
+    public static async Task<PaginationWrapperModel<RepositoryActivityModel>> GetActivitiesPaginated(Guid userId, Guid repositoryId, int page, int maxItemsPerPage)
     {
         var repositoryActivitiesService = _factory.Services.GetRequiredService<IRepositoryActivitiesService>();
-        var pagination = await repositoryActivitiesService.GetActivitiesPaginated(repositoryId, page, maxItemsPerPage);
+        var pagination = await repositoryActivitiesService.GetActivitiesPaginated(userId, repositoryId, page, maxItemsPerPage);
         return pagination;
     }
 

@@ -1,5 +1,5 @@
 <div class="h-100">
-    <table mat-table *ngIf="repositoryMembers; else loadingTable" [dataSource]="repositoryMembers">
+    <table mat-table *ngIf="repositoryMembers" [dataSource]="repositoryMembers">
 
         <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef>Name</th>
@@ -43,7 +43,3 @@
         <div class="fs-1 fw-lighter m-3">No members were found...</div>
     </div>
 </div>
-
-<ng-template #loadingTable>
-    <p>Loading</p>
-</ng-template>

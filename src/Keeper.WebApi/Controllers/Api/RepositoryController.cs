@@ -1,5 +1,6 @@
 ﻿using Keeper.Application.DTOs;
 using Keeper.Application.Interfaces;
+using Keeper.Domain.Enums;
 using Keeper.Domain.Models;
 using Keeper.WebApi.Helpers;
 using Microsoft.AspNetCore.Authorization;
@@ -13,10 +14,12 @@ namespace Keeper.WebApi.Controllers.Api;
 public class RepositoryController : ControllerBase
 {
     private readonly IRepositoryService _repoService;
+    private readonly IRepositoryActivitiesService _repositoryActivitiesService;
 
-    public RepositoryController(IRepositoryService repoService)
+    public RepositoryController(IRepositoryService repoService, IRepositoryActivitiesService repositoryActivitiesService)
     {
         _repoService = repoService;
+        _repositoryActivitiesService = repositoryActivitiesService;
     }
 
     [HttpGet("{repositoryId:guid}")]
@@ -41,6 +44,7 @@ public class RepositoryController : ControllerBase
             var repo = await _repoService.CreateRepository(user.Id, createRepoRequest);
             if(repo != null)
             {
+                await _repositoryActivitiesService.CreateActivity(repo.Id, user.Email!, RepositoryActivity.CreateRepository, "");
                 return Ok(repo);
             }
         }
@@ -69,6 +73,7 @@ public class RepositoryController : ControllerBase
         {
             if(await _repoService.UpdateRepository(user.Id, repositoryId, updateRepositoryRequest))
             {
+                await _repositoryActivitiesService.CreateActivity(repositoryId, user.Email!, RepositoryActivity.UpdateRepository, $"Name or description changed");
                 return Ok();
             }
         }
@@ -83,6 +88,7 @@ public class RepositoryController : ControllerBase
         {
             if(await _repoService.UpdateRepositoryAllowAnonymousFileRead(user.Id, repositoryId, allow))
             {
+                await _repositoryActivitiesService.CreateActivity(repositoryId, user.Email!, RepositoryActivity.ToggleRepositoryAccess, allow ? "Opened repository" : "Closed repository");
                 return Ok();
             }
         }

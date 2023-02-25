@@ -1,0 +1,16 @@
+<ng-container *ngIf="repository$ | async as repository">
+    <ng-container *ngIf="activityLogsPagination$ | async as activityLogsPagination; else loadingTemplate">
+        <div class="d-flex flex-column p-0 h-100" fadeInContent>
+            <mat-paginator [pageSize]="activityLogsPagination.itemsPerPage"
+                           [length]="activityLogsPagination.totalItems"
+                           [pageIndex]="activityLogsPagination.currentPage - 1"
+                           (page)="onPageChanged($event)">
+            </mat-paginator>
+            <app-activity-log-table [activities]="activityLogsPagination.pageItems"></app-activity-log-table>
+        </div>
+    </ng-container>
+</ng-container>
+
+<ng-template #loadingTemplate>
+    <app-loading-centered></app-loading-centered>
+</ng-template>

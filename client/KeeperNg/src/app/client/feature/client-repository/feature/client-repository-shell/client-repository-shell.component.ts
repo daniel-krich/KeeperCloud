@@ -50,6 +50,7 @@ export class ClientRepositoryShellComponent {
     links = [
         { path: './', label: 'Repository files' },
         { path: './manage-access', label: 'Manage access' },
+        { path: './activity-log', label: 'Activity log' },
     ];
 
     public repoId$: Observable<string | null> = this.route.paramMap.pipe(

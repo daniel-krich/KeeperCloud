@@ -39,21 +39,19 @@ public class RepositoryActivitiesService : IRepositoryActivitiesService
         }
     }
 
-    public async Task<PaginationWrapperModel<RepositoryActivityModel>> GetActivitiesPaginated(Guid repositoryId, int page, int maxRecordsPerPage)
+    public async Task<PaginationWrapperModel<RepositoryActivityModel>> GetActivitiesPaginated(Guid userId, Guid repositoryId, int page, int maxRecordsPerPage)
     {
         using (var context = _keeperFactory.CreateDbContext())
         {
             var repository = await context.Repositories.Include(x => x.Activities.OrderByDescending(y => y.CreatedDate)
                                                                     .Skip((page - 1) * maxRecordsPerPage)
                                                                     .Take(maxRecordsPerPage)
-                                     ).FirstOrDefaultAsync(x => x.Id == repositoryId);
-
-            var repositoryActivitiesAllCount = await context.RepositoryActivities.Where(x => x.RepositoryId == repositoryId).LongCountAsync();
-
-            if (repository != null)
+                                     ).FirstOrDefaultAsync(x => x.Id == repositoryId && x.OwnerId == userId);
+            if(repository != null)
             {
+                var repositoryActivitiesAllCount = await context.RepositoryActivities.Where(x => x.RepositoryId == repositoryId).CountAsync();
                 var activitiesModel = _mapper.Map<List<RepositoryActivityModel>>(repository.Activities);
-                return new PaginationWrapperModel<RepositoryActivityModel>(activitiesModel, page, Convert.ToInt32(Math.Abs(repositoryActivitiesAllCount / maxRecordsPerPage) + 1));
+                return new PaginationWrapperModel<RepositoryActivityModel>(activitiesModel, page, Convert.ToInt32(Math.Abs(repositoryActivitiesAllCount / maxRecordsPerPage) + 1), maxRecordsPerPage, repositoryActivitiesAllCount);
             }
             return new PaginationWrapperModel<RepositoryActivityModel>();
         }

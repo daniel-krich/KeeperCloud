@@ -22,6 +22,12 @@ const routes: Routes = [
                 loadChildren: () => import('../client-repository-manage-access/client-repository-manage-access.module').then(m => m.ClientRepositoryManageAccessModule),
                 canActivate: [IsAuthenticatedGuard],
                 title: 'Client / Manage access'
+            },
+            {
+                path: 'activity-log',
+                loadChildren: () => import('../client-repository-activity-log/client-repository-activity-log.module').then(m => m.ClientRepositoryActivityLogModule),
+                canActivate: [IsAuthenticatedGuard],
+                title: 'Client / Activity log'
             }
         ],
         resolve: [RepositoryResolver]

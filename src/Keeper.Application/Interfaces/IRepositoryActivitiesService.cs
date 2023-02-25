@@ -7,5 +7,5 @@ namespace Keeper.Application.Interfaces;
 public interface IRepositoryActivitiesService
 {
     Task<RepositoryActivityModel?> CreateActivity(Guid repositoryId, string identity, RepositoryActivity operationId, string operationContext);
-    Task<PaginationWrapperModel<RepositoryActivityModel>> GetActivitiesPaginated(Guid repositoryId, int page, int maxRecordsPerPage);
+    Task<PaginationWrapperModel<RepositoryActivityModel>> GetActivitiesPaginated(Guid userId, Guid repositoryId, int page, int maxRecordsPerPage);
 }

@@ -17,7 +17,7 @@ public interface IRepositoryService
     Task<(FileEntity fileEntity, IRepositoryFile? file)?> GetFileAccessor(Guid userId, Guid repositoryId, Guid fileId);
     Task<IEnumerable<FileStreamWithMetaModel>> GetFilesReadStreams(Guid userId, Guid repositoryId, IEnumerable<Guid> fileIds);
     Task<List<FileModel>?> CreateFilesByForm(Guid userId, Guid repositoryId, IEnumerable<IFormFile> files);
-    Task<bool> DeleteFiles(Guid userId, Guid repositoryId, IEnumerable<Guid> fileIds);
+    Task<int> DeleteFiles(Guid userId, Guid repositoryId, IEnumerable<Guid> fileIds);
     Task<bool> DeleteRepository(Guid userId, Guid repositoryId);
     Task<bool> UpdateRepository(Guid userId, Guid repositoryId, UpdateRepositoryRequestDto updateRepositoryRequest);
     Task<bool> UpdateRepositoryAllowAnonymousFileRead(Guid userId, Guid repositoryId, bool allow);

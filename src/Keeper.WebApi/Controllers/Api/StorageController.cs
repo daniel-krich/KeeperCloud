@@ -1,6 +1,7 @@
 ﻿using System.IO.Compression;
 using Keeper.Application.Interfaces;
 using Keeper.Application.Models;
+using Keeper.Domain.Enums;
 using Keeper.Domain.Models;
 using Keeper.RepositoriesAccess.Enums;
 using Keeper.WebApi.Helpers;
@@ -17,12 +18,14 @@ public class StorageController : ControllerBase
 {
     private readonly IRepositoryService _repositoryService;
     private readonly IMapper _mapper;
+    private readonly IRepositoryActivitiesService _repositoryActivitiesService;
     private readonly ILogger<StorageController> _logger;
 
     private const int _batchTakeRepositoryFilesLimit = 200;
 
-    public StorageController(IRepositoryService repositoryService, IMapper mapper, ILogger<StorageController> logger)
+    public StorageController(IRepositoryService repositoryService, IMapper mapper, ILogger<StorageController> logger, IRepositoryActivitiesService repositoryActivitiesService)
     {
+        _repositoryActivitiesService = repositoryActivitiesService;
         _repositoryService = repositoryService;
         _mapper = mapper;
         _logger = logger;
@@ -56,6 +59,7 @@ public class StorageController : ControllerBase
             var res = await _repositoryService.CreateFilesByForm(user.Id, repositoryId, files);
             if(res != null)
             {
+                await _repositoryActivitiesService.CreateActivity(repositoryId, user.Email!, RepositoryActivity.UploadFilesToRepository, $"Uploaded {res.Count} files in total");
                 return Ok(res);
             }
             else
@@ -72,10 +76,13 @@ public class StorageController : ControllerBase
         UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
         if (user is not null)
         {
-            if(await _repositoryService.DeleteFiles(user.Id, repositoryId, fileIds))
+            int affectedRows = await _repositoryService.DeleteFiles(user.Id, repositoryId, fileIds);
+            if (affectedRows > 0)
             {
+                await _repositoryActivitiesService.CreateActivity(repositoryId, user.Email!, RepositoryActivity.DeleteFilesFromRepository, $"Deleted {affectedRows} files in total");
                 return Ok();
             }
+            
         }
         return BadRequest();
     }

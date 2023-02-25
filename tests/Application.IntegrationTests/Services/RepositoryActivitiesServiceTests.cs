@@ -30,7 +30,7 @@ public class RepositoryActivitiesServiceTests
     [Parallelizable(ParallelScope.All)]
     public async Task ShouldReturnPaginationActivityItems(int page, int maxItems, int totalItemsInDb = 7)
     {
-        var pagination = await GetActivitiesPaginated(_repositoryId, page, maxItems);
+        var pagination = await GetActivitiesPaginated(_userId, _repositoryId, page, maxItems);
 
         pagination.CurrentPage.Should().Be(page);
 

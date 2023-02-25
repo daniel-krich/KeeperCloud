@@ -1,5 +1,6 @@
 ﻿using Keeper.Application.DTOs;
 using Keeper.Application.Interfaces;
+using Keeper.Domain.Enums;
 using Keeper.Domain.Models;
 using Keeper.WebApi.Helpers;
 using MapsterMapper;
@@ -15,11 +16,13 @@ public class RepositoryMembersController : ControllerBase
 {
     private readonly IRepositoryApiMembersService _repoMembersService;
     private readonly IMapper _mapper;
+    private readonly IRepositoryActivitiesService _repositoryActivitiesService;
 
-    public RepositoryMembersController(IRepositoryApiMembersService repoMembersService, IMapper mapper)
+    public RepositoryMembersController(IRepositoryApiMembersService repoMembersService, IMapper mapper, IRepositoryActivitiesService repositoryActivitiesService)
     {
         _repoMembersService = repoMembersService;
         _mapper = mapper;
+        _repositoryActivitiesService = repositoryActivitiesService;
     }
 
 
@@ -47,6 +50,7 @@ public class RepositoryMembersController : ControllerBase
             var apiMember = await _repoMembersService.CreateApiMember(user.Id, repositoryId, apiMemberRequest);
             if (apiMember != null)
             {
+                await _repositoryActivitiesService.CreateActivity(repositoryId, user.Email!, RepositoryActivity.AddApiMember, $"Added {apiMember.Name}");
                 return Ok(apiMember);
             }
             else
@@ -66,6 +70,7 @@ public class RepositoryMembersController : ControllerBase
             var apiMember = await _repoMembersService.UpdateApiMember(user.Id, repositoryId, memberId, apiMemberRequest);
             if (apiMember != null)
             {
+                await _repositoryActivitiesService.CreateActivity(repositoryId, user.Email!, RepositoryActivity.UpdateApiMember, $"Updated {apiMember.Name}");
                 return Ok(apiMember);
             }
             else
@@ -84,6 +89,7 @@ public class RepositoryMembersController : ControllerBase
         {
             if(await _repoMembersService.DeleteApiMember(user.Id, repositoryId, memberId))
             {
+                await _repositoryActivitiesService.CreateActivity(repositoryId, user.Email!, RepositoryActivity.DeleteFilesFromRepository, $"Deleted member");
                 return Ok();
             }
             else
