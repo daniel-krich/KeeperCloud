@@ -1,4 +1,4 @@
-﻿using Keeper.Application.Interfaces;
+﻿using Keeper.Application.Common.Interfaces;
 using Keeper.Infrastructure.Data.Interceptors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

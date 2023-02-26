@@ -1,8 +1,8 @@
-﻿using Keeper.Application.DTOs;
-using Keeper.Application.Interfaces;
-using Keeper.Application.Security.Jwt.Interfaces;
+﻿using Keeper.Application.Common.DTOs;
+using Keeper.Application.Common.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace Keeper.WebApi.Controllers.Api;
 

@@ -1,4 +1,5 @@
-﻿using Keeper.Domain.Models;
+﻿using Keeper.Application.Common.Enums;
+using Keeper.Domain.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Security.Claims;
@@ -7,11 +8,13 @@ namespace Keeper.WebApi.Helpers;
 
 public static class ClaimsHelper
 {
+    public const string JwtUserClaim = "user";
+    public const string ApiMemberClaim = "member";
     public static UserModel? RetreiveUserFromClaims(ClaimsPrincipal claims)
     {
         if (claims.Identity?.IsAuthenticated == true)
         {
-            var rawUser = claims.FindFirst(x => x.Type == "user")?.Value;
+            var rawUser = claims.FindFirst(x => x.Type == JwtUserClaim)?.Value;
             if (rawUser != null)
             {
                 var settings = new JsonSerializerSettings
@@ -32,7 +35,7 @@ public static class ClaimsHelper
     {
         if (claims.Identity?.IsAuthenticated == true)
         {
-            var rawMember = claims.FindFirst(x => x.Type == "member")?.Value;
+            var rawMember = claims.FindFirst(x => x.Type == ApiMemberClaim)?.Value;
             if (rawMember != null)
             {
                 var member = JsonConvert.DeserializeObject<RepositoryApiMemberFullModel>(rawMember);
@@ -40,5 +43,18 @@ public static class ClaimsHelper
             }
         }
         return default;
+    }
+
+    public static AuthenticationType GetAuthenticationType(ClaimsPrincipal claims)
+    {
+        switch(claims.Claims.LastOrDefault()?.Type)
+        {
+            case JwtUserClaim:
+                return AuthenticationType.Jwt;
+            case ApiMemberClaim:
+                return AuthenticationType.MemberKey;
+            default:
+                return AuthenticationType.None;
+        }
     }
 }

@@ -1,6 +1,5 @@
-﻿using Keeper.Application.Interfaces;
-using Keeper.Application.Models;
-using Keeper.Application.Security.Jwt.Interfaces;
+﻿using Keeper.Application.Common.Interfaces;
+using Keeper.Application.Common.Models;
 using Keeper.Infrastructure.Data;
 using Keeper.Infrastructure.Data.Factories;
 using Keeper.Infrastructure.Data.Interceptors;

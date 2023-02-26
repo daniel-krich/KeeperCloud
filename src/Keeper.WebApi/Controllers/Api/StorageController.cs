@@ -1,6 +1,6 @@
 ﻿using System.IO.Compression;
-using Keeper.Application.Interfaces;
-using Keeper.Application.Models;
+using Keeper.Application.Common.Interfaces;
+using Keeper.Application.Common.Models;
 using Keeper.Domain.Enums;
 using Keeper.Domain.Models;
 using Keeper.RepositoriesAccess.Enums;

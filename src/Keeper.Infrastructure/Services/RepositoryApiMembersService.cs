@@ -1,5 +1,5 @@
-﻿using Keeper.Application.DTOs;
-using Keeper.Application.Interfaces;
+﻿using Keeper.Application.Common.DTOs;
+using Keeper.Application.Common.Interfaces;
 using Keeper.Domain.Entities;
 using Keeper.Domain.Models;
 using Keeper.Utilities;

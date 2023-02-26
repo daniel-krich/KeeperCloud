@@ -1,5 +1,5 @@
-﻿using Keeper.Application.Interfaces;
-using Keeper.Application.Models;
+﻿using Keeper.Application.Common.Interfaces;
+using Keeper.Application.Common.Models;
 using Keeper.Domain.Entities;
 using Keeper.Domain.Enums;
 using Keeper.Domain.Models;
