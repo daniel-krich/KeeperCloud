@@ -1,8 +1,11 @@
 ﻿using Keeper.Application.Common.DTOs;
 using Keeper.Application.Common.Interfaces;
+using Keeper.Application.Repositories.Commands.CreateRepository;
+using Keeper.Application.Repositories.Queries.GetRepository;
 using Keeper.Domain.Enums;
 using Keeper.Domain.Models;
 using Keeper.WebApi.Helpers;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,40 +18,26 @@ public class RepositoryController : ControllerBase
 {
     private readonly IRepositoryService _repoService;
     private readonly IRepositoryActivitiesService _repositoryActivitiesService;
+    private readonly ISender _mediatR;
 
-    public RepositoryController(IRepositoryService repoService, IRepositoryActivitiesService repositoryActivitiesService)
+    public RepositoryController(IRepositoryService repoService, IRepositoryActivitiesService repositoryActivitiesService, ISender mediatR)
     {
         _repoService = repoService;
         _repositoryActivitiesService = repositoryActivitiesService;
+        _mediatR = mediatR;
     }
 
     [HttpGet("{repositoryId:guid}")]
-    public async Task<IActionResult> GetRepositoryInfo([FromRoute] Guid repositoryId)
+    public async Task<ActionResult<RepositoryModel>> GetRepositoryInfo([FromRoute] Guid repositoryId)
     {
-        UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
-        if (user != null)
-        {
-            RepositoryModel? repositoriesBatch = await _repoService.GetRepositoryByUser(user.Id, repositoryId);
-            if (repositoriesBatch != null) return Ok(repositoriesBatch);
-            else return NotFound();
-        }
-        return BadRequest();
+        return await _mediatR.Send(new GetRepositoryQuery { RepositoryId = repositoryId });
     }
 
     [HttpPost("create")]
-    public async Task<IActionResult> PostNewRepository([FromBody] CreateRepositoryRequestDto createRepoRequest)
+    public async Task<ActionResult<RepositoryModel>> PostNewRepository([FromBody] CreateRepositoryCommand createRepositoryCommand)
     {
-        UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
-        if(user != null)
-        {
-            var repo = await _repoService.CreateRepository(user.Id, createRepoRequest);
-            if(repo != null)
-            {
-                await _repositoryActivitiesService.CreateActivity(repo.Id, user.Email!, RepositoryActivity.CreateRepository, "");
-                return Ok(repo);
-            }
-        }
-        return BadRequest();
+        var repositoryId = await _mediatR.Send(createRepositoryCommand);
+        return await _mediatR.Send(new GetRepositoryQuery { RepositoryId = repositoryId });
     }
 
     [HttpDelete("{repositoryId:guid}")]

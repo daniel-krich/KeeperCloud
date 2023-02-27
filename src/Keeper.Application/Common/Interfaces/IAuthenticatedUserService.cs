@@ -1,4 +1,5 @@
 ﻿using Keeper.Application.Common.Models;
+using Keeper.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +10,7 @@ namespace Keeper.Application.Common.Interfaces;
 
 public interface IAuthenticatedUserService
 {
-    AuthenticatedUserModel? User { get; }
+    UserModel? User { get; }
+    bool IsAuthenticated { get; }
+    string? IP { get; }
 }

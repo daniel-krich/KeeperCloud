@@ -11,9 +11,6 @@ public class RepositoryMappingProfile : IRegister
         config.NewConfig<RepositoryEntity, RepositoryModel>()
             .TwoWays();
 
-        config.NewConfig<RepositoryEntity, RepositoryExtendedModel>()
-            .TwoWays();
-
         config.Compile();
     }
 }

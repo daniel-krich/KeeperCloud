@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Keeper.Application.Common.Interfaces;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -11,10 +12,11 @@ namespace Keeper.Application.Common.Behaviours;
 public class UnhandledExceptionBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull
 {
     private readonly ILogger<TRequest> _logger;
-
-    public UnhandledExceptionBehaviour(ILogger<TRequest> logger)
+    private readonly IAuthenticatedUserService _authenticatedUserService;
+    public UnhandledExceptionBehaviour(ILogger<TRequest> logger, IAuthenticatedUserService authenticatedUserService)
     {
         _logger = logger;
+        _authenticatedUserService = authenticatedUserService;
     }
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
@@ -27,7 +29,7 @@ public class UnhandledExceptionBehaviour<TRequest, TResponse> : IPipelineBehavio
         {
             var requestName = typeof(TRequest).Name;
 
-            _logger.LogError(ex, "Request: Unhandled Exception for Request {Name} {@Request}", requestName, request);
+            _logger.LogError(ex, "IP: {IP} | {Request}", _authenticatedUserService.IP, request);
 
             throw;
         }

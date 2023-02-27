@@ -26,7 +26,7 @@ public class StorageController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet("{fileId:guid}")]
+    /*[HttpGet("{fileId:guid}")]
     [Authorize(AuthenticationSchemes = MemberKeyAuthenticationOptions.DefaultScheme)]
     [AllowAnonymous]
     public async Task<IActionResult> DownloadFileById([FromRoute] Guid repositoryId, [FromRoute] Guid fileId)
@@ -70,5 +70,5 @@ public class StorageController : ControllerBase
             }
         }
         return NotFound("Repository not found");
-    }
+    }*/
 }

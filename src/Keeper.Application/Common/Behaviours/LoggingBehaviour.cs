@@ -25,8 +25,10 @@ public class LoggingBehaviour<TRequest> : IRequestPreProcessor<TRequest> where T
     {
         var requestName = typeof(TRequest).Name;
 
-        _logger.LogInformation("Request: {@Name} {@User} {@Request}",
-            requestName, JsonConvert.SerializeObject(_authenticatedUserService.User), request);
+        var user = _authenticatedUserService.User;
+
+        _logger.LogInformation("Id: {Id} | Identity: {User} | IP: {IP} | {Request}",
+            user?.Id, user?.Email, _authenticatedUserService.IP, request);
 
         return Task.CompletedTask;
     }

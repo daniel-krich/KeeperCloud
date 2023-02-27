@@ -1,5 +1,4 @@
-﻿using Keeper.Application.Common.Enums;
-using Keeper.Domain.Models;
+﻿using Keeper.Domain.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Security.Claims;
@@ -43,18 +42,5 @@ public static class ClaimsHelper
             }
         }
         return default;
-    }
-
-    public static AuthenticationType GetAuthenticationType(ClaimsPrincipal claims)
-    {
-        switch(claims.Claims.LastOrDefault()?.Type)
-        {
-            case JwtUserClaim:
-                return AuthenticationType.Jwt;
-            case ApiMemberClaim:
-                return AuthenticationType.MemberKey;
-            default:
-                return AuthenticationType.None;
-        }
     }
 }

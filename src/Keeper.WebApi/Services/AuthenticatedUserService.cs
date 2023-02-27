@@ -1,6 +1,5 @@
-﻿using Keeper.Application.Common.Enums;
-using Keeper.Application.Common.Interfaces;
-using Keeper.Application.Common.Models;
+﻿using Keeper.Application.Common.Interfaces;
+using Keeper.Domain.Models;
 using System.Security.Claims;
 
 namespace Keeper.WebApi.Services;
@@ -15,34 +14,23 @@ public class AuthenticatedUserService : IAuthenticatedUserService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public AuthenticatedUserModel? User
+    public UserModel? User
     {
         get
         {
             if (_httpContextAccessor.HttpContext?.User.Identity?.IsAuthenticated == true && _httpContextAccessor.HttpContext?.User is ClaimsPrincipal claims)
             {
-                var authType = GetAuthenticationType(claims);
-                switch(authType)
+                var user = RetreiveUserFromClaims(claims);
+                if(user != null)
                 {
-                    case AuthenticationType.Jwt:
-                        var user = RetreiveUserFromClaims(claims);
-                        if(user != null && user.Email != null)
-                        {
-                            return new AuthenticatedUserModel(user.Id, user.Email, AuthenticationType.Jwt);
-                        }
-                        break;
-                    case AuthenticationType.MemberKey:
-                        var member = RetreiveFullMemberFromClaims(claims);
-                        if (member != null && member.Name != null)
-                        {
-                            return new AuthenticatedUserModel(member.Id, member.Name, AuthenticationType.MemberKey);
-                        }
-                        break;
-                    default:
-                        break;
+                    return user;
                 }
             }
             return default;
         }
     }
+
+    public bool IsAuthenticated => _httpContextAccessor.HttpContext?.User.Identity?.IsAuthenticated == true;
+
+    public string? IP => _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.MapToIPv4().ToString();
 }

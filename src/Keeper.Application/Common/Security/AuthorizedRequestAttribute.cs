@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Keeper.Application.Common.Enums;
-
-public enum AuthenticationType
+namespace Keeper.Application.Common.Security
 {
-    None,
-    Jwt,
-    MemberKey
+    public class AuthorizedRequestAttribute : Attribute
+    {
+    }
 }

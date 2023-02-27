@@ -25,38 +25,6 @@ public class RepositoryService : IRepositoryService
         _mapper = mapper;
     }
 
-    public async Task<RepositoryExtendedModel?> CreateRepository(Guid userId, CreateRepositoryRequestDto request)
-    {
-        using (var context = _keeperFactory.CreateDbContext())
-        {
-            if (await context.Users.FindAsync(userId) is UserEntity user)
-            {
-                var repo = _repositoriesAccessor.CreateRepository(userId);
-                if (repo != null)
-                {
-                    
-                    var repoEntity = new RepositoryEntity
-                    {
-                        Id = repo.RepositoryId,
-                        OwnerId = repo.OwnerId,
-                        Name = request.Name,
-                        Description = request.Description,
-                        AllowAnonymousFileRead = false
-                    };
-                    context.Repositories.Add(repoEntity);
-                    await context.SaveChangesAsync();
-
-                    //
-
-                    
-
-                    return _mapper.Map<RepositoryExtendedModel>(repoEntity);
-                }
-            }
-            return default;
-        }
-    }
-
     public async Task<(FileEntity fileEntity, IRepositoryFile? file)?> GetFileAccessor(Guid userId, Guid repositoryId, Guid fileId)
     {
         using (var context = _keeperFactory.CreateDbContext())
@@ -126,33 +94,6 @@ public class RepositoryService : IRepositoryService
         }
     }
 
-    public async Task<BatchWrapperModel<RepositoryExtendedModel>> GetRepositoriesBatch(Guid userId, int batchOffset, int batchTakeLimit)
-    {
-        using (var context = _keeperFactory.CreateDbContext())
-        {
-
-            var repositoriesFragments = await (from repo in context.Repositories
-                                               where repo.OwnerId == userId
-                                               select new
-                                               {
-                                                   Repo = repo,
-                                                   OverallFileCount = repo.Files.Count(),
-                                                   OverallRepositorySize = repo.Files.Sum(f => f.FileSize)
-                                               }).OrderByDescending(x => x.Repo.CreatedDate).Skip(batchOffset).Take(batchTakeLimit).ToListAsync();
-
-            var repositories = repositoriesFragments.Select(x =>
-            {
-                var repo = _mapper.Map<RepositoryExtendedModel>(x.Repo);
-                repo.OverallFileCount = x.OverallFileCount;
-                repo.OverallRepositorySize = x.OverallRepositorySize;
-                return repo;
-            }).ToList();
-
-            var howMuchReposLeftCount = (await context.Repositories.Where(x => x.OwnerId == userId).CountAsync()) - batchOffset - repositories.Count;
-            return new BatchWrapperModel<RepositoryExtendedModel>(repositories, batchOffset, howMuchReposLeftCount);
-        }
-    }
-
     public async Task<BatchWrapperModel<FileModel>> GetRepositoryFilesBatch(Guid userId, Guid repositoryId, int batchOffset, int batchCountLimit)
     {
         using (var context = _keeperFactory.CreateDbContext())
@@ -169,41 +110,6 @@ public class RepositoryService : IRepositoryService
                 return new BatchWrapperModel<FileModel>(fileModelList, batchOffset, howMuchFilesLeftCount);
             }
             return new BatchWrapperModel<FileModel>();
-        }
-    }
-
-    public async Task<RepositoryEntity?> GetRepository(Guid repositoryId)
-    {
-        using (var context = _keeperFactory.CreateDbContext())
-        {
-            var repository = await context.Repositories.FindAsync(repositoryId);
-            return repository;
-        }
-    }
-
-    public async Task<RepositoryExtendedModel?> GetRepositoryByUser(Guid userId, Guid repositoryId)
-    {
-        using (var context = _keeperFactory.CreateDbContext())
-        {
-            var repositoryFragments = await (from repo in context.Repositories
-                                             where repo.OwnerId == userId && repo.Id == repositoryId
-                                             select new
-                                             {
-                                                 Repo = repo,
-                                                 OverallFileCount = repo.Files.Count(),
-                                                 OverallRepositorySize = repo.Files.Sum(f => f.FileSize)
-                                             }).FirstOrDefaultAsync();
-
-            if(repositoryFragments != null)
-            {
-                var repository = _mapper.Map<RepositoryExtendedModel>(repositoryFragments.Repo);
-                repository.OverallFileCount = repositoryFragments.OverallFileCount;
-                repository.OverallRepositorySize = repositoryFragments.OverallRepositorySize;
-                return repository;
-            }
-
-            return default;
-
         }
     }
 

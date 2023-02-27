@@ -14,7 +14,7 @@ namespace Keeper.WebApi.Controllers.Api;
 
 [Route("api/repository/{repositoryId:guid}/activities")]
 [ApiController]
-//[Authorize]
+[Authorize]
 public class RepositoryActivitiesController : ControllerBase
 {
     private readonly IRepositoryActivitiesService _repositoryActivitiesService;
@@ -35,7 +35,7 @@ public class RepositoryActivitiesController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<PaginationWrapperModel<RepositoryActivityModel>>> GetPaginationRepositoryActivities([FromRoute] Guid repositoryId, [FromQuery] int page)
     {
-        return await _mediator.Send(new GetRepositoryActivitiesPaginatedQuery { repositoryId = repositoryId, page = page, maxRecordsPerPage = _maxItemsPerPage });
+        return await _mediator.Send(new GetRepositoryActivitiesPaginatedQuery { RepositoryId = repositoryId, Page = page, MaxRecordsPerPage = _maxItemsPerPage });
         /*UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
         if (user != null)
         {
