@@ -4,8 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, combineLatest, concatMap, delay, filter, first, map, Observable, of, Subject, Subscription, switchMap, takeUntil, tap, throwIfEmpty, withLatestFrom } from 'rxjs';
-import { RepositoryDataService } from 'src/app/client/data-access/repository-data.service';
-import { RepositoryFilesDataService } from 'src/app/client/data-access/repository-files-data.service';
+import { RepositoryFilesApiService } from 'src/app/client/data-access/repository-files-api.service';
 import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
 import { downloadBegin, uploadBegin } from 'src/app/shared/data-access/state/file-transfer/file-transfer.actions';
 import { deleteRepoFilesBegin, loadRepoFilesBatchError, loadRepoFilesBatchInit, loadRepoFilesBatchNext, loadRepoFilesBatchSuccess, loadRepoFilesBatchSuccessEmpty } from 'src/app/shared/data-access/state/repositories-files/repositories-files.actions';
@@ -78,8 +77,7 @@ export class ClientRepositoryFilesComponent implements OnDestroy {
     constructor(private route: ActivatedRoute,
         private router: Router,
         private actions: Actions,
-        private repoService: RepositoryDataService,
-        private fileRepoService: RepositoryFilesDataService,
+        private fileRepoService: RepositoryFilesApiService,
         private dialog: MatDialog,
         private store: Store<AppStateInterface>) {
         this.repoId$.pipe(

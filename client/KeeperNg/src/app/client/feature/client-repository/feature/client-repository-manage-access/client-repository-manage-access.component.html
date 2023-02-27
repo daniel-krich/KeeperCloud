@@ -5,12 +5,16 @@
             <div class="row flex-row-reverse g-0 h-100">
                 <div class="col-lg-4 col-xl-3 p-0">
                     <app-manage-access-menu [repository]="repository"
-                        [apiMembersCount]="repositoryAllMembersMemoryWithApiCall.length"
+                        [apiMembersCount]="repositoryAllMembersMemoryWithApiCall.totalItems"
                         (clickAddApiMember)="onClickAddApiMember(repository.id)"
                         (toggleAllowAnonymousFileRead)="onToggleAllowAnonymousFileRead(repository.id, $event)"></app-manage-access-menu>
                 </div>
                 <div class="col-lg-8 col-xl-9 p-0">
-                    <app-member-api-table [repositoryMembers]="repositoryAllMembersMemoryWithApiCall"
+                    <mat-paginator [pageSize]="repositoryAllMembersMemoryWithApiCall.itemsPerPage"
+                        [length]="repositoryAllMembersMemoryWithApiCall.totalItems"
+                        [pageIndex]="repositoryAllMembersMemoryWithApiCall.currentPage - 1" (page)="onPageChanged($event)">
+                    </mat-paginator>
+                    <app-member-api-table class="d-block" [repositoryMembers]="repositoryAllMembersMemoryWithApiCall.pageItems"
                         (clickRemoveMember)="onRemoveApiMember(repository.id, repositoryAllMembersMemoryWithApiCall, $event)"
                         (clickCopyApiToken)="onClickCopyApiToken($event)"
                         (clickEditMember)="onUpdateApiMember(repository.id, repositoryAllMembersMemoryWithApiCall, $event)"></app-member-api-table>

@@ -4,8 +4,8 @@ import { Router } from "@angular/router";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { Action, Store } from "@ngrx/store";
 import { catchError, map, switchMap, of, throwIfEmpty, tap, throwError, defer, withLatestFrom, delay } from "rxjs";
-import { RepositoryDataService } from "src/app/client/data-access/repository-data.service";
-import { RepositoryFilesDataService } from "src/app/client/data-access/repository-files-data.service";
+import { RepositoryApiService } from "src/app/client/data-access/repository-api.service";
+import { RepositoryFilesApiService } from "src/app/client/data-access/repository-files-api.service";
 import { AppStateInterface } from "../app.state";
 import { loadRepoFilesBatchInit, removeAllRepoFilesByRepoId } from "../repositories-files/repositories-files.actions";
 import { 
@@ -182,7 +182,7 @@ export class RepositoryEffects {
         this.actions$.pipe(
             ofType(toggleRepositoryAllowAnonymousFileReadBegin),
             switchMap(action => 
-                this.repoDataService.updateRepositoryAllowAnonymousFileRead(action.repositoryId, action.toggle).pipe(
+                this.repoDataService.updateRepository(action.repositoryId, { allowAnonymousFileRead: action.toggle }).pipe(
                     map(_ => toggleRepositoryAllowAnonymousFileReadSuccess({ repositoryId: action.repositoryId, toggle: action.toggle })),
                     catchError(() => of(toggleRepositoryAllowAnonymousFileReadError()))
                 )
@@ -205,9 +205,9 @@ export class RepositoryEffects {
 
     constructor(private actions$: Actions,
                 private store: Store<AppStateInterface>,
-                private repoDataService: RepositoryDataService,
+                private repoDataService: RepositoryApiService,
                 private router: Router,
                 private snackbar: MatSnackBar,
-                private repoFilesDataService: RepositoryFilesDataService) {}
+                private repoFilesDataService: RepositoryFilesApiService) {}
     
 }

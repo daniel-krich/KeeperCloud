@@ -106,8 +106,8 @@ export const repositoryReducer = createReducer(
         const repositoriesCopy = [...state.repositories.filter(x => x.id !== repositoryId)];
         const currentRepo = { ...state.repositories.find(x => x.id === repositoryId)! };
         if (currentRepo) {
-            currentRepo.name = repositoryUpdate.name;
-            currentRepo.description = repositoryUpdate.description;
+            currentRepo.name = repositoryUpdate.name ?? '';
+            currentRepo.description = repositoryUpdate.description ?? '';
         }
         return {
             ...state,

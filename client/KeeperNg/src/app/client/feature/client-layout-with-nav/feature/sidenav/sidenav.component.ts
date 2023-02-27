@@ -4,7 +4,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { map } from 'rxjs';
-import { RepositoryDataService } from 'src/app/client/data-access/repository-data.service';
 import { NavigationDataService } from 'src/app/shared/data-access/navigation-data.service';
 import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
 import { signoutBegin } from 'src/app/shared/data-access/state/authentication/authentication.actions';
@@ -24,7 +23,6 @@ export class SidenavComponent {
     public user$ = this.store.select(selectAuthUser).pipe(map(x => x.user));
 
     constructor(public navigationData: NavigationDataService,
-        private repoService: RepositoryDataService,
         private dialog: MatDialog,
         private router: Router,
         private store: Store<AppStateInterface>,

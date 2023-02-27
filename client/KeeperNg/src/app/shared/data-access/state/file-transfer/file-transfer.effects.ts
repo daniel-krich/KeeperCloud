@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { Store } from "@ngrx/store";
 import { catchError, map, of, switchMap, tap, throwError, withLatestFrom } from "rxjs";
-import { RepositoryFilesDataService } from "src/app/client/data-access/repository-files-data.service";
+import { RepositoryFilesApiService } from "src/app/client/data-access/repository-files-api.service";
 import { AppStateInterface } from "../app.state";
 import { appendRepoFiles } from "../repositories-files/repositories-files.actions";
 import { increaseRepositoryFilesStats } from "../repository/repository.actions";
@@ -95,5 +95,5 @@ export class FileTransferEffects {
 
     constructor(private store: Store<AppStateInterface>,
         private actions: Actions,
-        private repoFilesService: RepositoryFilesDataService) { }
+        private repoFilesService: RepositoryFilesApiService) { }
 }

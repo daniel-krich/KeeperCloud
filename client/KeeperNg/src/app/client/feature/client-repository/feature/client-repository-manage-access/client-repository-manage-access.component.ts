@@ -16,6 +16,19 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { ConfirmDialogModel } from 'src/app/shared/ui/confirm-dialog/confirm-dialog.model';
 import { ConfirmDialogComponent } from 'src/app/shared/ui/confirm-dialog/confirm-dialog.component';
 import { toggleRepositoryAllowAnonymousFileReadBegin, toggleRepositoryAllowAnonymousFileReadSuccess } from 'src/app/shared/data-access/state/repository/repository.actions';
+import { PageWrapperInterface } from 'src/app/shared/interfaces/page-wrapper.interface';
+import { PageEvent } from '@angular/material/paginator';
+
+
+
+const defaultPagination: PageWrapperInterface<RepositoryMemberInterface> = {
+    currentPage: 0,
+    itemsPerPage: 0,
+    pageItems: [],
+    pageItemsCount: 0,
+    pagesCount: 0,
+    totalItems: 0
+};
 
 @Component({
     selector: 'app-client-repository-manage-access',
@@ -39,11 +52,13 @@ export class ClientRepositoryManageAccessComponent {
         )
     );
 
-    private repositoryApiMembersMemory$: BehaviorSubject<RepositoryMemberInterface[]> = new BehaviorSubject<RepositoryMemberInterface[]>([]);
+    public currentPage$: BehaviorSubject<number> = new BehaviorSubject<number>(1);
 
-    private repositoryApiCallMembers$: Observable<RepositoryMemberInterface[]> = this.repoId$.pipe(
-        switchMap(x => this.memberManageApi.fetchAllMembers(x!).pipe(
-            tap(members => this.repositoryApiMembersMemory$.next(members))
+    private repositoryApiMembersMemory$: BehaviorSubject<PageWrapperInterface<RepositoryMemberInterface>> = new BehaviorSubject<PageWrapperInterface<RepositoryMemberInterface>>(defaultPagination);
+
+    private repositoryApiCallMembers$: Observable<PageWrapperInterface<RepositoryMemberInterface>> = combineLatest([this.repoId$, this.currentPage$]).pipe(
+        switchMap(([repoId, page]) => this.memberManageApi.fetchPaginatedMembers(repoId!, page).pipe(
+            tap(pagination => this.repositoryApiMembersMemory$.next(pagination))
         ))
     );
 
@@ -70,12 +85,20 @@ export class ClientRepositoryManageAccessComponent {
         });
 
         dialogRef.afterClosed().pipe(
-            withLatestFrom(this.repositoryApiMembersMemory$)
-        ).subscribe(([isOk, repositoryMembers]) => {
+            withLatestFrom(this.repositoryApiMembersMemory$, this.currentPage$)
+        ).subscribe(([isOk, repositoryPagination, page]) => {
             if (isOk) {
                 this.memberManageApi.createMember(repositoryId, { name: memberModel.name, role: memberModel.role, permissionFlags: memberModel.permissionFlags }).subscribe({
                     next: (member) => {
-                        this.repositoryApiMembersMemory$.next([member, ...repositoryMembers]);
+
+                        if (page <= 1) {
+                            this.repositoryApiMembersMemory$.next({
+                                ...repositoryPagination,
+                                pageItems: [member, ...repositoryPagination.pageItems],
+                                totalItems: repositoryPagination.totalItems + 1,
+                                pageItemsCount: repositoryPagination.pageItemsCount + 1
+                            });
+                        }
 
                         this.snackbar.open("Created Api member successfully", 'Close', {
                             duration: 2000,
@@ -103,9 +126,9 @@ export class ClientRepositoryManageAccessComponent {
         });
     }
 
-    public onUpdateApiMember(repositoryId: string, repositoryMembers: RepositoryMemberInterface[], memberId: string): void {
-        const index = repositoryMembers.findIndex(x => x.id === memberId);
-        const memberModel = new RepositoryMemberModel(repositoryMembers[index]);
+    public onUpdateApiMember(repositoryId: string, page: PageWrapperInterface<RepositoryMemberInterface>, memberId: string): void {
+        const index = page.pageItems.findIndex(x => x.id === memberId);
+        const memberModel = new RepositoryMemberModel(page.pageItems[index]);
         const memberHolderDialogModel: MemberHolderDialogModel = new MemberHolderDialogModel('Edit', memberModel);
         const dialogRef = this.dialog.open(MemberHolderDialogComponent, {
             data: memberHolderDialogModel,
@@ -119,9 +142,10 @@ export class ClientRepositoryManageAccessComponent {
             if (isOk) {
                 this.memberManageApi.updateMember(repositoryId, memberHolderDialogModel.repositoryMember.id, { name: memberModel.name, role: memberModel.role, permissionFlags: memberModel.permissionFlags }).subscribe({
                     next: (member) => {
-                        const membersCopy = [...repositoryMembers];
+                        const membersCopy = [...page.pageItems];
                         membersCopy[index] = { ...member };
-                        this.repositoryApiMembersMemory$.next(membersCopy);
+
+                        this.repositoryApiMembersMemory$.next({ ...page, pageItems: membersCopy });
 
                         this.snackbar.open("Updated Api member successfully", 'Close', {
                             duration: 2000,
@@ -141,7 +165,7 @@ export class ClientRepositoryManageAccessComponent {
     }
 
     public onToggleAllowAnonymousFileRead(repositoryId: string, toggle: boolean): void {
-        if(toggle) {
+        if (toggle) {
             const dialogData = new ConfirmDialogModel('Repository open confirm', `
                 Are you sure you want to open the repository for the public? this will enable anyone to access
                 and download your files from this repository.
@@ -153,17 +177,17 @@ export class ClientRepositoryManageAccessComponent {
             });
             dialogRef.afterClosed().subscribe((isOk: boolean) => {
                 if (isOk) {
-                    this.store.dispatch(toggleRepositoryAllowAnonymousFileReadBegin({ repositoryId: repositoryId, toggle: toggle}));
+                    this.store.dispatch(toggleRepositoryAllowAnonymousFileReadBegin({ repositoryId: repositoryId, toggle: toggle }));
                 }
             });
         }
         else {
-            this.store.dispatch(toggleRepositoryAllowAnonymousFileReadBegin({ repositoryId: repositoryId, toggle: toggle}));
+            this.store.dispatch(toggleRepositoryAllowAnonymousFileReadBegin({ repositoryId: repositoryId, toggle: toggle }));
         }
     }
 
-    public onRemoveApiMember(repositoryId: string, repositoryMembers: RepositoryMemberInterface[], memberId: string): void {
-        const memberRef = repositoryMembers.find(x => x.id === memberId);
+    public onRemoveApiMember(repositoryId: string, page: PageWrapperInterface<RepositoryMemberInterface>, memberId: string): void {
+        const memberRef = page.pageItems.find(x => x.id === memberId);
         const dialogData = new ConfirmDialogModel('Confirm Action', `
                 Are you sure you want to remove member "${memberRef?.name}" which has a role of "${memberRef?.role}"?
             `);
@@ -176,7 +200,12 @@ export class ClientRepositoryManageAccessComponent {
             if (isOk) {
                 this.memberManageApi.deleteMember(repositoryId, memberId).subscribe({
                     next: () => {
-                        this.repositoryApiMembersMemory$.next(repositoryMembers.filter(x => x.id !== memberId));
+                        this.repositoryApiMembersMemory$.next({
+                            ...page,
+                            pageItems: page.pageItems.filter(x => x.id !== memberId),
+                            totalItems: page.totalItems - 1,
+                            pageItemsCount: page.pageItemsCount - 1
+                        });
 
                         this.snackbar.open("Deleted Api member successfully", 'Close', {
                             duration: 2000,
@@ -192,6 +221,10 @@ export class ClientRepositoryManageAccessComponent {
                 });
             }
         });
+    }
+
+    public onPageChanged(pageEvent: PageEvent): void {
+        this.currentPage$.next(pageEvent.pageIndex + 1);
     }
 
 }

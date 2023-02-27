@@ -8,16 +8,16 @@ import { RepoFileInterface } from "src/app/shared/interfaces/repo-file.interface
 @Injectable({
     providedIn: 'root'
 })
-export class RepositoryFilesDataService {
+export class RepositoryFilesApiService {
     constructor(private httpClient: HttpClient,
                 @Inject(BASE_URL) private baseUrl: string) { }
 
     public loadRepositoryFiles(repositoryId: string, batchOffset: number = 0, take?: number): Observable<BatchWrapperInterface<RepoFileInterface>> {
-        return this.httpClient.get<BatchWrapperInterface<RepoFileInterface>>(this.baseUrl + `/api/repository/${repositoryId}/storage/records`, {params: { offset: batchOffset, ...(take) && { take: take } }});
+        return this.httpClient.get<BatchWrapperInterface<RepoFileInterface>>(this.baseUrl + `/api/repository/files`, {params: { repositoryId: repositoryId, offset: batchOffset, ...(take) && { take: take } }});
     }
 
     public deleteRepositoryFiles(repositoryId: string, files: RepoFileInterface[]): Observable<void> {
-        return this.httpClient.post<void>(this.baseUrl + `/api/repository/${repositoryId}/storage/delete-many`, files.map(x => x.id));
+        return this.httpClient.post<void>(this.baseUrl + `/api/repository/files/remove-many`, { repositoryId: repositoryId, fileIds: files.map(x => x.id) });
     }
 
     public uploadRepositoryFiles(repositoryId: string, files: File[]): Observable<{ files: RepoFileInterface[] | null, progress: number | null }> {
