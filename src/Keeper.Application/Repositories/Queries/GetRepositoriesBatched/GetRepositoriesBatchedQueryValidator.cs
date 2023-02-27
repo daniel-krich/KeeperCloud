@@ -11,10 +11,7 @@ public class GetRepositoriesBatchedQueryValidator: AbstractValidator<GetReposito
 {
     public GetRepositoriesBatchedQueryValidator()
     {
-        RuleFor(x => x.BatchOffset)
+        RuleFor(x => x.Offset)
             .GreaterThanOrEqualTo(0).WithMessage("Offset should be non-negative.");
-
-        RuleFor(x => x.BatchTakeLimit)
-            .GreaterThanOrEqualTo(1).WithMessage("Limit should be greater or equal to 1.");
     }
 }

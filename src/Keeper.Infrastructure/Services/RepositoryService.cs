@@ -94,25 +94,6 @@ public class RepositoryService : IRepositoryService
         }
     }
 
-    public async Task<BatchWrapperModel<FileModel>> GetRepositoryFilesBatch(Guid userId, Guid repositoryId, int batchOffset, int batchCountLimit)
-    {
-        using (var context = _keeperFactory.CreateDbContext())
-        {
-            var repository = await context.Repositories.Include(x =>
-                                    x.Files.OrderByDescending(x => x.CreatedDate)
-                                    .Skip(batchOffset)
-                                    .Take(batchCountLimit)
-                            ).FirstOrDefaultAsync(x => x.OwnerId == userId && x.Id == repositoryId);
-            if (repository != null)
-            {
-                var howMuchFilesLeftCount = (await context.Files.Where(x => x.RepositoryId == repositoryId).CountAsync()) - batchOffset - repository.Files.Count;
-                var fileModelList = _mapper.Map<ICollection<FileEntity>, List<FileModel>>(repository.Files);
-                return new BatchWrapperModel<FileModel>(fileModelList, batchOffset, howMuchFilesLeftCount);
-            }
-            return new BatchWrapperModel<FileModel>();
-        }
-    }
-
     public async Task<IEnumerable<FileStreamWithMetaModel>> GetFilesReadStreams(Guid userId, Guid repositoryId, IEnumerable<Guid> fileIds)
     {
         using (var context = _keeperFactory.CreateDbContext())
@@ -135,57 +116,6 @@ public class RepositoryService : IRepositoryService
                 }
             }
             return new List<FileStreamWithMetaModel>();
-        }
-    }
-
-    public async Task<int> DeleteFiles(Guid userId, Guid repositoryId, IEnumerable<Guid> fileIds)
-    {
-        using (var context = _keeperFactory.CreateDbContext())
-        {
-            var repo = await context.Repositories.Include(x => x.Owner).FirstOrDefaultAsync(x => x.Id == repositoryId && x.OwnerId == userId);
-            if (repo is not null)
-            {
-                var fileEntities = await context.Files.Where(x => fileIds.Contains(x.Id) && x.RepositoryId == repositoryId).ToListAsync();
-
-                var repoAccess = _repositoriesAccessor.OpenRepository(userId, repositoryId);
-                if (repoAccess != null && fileEntities.Count > 0)
-                {
-                    foreach (var file in fileEntities)
-                    {
-                        var fileAccess = repoAccess.OpenRepoFileAccessor(file.Id);
-                        if (fileAccess != null)
-                        {
-                            await fileAccess.DeleteAsync();
-                        }
-                    }
-
-                    context.Files.RemoveRange(fileEntities);
-                    return await context.SaveChangesAsync();
-                }
-            }
-            return 0;
-        }
-    }
-
-    public async Task<bool> DeleteRepository(Guid userId, Guid repositoryId)
-    {
-        using (var context = _keeperFactory.CreateDbContext())
-        {
-            var repo = await context.Repositories.FirstOrDefaultAsync(x => x.Id == repositoryId && x.OwnerId == userId);
-            if (repo is not null)
-            {
-                var repoAccess = _repositoriesAccessor.OpenRepository(userId, repositoryId);
-                if (repoAccess != null)
-                {
-                    if (await repoAccess.DeleteRepository())
-                    {
-                        context.Repositories.Remove(repo);
-                        await context.SaveChangesAsync();
-                        return true;
-                    }
-                }
-            }
-            return false;
         }
     }
 

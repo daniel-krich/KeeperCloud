@@ -17,8 +17,6 @@ public class RepositoriesController : ControllerBase
     private readonly IRepositoryService _repoService;
     private readonly ISender _mediatR;
 
-    private const int _batchTakeRepositoryLimit = 20;
-
     public RepositoriesController(IRepositoryService repoService, ISender mediatR)
     {
         _repoService = repoService;
@@ -26,8 +24,8 @@ public class RepositoriesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<BatchWrapperModel<RepositoryModel>>> GetRepositoriesBatched([FromQuery] int offset = 0)
+    public async Task<ActionResult<BatchWrapperModel<RepositoryModel>>> GetRepositoriesBatched([FromQuery] GetRepositoriesBatchedQuery getRepositoriesBatchedQuery)
     {
-        return await _mediatR.Send(new GetRepositoriesBatchedQuery { BatchOffset = offset, BatchTakeLimit = _batchTakeRepositoryLimit });
+        return await _mediatR.Send(getRepositoriesBatchedQuery);
     }
 }

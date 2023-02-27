@@ -16,8 +16,7 @@ namespace Keeper.Application.Repositories.Queries.GetRepositoriesBatched;
 [AuthorizedRequest]
 public record GetRepositoriesBatchedQuery : IRequest<BatchWrapperModel<RepositoryModel>>
 {
-    public int BatchOffset { get; set; }
-    public int BatchTakeLimit { get; set; }
+    public int Offset { get; set; }
 }
 
 public class GetRepositoriesBatchedQueryHandler : IRequestHandler<GetRepositoriesBatchedQuery, BatchWrapperModel<RepositoryModel>>
@@ -25,6 +24,8 @@ public class GetRepositoriesBatchedQueryHandler : IRequestHandler<GetRepositorie
     private readonly IKeeperDbContextFactory _keeperFactory;
     private readonly IAuthenticatedUserService _authenticatedUserService;
     private readonly IMapper _mapper;
+
+    private const int BatchTakeLimit = 20;
     public GetRepositoriesBatchedQueryHandler(IKeeperDbContextFactory keeperFactory, IAuthenticatedUserService authenticatedUserService, IMapper mapper)
     {
         _keeperFactory = keeperFactory;
@@ -44,7 +45,7 @@ public class GetRepositoriesBatchedQueryHandler : IRequestHandler<GetRepositorie
                                                    Repo = repo,
                                                    OverallFileCount = repo.Files.Count(),
                                                    OverallRepositorySize = repo.Files.Sum(f => f.FileSize)
-                                               }).OrderByDescending(x => x.Repo.CreatedDate).Skip(request.BatchOffset).Take(request.BatchTakeLimit).ToListAsync();
+                                               }).OrderByDescending(x => x.Repo.CreatedDate).Skip(request.Offset).Take(BatchTakeLimit).ToListAsync();
 
             var repositories = repositoriesFragments.Select(x =>
             {
@@ -54,8 +55,8 @@ public class GetRepositoriesBatchedQueryHandler : IRequestHandler<GetRepositorie
                 return repo;
             }).ToList();
 
-            var howMuchReposLeftCount = (await context.Repositories.Where(x => x.OwnerId == user.Id).CountAsync()) - request.BatchOffset - repositories.Count;
-            return new BatchWrapperModel<RepositoryModel>(repositories, request.BatchOffset, howMuchReposLeftCount);
+            var howMuchReposLeftCount = (await context.Repositories.Where(x => x.OwnerId == user.Id).CountAsync()) - request.Offset - repositories.Count;
+            return new BatchWrapperModel<RepositoryModel>(repositories, request.Offset, howMuchReposLeftCount);
         }
     }
 }

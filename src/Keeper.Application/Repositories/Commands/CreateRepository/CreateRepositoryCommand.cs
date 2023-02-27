@@ -1,6 +1,7 @@
 ﻿using Keeper.Application.Common.Exceptions;
 using Keeper.Application.Common.Interfaces;
 using Keeper.Application.Common.Security;
+using Keeper.Application.Repositories.Exceptions;
 using Keeper.Domain.Entities;
 using Keeper.Domain.Models;
 using Keeper.RepositoriesAccess.Interfaces;

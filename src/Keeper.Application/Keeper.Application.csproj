@@ -25,8 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="RepositoryActivities\EventHandlers\" />
+    <Folder Include="Repositories\EventHandlers\" />
     <Folder Include="RepositoryActivities\Commands\" />
+    <Folder Include="RepositoryActivities\EventHandlers\" />
   </ItemGroup>
 
 </Project>
