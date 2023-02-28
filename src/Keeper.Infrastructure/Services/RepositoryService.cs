@@ -118,37 +118,4 @@ public class RepositoryService : IRepositoryService
             return new List<FileStreamWithMetaModel>();
         }
     }
-
-    public async Task<bool> UpdateRepository(Guid userId, Guid repositoryId, UpdateRepositoryRequestDto updateRepositoryRequest)
-    {
-        using (var context = _keeperFactory.CreateDbContext())
-        {
-            var repo = await context.Repositories.Include(x => x.Owner).FirstOrDefaultAsync(x => x.Id == repositoryId && x.OwnerId == userId);
-            if (repo is not null)
-            {
-                repo.Name = updateRepositoryRequest.Name;
-                repo.Description = updateRepositoryRequest.Description;
-                context.Repositories.Update(repo);
-                await context.SaveChangesAsync();
-                return true;
-            }
-            return false;
-        }
-    }
-
-    public async Task<bool> UpdateRepositoryAllowAnonymousFileRead(Guid userId, Guid repositoryId, bool allow)
-    {
-        using (var context = _keeperFactory.CreateDbContext())
-        {
-            var repo = await context.Repositories.Include(x => x.Owner).FirstOrDefaultAsync(x => x.Id == repositoryId && x.OwnerId == userId);
-            if (repo is not null)
-            {
-                repo.AllowAnonymousFileRead = allow;
-                context.Repositories.Update(repo);
-                await context.SaveChangesAsync();
-                return true;
-            }
-            return false;
-        }
-    }
 }

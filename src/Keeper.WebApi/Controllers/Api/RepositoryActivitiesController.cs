@@ -14,14 +14,12 @@ namespace Keeper.WebApi.Controllers.Api;
 [Authorize]
 public class RepositoryActivitiesController : ControllerBase
 {
-    private readonly IRepositoryActivitiesService _repositoryActivitiesService;
     private readonly IMapper _mapper;
     private readonly ISender _mediator;
     private readonly ILogger<RepositoryActivitiesController> _logger;
 
-    public RepositoryActivitiesController(IRepositoryActivitiesService repositoryActivitiesService, IMapper mapper, ILogger<RepositoryActivitiesController> logger, ISender mediator)
+    public RepositoryActivitiesController(IMapper mapper, ILogger<RepositoryActivitiesController> logger, ISender mediator)
     {
-        _repositoryActivitiesService = repositoryActivitiesService;
         _mapper = mapper;
         _logger = logger;
         _mediator = mediator;

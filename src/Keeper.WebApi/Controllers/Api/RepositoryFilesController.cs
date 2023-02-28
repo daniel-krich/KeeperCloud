@@ -3,6 +3,8 @@ using Keeper.Application.Common.Interfaces;
 using Keeper.Application.Common.Models;
 using Keeper.Application.RepositoryFiles.Commands.DeleteRepositoryFiles;
 using Keeper.Application.RepositoryFiles.Queries.GetRepositoryFilesBatched;
+using Keeper.Application.RepositoryFiles.Queries.GetRepositoryFileStream;
+using Keeper.Application.RepositoryFiles.Queries.GetRepositoryMultipleFileStream;
 using Keeper.Domain.Enums;
 using Keeper.Domain.Models;
 using Keeper.RepositoriesAccess.Enums;
@@ -19,17 +21,11 @@ namespace Keeper.WebApi.Controllers.Api;
 [Authorize]
 public class RepositoryFilesController : ControllerBase
 {
-    private readonly IRepositoryService _repositoryService;
-    private readonly IMapper _mapper;
     private readonly ISender _mediatR;
-    private readonly IRepositoryActivitiesService _repositoryActivitiesService;
     private readonly ILogger<RepositoryFilesController> _logger;
 
-    public RepositoryFilesController(IRepositoryService repositoryService, IMapper mapper, ILogger<RepositoryFilesController> logger, IRepositoryActivitiesService repositoryActivitiesService, ISender mediatR)
+    public RepositoryFilesController(ILogger<RepositoryFilesController> logger, ISender mediatR)
     {
-        _repositoryActivitiesService = repositoryActivitiesService;
-        _repositoryService = repositoryService;
-        _mapper = mapper;
         _logger = logger;
         _mediatR = mediatR;
     }
@@ -37,6 +33,7 @@ public class RepositoryFilesController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<BatchWrapperModel<FileModel>>> GetRepositoryFilesBatched([FromQuery] GetRepositoryFilesBatchedQuery getRepositoryFilesBatchedQuery)
     {
+
         return await _mediatR.Send(getRepositoryFilesBatchedQuery);
     }
 
@@ -69,54 +66,37 @@ public class RepositoryFilesController : ControllerBase
     }
 
 
-    /*[HttpPost("download-many")]
-    public async Task DownloadFiles([FromRoute] Guid repositoryId, [FromBody] IEnumerable<Guid> fileIds)
+    [HttpPost("download-many")]
+    public async Task<IActionResult> DownloadFiles([FromBody] GetRepositoryMultipleFileStreamQuery getRepositoryMultipleFileStreamQuery)
     {
-        UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
-        if (user is not null)
+
+        Response.Headers.Add("Content-Disposition", $"attachment; filename={DateTime.Now}");
+
+        if (getRepositoryMultipleFileStreamQuery.FileIds.Count() > 1)
         {
             Response.ContentType = "application/octet-stream";
-
-            Response.Headers.Add("Content-Disposition", $"attachment; filename={DateTime.Now}");
-
-            var files = (await _repositoryService.GetFilesReadStreams(user.Id, repositoryId, fileIds)).ToList();
-            if (files.Count > 1)
+            var multipleFileCollection = await _mediatR.Send(getRepositoryMultipleFileStreamQuery);
+            using (var archive = new ZipArchive(Response.BodyWriter.AsStream(), ZipArchiveMode.Create))
             {
-                using (var archive = new ZipArchive(Response.BodyWriter.AsStream(), ZipArchiveMode.Create))
+                await foreach (var fileWithStream in multipleFileCollection)
                 {
-                    foreach (var fileAccess in files)
+                    using (fileWithStream)
                     {
-                        try
-                        {
-                            using (var fileStream = await fileAccess.OpenStreamAsync(RepositoryFileStreamMode.Read))
-                            {
-                                var entry = archive.CreateEntry(fileAccess.Name, CompressionLevel.Optimal);
-                                using var entryStream = entry.Open();
-                                await fileStream.CopyToAsync(entryStream);
-                            }
-                        }
-                        catch
-                        {
-                            _logger.LogWarning($"Error while accessing file {fileAccess.Name}");
-                        }
+                        var entry = archive.CreateEntry(fileWithStream.File.Name!, CompressionLevel.Optimal);
+                        using var entryStream = entry.Open();
+                        await fileWithStream.Stream.CopyToAsync(entryStream);
                     }
                 }
-            }
-            else if(files.Count == 1)
-            {
-                var file = files.First();
-                try
-                {
-                    using (var fileStream = await file.OpenStreamAsync(RepositoryFileStreamMode.Read))
-                    {
-                        await fileStream.CopyToAsync(Response.Body);
-                    }
-                }
-                catch
-                {
-                    _logger.LogWarning($"Error while accessing file {file.Name}");
-                }
+                return new EmptyResult();
             }
         }
-    }*/
+        else if (getRepositoryMultipleFileStreamQuery.FileIds.Count() == 1)
+        {
+            var singleFileCollection = await _mediatR.Send(new GetRepositoryFileStreamQuery { RepositoryId = getRepositoryMultipleFileStreamQuery.RepositoryId, FileId = getRepositoryMultipleFileStreamQuery.FileIds.First() });
+            Response.ContentType = MimeHelper.GetMimeType(singleFileCollection.File.Name!);
+            await singleFileCollection.Stream.CopyToAsync(Response.Body);
+            return new EmptyResult();
+        }
+        else return BadRequest();
+    }
 }

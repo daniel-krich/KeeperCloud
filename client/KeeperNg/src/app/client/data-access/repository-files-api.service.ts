@@ -42,7 +42,7 @@ export class RepositoryFilesApiService {
 
     public downloadRepositoryFiles(repositoryId: string, files: RepoFileInterface[]): Observable<{ blob: Blob | null, progress: number | null }> {
         const apprxFileSize = files.reduce((acc, curr) => acc+curr.fileSize, 0);
-        return this.httpClient.post(this.baseUrl + `/api/repository/${repositoryId}/storage/download-many`, files.map(x => x.id), { responseType: 'blob', observe: 'events', reportProgress: true }).pipe(
+        return this.httpClient.post(this.baseUrl + `/api/repository/files/download-many`, { repositoryId: repositoryId, fileIds: files.map(x => x.id) }, { responseType: 'blob', observe: 'events', reportProgress: true }).pipe(
             filter(event => event.type === HttpEventType.DownloadProgress || event.type === HttpEventType.Response),
             map((event: HttpEvent<Blob>) => {
                 switch (event.type) {

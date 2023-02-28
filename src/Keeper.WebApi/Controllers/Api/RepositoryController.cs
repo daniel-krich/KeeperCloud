@@ -19,13 +19,11 @@ namespace Keeper.WebApi.Controllers.Api;
 public class RepositoryController : ControllerBase
 {
     private readonly IRepositoryService _repoService;
-    private readonly IRepositoryActivitiesService _repositoryActivitiesService;
     private readonly ISender _mediatR;
 
-    public RepositoryController(IRepositoryService repoService, IRepositoryActivitiesService repositoryActivitiesService, ISender mediatR)
+    public RepositoryController(IRepositoryService repoService, ISender mediatR)
     {
         _repoService = repoService;
-        _repositoryActivitiesService = repositoryActivitiesService;
         _mediatR = mediatR;
     }
 

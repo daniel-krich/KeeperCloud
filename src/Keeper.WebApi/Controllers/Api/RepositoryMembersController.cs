@@ -18,16 +18,12 @@ namespace Keeper.WebApi.Controllers.Api;
 [Authorize]
 public class RepositoryMembersController : ControllerBase
 {
-    private readonly IRepositoryApiMembersService _repoMembersService;
     private readonly IMapper _mapper;
     private readonly ISender _mediatR;
-    private readonly IRepositoryActivitiesService _repositoryActivitiesService;
 
-    public RepositoryMembersController(IRepositoryApiMembersService repoMembersService, IMapper mapper, IRepositoryActivitiesService repositoryActivitiesService, ISender mediatR)
+    public RepositoryMembersController(IMapper mapper, ISender mediatR)
     {
-        _repoMembersService = repoMembersService;
         _mapper = mapper;
-        _repositoryActivitiesService = repositoryActivitiesService;
         _mediatR = mediatR;
     }
 
