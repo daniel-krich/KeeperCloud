@@ -13,6 +13,9 @@ public class GetRepositoryFilesBatchedQueryValidator : AbstractValidator<GetRepo
 
     public GetRepositoryFilesBatchedQueryValidator()
     {
+        RuleFor(x => x.RepositoryId)
+            .NotEmpty().WithMessage("Repository id cannot be empty or null.");
+
         RuleFor(x => x.Offset)
             .GreaterThanOrEqualTo(0).WithMessage("Offset should be non-negative.");
 

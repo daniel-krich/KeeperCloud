@@ -11,6 +11,9 @@ public class DeleteRepositoryFilesCommandValidator : AbstractValidator<DeleteRep
 {
     public DeleteRepositoryFilesCommandValidator()
     {
+        RuleFor(x => x.RepositoryId)
+            .NotEmpty().WithMessage("Repository id cannot be empty or null.");
+
         RuleFor(x => x.FileIds)
             .NotEmpty().WithMessage("File ids should not be null or empty.");
     }

@@ -1,5 +1,9 @@
 ﻿using Keeper.Application.Common.Interfaces;
+using Keeper.Infrastructure.Common;
+using Keeper.WebApi.Binders;
 using Keeper.WebApi.Services;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.AspNetCore.ResponseCompression;
 using NLog;
 using NLog.Web;
@@ -31,7 +35,10 @@ public static class ConfigureServices
         services.Configure<BrotliCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
         services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
 
-        services.AddControllers();
+        services.AddControllers(options =>
+        {
+            options.ModelBinderProviders.Insert(0, new FileUploadBinderProvider(new FileUploadBinder()));
+        });
         services.AddCors(options =>
         {
             options.AddPolicy(name: "AllowAllOrigins",
@@ -47,6 +54,7 @@ public static class ConfigureServices
         services.AddHttpContextAccessor();
 
         services.AddScoped<IAuthenticatedUserService, AuthenticatedUserService>();
+
         return services;
     }
 }

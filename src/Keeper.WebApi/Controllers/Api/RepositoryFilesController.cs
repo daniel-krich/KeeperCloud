@@ -2,6 +2,8 @@
 using Keeper.Application.Common.Interfaces;
 using Keeper.Application.Common.Models;
 using Keeper.Application.RepositoryFiles.Commands.DeleteRepositoryFiles;
+using Keeper.Application.RepositoryFiles.Commands.UploadRepositoryFiles;
+using Keeper.Application.RepositoryFiles.Queries.GetRepositoryFiles;
 using Keeper.Application.RepositoryFiles.Queries.GetRepositoryFilesBatched;
 using Keeper.Application.RepositoryFiles.Queries.GetRepositoryFileStream;
 using Keeper.Application.RepositoryFiles.Queries.GetRepositoryMultipleFileStream;
@@ -33,32 +35,18 @@ public class RepositoryFilesController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<BatchWrapperModel<FileModel>>> GetRepositoryFilesBatched([FromQuery] GetRepositoryFilesBatchedQuery getRepositoryFilesBatchedQuery)
     {
-
         return await _mediatR.Send(getRepositoryFilesBatchedQuery);
     }
 
-    /*[HttpPost("upload")]
+    [HttpPost("upload")]
     [DisableRequestSizeLimit]
-    public async Task<IActionResult> UploadFiles([FromRoute] Guid repositoryId, [FromForm] IEnumerable<IFormFile> files)
+    public async Task<ActionResult<List<FileModel>>> UploadFiles([FromForm] UploadRepositoryFilesCommand uploadRepositoryFilesCommand)
     {
-        UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
-        if (user is not null)
-        {
-            var res = await _repositoryService.CreateFilesByForm(user.Id, repositoryId, files);
-            if(res != null)
-            {
-                await _repositoryActivitiesService.CreateActivity(repositoryId, user.Email!, RepositoryActivity.UploadFilesToRepository, $"Uploaded {res.Count} files in total");
-                return Ok(res);
-            }
-            else
-            {
-                return BadRequest("Repository not found");
-            }
-        }
-        return BadRequest();
-    }*/
+        var fileIds = await _mediatR.Send(uploadRepositoryFilesCommand);
+        return await _mediatR.Send(new GetRepositoryFilesQuery { RepositoryId = uploadRepositoryFilesCommand.RepositoryId, FileIds = fileIds });
+    }
 
-    [HttpPost("remove-many")]
+    [HttpPost("remove")]
     public async Task<IActionResult> DeleteFiles([FromBody] DeleteRepositoryFilesCommand deleteRepositoryFilesCommand)
     {
         var deleteCount = await _mediatR.Send(deleteRepositoryFilesCommand);
@@ -66,7 +54,7 @@ public class RepositoryFilesController : ControllerBase
     }
 
 
-    [HttpPost("download-many")]
+    [HttpPost("download")]
     public async Task<IActionResult> DownloadFiles([FromBody] GetRepositoryMultipleFileStreamQuery getRepositoryMultipleFileStreamQuery)
     {
 

@@ -13,19 +13,20 @@ export class RepositoryFilesApiService {
                 @Inject(BASE_URL) private baseUrl: string) { }
 
     public loadRepositoryFiles(repositoryId: string, batchOffset: number = 0, take?: number): Observable<BatchWrapperInterface<RepoFileInterface>> {
-        return this.httpClient.get<BatchWrapperInterface<RepoFileInterface>>(this.baseUrl + `/api/repository/files`, {params: { repositoryId: repositoryId, offset: batchOffset, ...(take) && { take: take } }});
+        return this.httpClient.get<BatchWrapperInterface<RepoFileInterface>>(this.baseUrl + '/api/repository/files', {params: { repositoryId: repositoryId, offset: batchOffset, ...(take) && { take: take } }});
     }
 
     public deleteRepositoryFiles(repositoryId: string, files: RepoFileInterface[]): Observable<void> {
-        return this.httpClient.post<void>(this.baseUrl + `/api/repository/files/remove-many`, { repositoryId: repositoryId, fileIds: files.map(x => x.id) });
+        return this.httpClient.post<void>(this.baseUrl + '/api/repository/files/remove', { repositoryId: repositoryId, fileIds: files.map(x => x.id) });
     }
 
     public uploadRepositoryFiles(repositoryId: string, files: File[]): Observable<{ files: RepoFileInterface[] | null, progress: number | null }> {
         const formData = new FormData();
+        formData.append('repositoryId', repositoryId);
         for (const file of files) {
             formData.append('files', file, file.name);
         }
-        return this.httpClient.post<RepoFileInterface[]>(this.baseUrl + `/api/repository/${repositoryId}/storage/upload`, formData, { observe: 'events', reportProgress: true }).pipe(
+        return this.httpClient.post<RepoFileInterface[]>(this.baseUrl + '/api/repository/files/upload', formData, { observe: 'events', reportProgress: true }).pipe(
             filter(event => event.type === HttpEventType.UploadProgress || event.type === HttpEventType.Response),
             map((event: HttpEvent<RepoFileInterface[]>) => {
                 switch (event.type) {
@@ -42,7 +43,7 @@ export class RepositoryFilesApiService {
 
     public downloadRepositoryFiles(repositoryId: string, files: RepoFileInterface[]): Observable<{ blob: Blob | null, progress: number | null }> {
         const apprxFileSize = files.reduce((acc, curr) => acc+curr.fileSize, 0);
-        return this.httpClient.post(this.baseUrl + `/api/repository/files/download-many`, { repositoryId: repositoryId, fileIds: files.map(x => x.id) }, { responseType: 'blob', observe: 'events', reportProgress: true }).pipe(
+        return this.httpClient.post(this.baseUrl + '/api/repository/files/download', { repositoryId: repositoryId, fileIds: files.map(x => x.id) }, { responseType: 'blob', observe: 'events', reportProgress: true }).pipe(
             filter(event => event.type === HttpEventType.DownloadProgress || event.type === HttpEventType.Response),
             map((event: HttpEvent<Blob>) => {
                 switch (event.type) {
