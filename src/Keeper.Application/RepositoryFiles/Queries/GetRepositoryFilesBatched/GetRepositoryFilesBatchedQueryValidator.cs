@@ -9,8 +9,6 @@ namespace Keeper.Application.RepositoryFiles.Queries.GetRepositoryFilesBatched;
 
 public class GetRepositoryFilesBatchedQueryValidator : AbstractValidator<GetRepositoryFilesBatchedQuery>
 {
-    private const int BatchTakeMax = 200;
-
     public GetRepositoryFilesBatchedQueryValidator()
     {
         RuleFor(x => x.RepositoryId)
@@ -20,7 +18,6 @@ public class GetRepositoryFilesBatchedQueryValidator : AbstractValidator<GetRepo
             .GreaterThanOrEqualTo(0).WithMessage("Offset should be non-negative.");
 
         RuleFor(x => x.Take)
-            .GreaterThanOrEqualTo(1).WithMessage("Cannot take less then 1.")
-            .LessThanOrEqualTo(BatchTakeMax).WithMessage($"Cannot take more then {BatchTakeMax} at once.");
+            .GreaterThanOrEqualTo(1).WithMessage("Cannot take less then 1.");
     }
 }

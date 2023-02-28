@@ -27,6 +27,8 @@ public class GetRepositoryFilesBatchedQueryHandler : IRequestHandler<GetReposito
     private readonly IKeeperDbContextFactory _keeperFactory;
     private readonly IAuthenticatedUserService _authenticatedUserService;
     private readonly IMapper _mapper;
+
+    private const int BatchTakeMax = 200;
     public GetRepositoryFilesBatchedQueryHandler(IKeeperDbContextFactory keeperFactory, IMapper mapper, IAuthenticatedUserService authenticatedUserService)
     {
         _keeperFactory = keeperFactory;
@@ -36,6 +38,8 @@ public class GetRepositoryFilesBatchedQueryHandler : IRequestHandler<GetReposito
 
     public async Task<BatchWrapperModel<FileModel>> Handle(GetRepositoryFilesBatchedQuery request, CancellationToken cancellationToken)
     {
+        request.Take = request.Take > BatchTakeMax ? BatchTakeMax : request.Take;
+
         using (var context = _keeperFactory.CreateDbContext())
         {
             var user = _authenticatedUserService.User!;
