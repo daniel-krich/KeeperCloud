@@ -18,10 +18,10 @@ namespace Keeper.WebApi.Controllers.Api;
 [Authorize]
 public class RepositoryController : ControllerBase
 {
-    private readonly IRepositoryService _repoService;
+    private readonly IRepositoryActivitiesService _repoService;
     private readonly ISender _mediatR;
 
-    public RepositoryController(IRepositoryService repoService, ISender mediatR)
+    public RepositoryController(IRepositoryActivitiesService repoService, ISender mediatR)
     {
         _repoService = repoService;
         _mediatR = mediatR;
@@ -34,7 +34,7 @@ public class RepositoryController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<RepositoryModel>> PostNewRepository([FromBody] CreateRepositoryCommand createRepositoryCommand)
+    public async Task<ActionResult<RepositoryModel>> CreateRepository([FromBody] CreateRepositoryCommand createRepositoryCommand)
     {
         var repositoryId = await _mediatR.Send(createRepositoryCommand);
         return await _mediatR.Send(new GetRepositoryQuery { RepositoryId = repositoryId });

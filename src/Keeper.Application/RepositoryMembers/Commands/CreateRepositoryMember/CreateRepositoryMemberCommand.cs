@@ -27,10 +27,12 @@ public class CreateRepositoryMemberHandler : IRequestHandler<CreateRepositoryMem
 {
     private readonly IKeeperDbContextFactory _keeperFactory;
     private readonly IAuthenticatedUserService _authenticatedUserService;
-    public CreateRepositoryMemberHandler(IKeeperDbContextFactory keeperFactory, IAuthenticatedUserService authenticatedUserService)
+    private readonly IRepositoryActivitiesService _repositoryActivitiesService;
+    public CreateRepositoryMemberHandler(IKeeperDbContextFactory keeperFactory, IAuthenticatedUserService authenticatedUserService, IRepositoryActivitiesService repositoryActivitiesService)
     {
         _keeperFactory = keeperFactory;
         _authenticatedUserService = authenticatedUserService;
+        _repositoryActivitiesService = repositoryActivitiesService;
     }
 
     public async Task<Guid> Handle(CreateRepositoryMemberCommand request, CancellationToken cancellationToken)
@@ -51,6 +53,7 @@ public class CreateRepositoryMemberHandler : IRequestHandler<CreateRepositoryMem
                 };
                 context.RepositoryApiMembers.Add(member);
                 await context.SaveChangesAsync();
+                await _repositoryActivitiesService.AddRepositoryActivity(request.RepositoryId, RepositoryActivity.AddApiMember, user.Email!, $"Initial name: {member.Name}");
                 return member.Id;
             }
             return default;

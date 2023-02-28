@@ -1,5 +1,6 @@
 ﻿using Keeper.Application.Common.DTOs;
 using Keeper.Application.Common.Interfaces;
+using Keeper.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,10 +19,12 @@ public class UpdateRepositoryMemberCommandHandler : IRequestHandler<UpdateReposi
 {
     private readonly IKeeperDbContextFactory _keeperFactory;
     private readonly IAuthenticatedUserService _authenticatedUserService;
-    public UpdateRepositoryMemberCommandHandler(IKeeperDbContextFactory keeperFactory, IAuthenticatedUserService authenticatedUserService)
+    private readonly IRepositoryActivitiesService _repositoryActivitiesService;
+    public UpdateRepositoryMemberCommandHandler(IKeeperDbContextFactory keeperFactory, IAuthenticatedUserService authenticatedUserService, IRepositoryActivitiesService repositoryActivitiesService)
     {
         _keeperFactory = keeperFactory;
         _authenticatedUserService = authenticatedUserService;
+        _repositoryActivitiesService = repositoryActivitiesService;
     }
 
     public async Task<Guid> Handle(UpdateRepositoryMemberCommand request, CancellationToken cancellationToken)
@@ -37,6 +40,7 @@ public class UpdateRepositoryMemberCommandHandler : IRequestHandler<UpdateReposi
                 repositoryApiMember.PermissionFlags = request.Member.PermissionFlags;
                 context.RepositoryApiMembers.Update(repositoryApiMember);
                 await context.SaveChangesAsync();
+                await _repositoryActivitiesService.AddRepositoryActivity(request.RepositoryId, RepositoryActivity.UpdateApiMember, user.Email!, $"Updated: {repositoryApiMember.Name}");
                 return repositoryApiMember.Id;
             }
             return default;

@@ -3,6 +3,7 @@ using Keeper.Application.Common.Interfaces;
 using Keeper.Application.Common.Security;
 using Keeper.Application.Repositories.Exceptions;
 using Keeper.Domain.Entities;
+using Keeper.Domain.Enums;
 using Keeper.Domain.Models;
 using Keeper.RepositoriesAccess.Interfaces;
 using MapsterMapper;
@@ -22,11 +23,13 @@ public class CreateRepositoryCommandHandler : IRequestHandler<CreateRepositoryCo
     private readonly IKeeperDbContextFactory _keeperFactory;
     private readonly IRepositoriesAccessor _repositoriesAccessor;
     private readonly IAuthenticatedUserService _authenticatedUserService;
-    public CreateRepositoryCommandHandler(IKeeperDbContextFactory keeperFactory, IRepositoriesAccessor repositoriesAccessor, IAuthenticatedUserService authenticatedUserService)
+    private readonly IRepositoryActivitiesService _repositoryActivitiesService;
+    public CreateRepositoryCommandHandler(IKeeperDbContextFactory keeperFactory, IRepositoriesAccessor repositoriesAccessor, IAuthenticatedUserService authenticatedUserService, IRepositoryActivitiesService repositoryActivitiesService)
     {
         _keeperFactory = keeperFactory;
         _repositoriesAccessor = repositoriesAccessor;
         _authenticatedUserService = authenticatedUserService;
+        _repositoryActivitiesService = repositoryActivitiesService;
     }
 
     public async Task<Guid> Handle(CreateRepositoryCommand request, CancellationToken cancellationToken)
@@ -47,6 +50,7 @@ public class CreateRepositoryCommandHandler : IRequestHandler<CreateRepositoryCo
                 };
                 context.Repositories.Add(repoEntity);
                 await context.SaveChangesAsync();
+                await _repositoryActivitiesService.AddRepositoryActivity(repoEntity.Id, RepositoryActivity.CreateRepository, user.Email!, $"Created repository");
                 return repoEntity.Id;
             }
             throw new CreateRepositoryException();

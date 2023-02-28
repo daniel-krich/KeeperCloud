@@ -2,6 +2,7 @@
 using Keeper.Application.Common.Interfaces;
 using Keeper.Application.Common.Security;
 using Keeper.Domain.Entities;
+using Keeper.Domain.Enums;
 using Keeper.RepositoriesAccess.Enums;
 using Keeper.RepositoriesAccess.Interfaces;
 using MediatR;
@@ -25,11 +26,13 @@ public class UploadRepositoryFilesCommandHandler : IRequestHandler<UploadReposit
     private readonly IKeeperDbContextFactory _keeperFactory;
     private readonly IRepositoriesAccessor _repositoriesAccessor;
     private readonly IAuthenticatedUserService _authenticatedUserService;
-    public UploadRepositoryFilesCommandHandler(IKeeperDbContextFactory keeperFactory, IRepositoriesAccessor repositoriesAccessor, IAuthenticatedUserService authenticatedUserService)
+    private readonly IRepositoryActivitiesService _repositoryActivitiesService;
+    public UploadRepositoryFilesCommandHandler(IKeeperDbContextFactory keeperFactory, IRepositoriesAccessor repositoriesAccessor, IAuthenticatedUserService authenticatedUserService, IRepositoryActivitiesService repositoryActivitiesService)
     {
         _keeperFactory = keeperFactory;
         _repositoriesAccessor = repositoriesAccessor;
         _authenticatedUserService = authenticatedUserService;
+        _repositoryActivitiesService = repositoryActivitiesService;
     }
 
     public async Task<IEnumerable<Guid>> Handle(UploadRepositoryFilesCommand request, CancellationToken cancellationToken)
@@ -76,6 +79,7 @@ public class UploadRepositoryFilesCommandHandler : IRequestHandler<UploadReposit
                     }
                     context.Files.AddRange(fileEntities);
                     await context.SaveChangesAsync();
+                    await _repositoryActivitiesService.AddRepositoryActivity(request.RepositoryId, RepositoryActivity.UploadFilesToRepository, user.Email!, $"Uploaded files: {fileEntities.Count}");
                     return fileEntities.Select(x => x.Id);
                 }
             }

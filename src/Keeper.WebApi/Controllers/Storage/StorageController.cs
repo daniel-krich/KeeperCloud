@@ -15,11 +15,11 @@ namespace Keeper.WebApi.Controllers.Storage;
 [ApiController]
 public class StorageController : ControllerBase
 {
-    private readonly IRepositoryService _repositoryService;
+    private readonly IRepositoryActivitiesService _repositoryService;
     private readonly IMapper _mapper;
     private readonly ILogger<StorageController> _logger;
 
-    public StorageController(IRepositoryService repositoryService, IMapper mapper, ILogger<StorageController> logger)
+    public StorageController(IRepositoryActivitiesService repositoryService, IMapper mapper, ILogger<StorageController> logger)
     {
         _repositoryService = repositoryService;
         _mapper = mapper;

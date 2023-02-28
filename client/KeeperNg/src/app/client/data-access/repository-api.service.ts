@@ -17,7 +17,7 @@ export class RepositoryApiService {
                 @Inject(BASE_URL) private baseUrl: string) { }
 
     public loadRepository(repositoryId: string): Observable<RepoInterface> {
-        return this.httpClient.get<RepoInterface>(this.baseUrl + '/api/repository/' + repositoryId);
+        return this.httpClient.get<RepoInterface>(this.baseUrl + '/api/repository', { params: { repositoryId: repositoryId } });
     }
 
     public loadRepositories(batchOffset: number = 0): Observable<BatchWrapperInterface<RepoInterface>> {
@@ -25,7 +25,7 @@ export class RepositoryApiService {
     }
 
     public createRepository(createModel: CreateRepositoryModel): Observable<RepoInterface> {
-        return this.httpClient.post<RepoInterface>(this.baseUrl + '/api/repository/create', <CreateRepositoryDTOInterface>{
+        return this.httpClient.post<RepoInterface>(this.baseUrl + '/api/repository', <CreateRepositoryDTOInterface>{
             name: createModel.name,
             description: createModel.description
         });
@@ -36,6 +36,6 @@ export class RepositoryApiService {
     }
 
     public deleteRepository(repositoryId: string): Observable<void> {
-        return this.httpClient.delete<void>(this.baseUrl + '/api/repository/' + repositoryId);
+        return this.httpClient.delete<void>(this.baseUrl + '/api/repository', { params: { repositoryId: repositoryId } });
     }
 }

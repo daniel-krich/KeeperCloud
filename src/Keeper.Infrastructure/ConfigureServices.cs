@@ -41,7 +41,7 @@ public static class ConfigureServices
 
         services.AddSingleton<IJwtService, JwtService>();
         services.AddSingleton<IAuthService, AuthService>();
-        services.AddSingleton<IRepositoryService, RepositoryService>();
+        services.AddSingleton<IRepositoryActivitiesService, RepositoryActivitiesService>();
 
         services.AddRepositoriesAccess(options =>
         {

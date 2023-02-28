@@ -1,4 +1,5 @@
 ﻿using Keeper.Application.Common.Interfaces;
+using Keeper.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -20,10 +21,12 @@ public class DeleteRepositoryMemberCommandHandler : IRequestHandler<DeleteReposi
 {
     private readonly IKeeperDbContextFactory _keeperFactory;
     private readonly IAuthenticatedUserService _authenticatedUserService;
-    public DeleteRepositoryMemberCommandHandler(IKeeperDbContextFactory keeperFactory, IAuthenticatedUserService authenticatedUserService)
+    private readonly IRepositoryActivitiesService _repositoryActivitiesService;
+    public DeleteRepositoryMemberCommandHandler(IKeeperDbContextFactory keeperFactory, IAuthenticatedUserService authenticatedUserService, IRepositoryActivitiesService repositoryActivitiesService)
     {
         _keeperFactory = keeperFactory;
         _authenticatedUserService = authenticatedUserService;
+        _repositoryActivitiesService = repositoryActivitiesService;
     }
 
     public async Task<bool> Handle(DeleteRepositoryMemberCommand request, CancellationToken cancellationToken)
@@ -36,6 +39,7 @@ public class DeleteRepositoryMemberCommandHandler : IRequestHandler<DeleteReposi
             {
                 context.RepositoryApiMembers.Remove(repositoryApiMember);
                 await context.SaveChangesAsync();
+                await _repositoryActivitiesService.AddRepositoryActivity(request.RepositoryId, RepositoryActivity.RemoveApiMember, user.Email!, $"Removed: {repositoryApiMember.Name}");
                 return true;
             }
             return false;

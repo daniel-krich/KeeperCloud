@@ -1,5 +1,6 @@
 ﻿using Keeper.Application.Common.Interfaces;
 using Keeper.Application.Common.Security;
+using Keeper.Domain.Enums;
 using Keeper.RepositoriesAccess.Interfaces;
 using MapsterMapper;
 using MediatR;
@@ -27,12 +28,14 @@ public class DeleteRepositoryFilesCommandHandler : IRequestHandler<DeleteReposit
     private readonly IRepositoriesAccessor _repositoriesAccessor;
     private readonly IAuthenticatedUserService _authenticatedUserService;
     private readonly IMapper _mapper;
-    public DeleteRepositoryFilesCommandHandler(IKeeperDbContextFactory keeperFactory, IRepositoriesAccessor repositoriesAccessor, IMapper mapper, IAuthenticatedUserService authenticatedUserService)
+    private readonly IRepositoryActivitiesService _repositoryActivitiesService;
+    public DeleteRepositoryFilesCommandHandler(IKeeperDbContextFactory keeperFactory, IRepositoriesAccessor repositoriesAccessor, IMapper mapper, IAuthenticatedUserService authenticatedUserService, IRepositoryActivitiesService repositoryActivitiesService)
     {
         _keeperFactory = keeperFactory;
         _repositoriesAccessor = repositoriesAccessor;
         _mapper = mapper;
         _authenticatedUserService = authenticatedUserService;
+        _repositoryActivitiesService = repositoryActivitiesService;
     }
 
     public async Task<int> Handle(DeleteRepositoryFilesCommand request, CancellationToken cancellationToken)
@@ -58,7 +61,9 @@ public class DeleteRepositoryFilesCommandHandler : IRequestHandler<DeleteReposit
                     }
 
                     context.Files.RemoveRange(fileEntities);
-                    return await context.SaveChangesAsync();
+                    var resultsCount = await context.SaveChangesAsync();
+                    await _repositoryActivitiesService.AddRepositoryActivity(request.RepositoryId, RepositoryActivity.DeleteFilesFromRepository, user.Email!, $"Deleted files: {resultsCount}");
+                    return resultsCount;
                 }
             }
             return 0;
