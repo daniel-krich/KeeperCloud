@@ -1,6 +1,7 @@
 ﻿using Keeper.Application.Common.Interfaces;
 using Keeper.Application.Common.Models;
 using Keeper.Application.Common.Security;
+using Keeper.Application.Common.Security.Attributes;
 using Keeper.Domain.Models;
 using MapsterMapper;
 using MediatR;
@@ -8,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Keeper.Application.RepositoryMembers.Queries.GetRepositoryMembersPaginated;
 
-[AuthorizedRequest]
+[AuthorizedUserRequest]
 public record GetRepositoryMembersPaginatedQuery : IRequest<PaginationWrapperModel<RepositoryApiMemberModel>>
 {
     public Guid RepositoryId { get; set; }

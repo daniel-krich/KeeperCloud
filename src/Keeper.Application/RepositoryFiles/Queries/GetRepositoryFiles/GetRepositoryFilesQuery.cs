@@ -1,6 +1,7 @@
 ﻿using Keeper.Application.Common.Interfaces;
 using Keeper.Application.Common.Models;
 using Keeper.Application.Common.Security;
+using Keeper.Application.Common.Security.Attributes;
 using Keeper.Domain.Entities;
 using Keeper.Domain.Models;
 using MapsterMapper;
@@ -10,7 +11,7 @@ using System.Collections.Generic;
 
 namespace Keeper.Application.RepositoryFiles.Queries.GetRepositoryFiles;
 
-[AuthorizedRequest]
+[AuthorizedUserRequest]
 public record GetRepositoryFilesQuery : IRequest<List<FileModel>>
 {
     public Guid RepositoryId { get; set; }

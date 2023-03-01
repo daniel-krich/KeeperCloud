@@ -1,6 +1,7 @@
 ﻿using Keeper.Application.Common.Exceptions;
 using Keeper.Application.Common.Interfaces;
 using Keeper.Application.Common.Security;
+using Keeper.Application.Common.Security.Attributes;
 using MediatR;
 using System.Reflection;
 
@@ -19,10 +20,20 @@ public class AuthorizationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRe
     {
         var authorizeAttributes = request.GetType().GetCustomAttributes<AuthorizedRequestAttribute>();
 
-        if (authorizeAttributes.Any() && (!_authenticatedUserService.IsAuthenticated || _authenticatedUserService.User == null))
+        if (authorizeAttributes.Any())
         {
-            throw new ForbiddenAccessException();
+            if (!_authenticatedUserService.IsAuthenticated || _authenticatedUserService.User == null)
+            {
+                throw new ForbiddenAccessException();
+            }
+
+            if (!authorizeAttributes.Any(x => x is AuthorizedRepositoryMemberRequestAttribute && _authenticatedUserService.User?.UserType == UserCredentialsType.RepositoryMember ||
+                                              x is AuthorizedUserRequestAttribute && _authenticatedUserService.User?.UserType == UserCredentialsType.DefaultUser))
+            {
+                throw new AccessSchemaMismatchException();
+            }
         }
+
         return await next();
     }
 }

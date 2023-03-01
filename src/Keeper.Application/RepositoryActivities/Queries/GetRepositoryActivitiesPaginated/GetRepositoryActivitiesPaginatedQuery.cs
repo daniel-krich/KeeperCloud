@@ -1,6 +1,7 @@
 ﻿using Keeper.Application.Common.Interfaces;
 using Keeper.Application.Common.Models;
 using Keeper.Application.Common.Security;
+using Keeper.Application.Common.Security.Attributes;
 using Keeper.Domain.Entities;
 using Keeper.Domain.Models;
 using MapsterMapper;
@@ -10,7 +11,7 @@ using System.Linq.Expressions;
 
 namespace Keeper.Application.RepositoryActivities.Queries.GetRepositoryActivitiesPaginated;
 
-[AuthorizedRequest]
+[AuthorizedUserRequest]
 public record GetRepositoryActivitiesPaginatedQuery : IRequest<PaginationWrapperModel<RepositoryActivityModel>>
 {
     public Guid RepositoryId { get; set; }

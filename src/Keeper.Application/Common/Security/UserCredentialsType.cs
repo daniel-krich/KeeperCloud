@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Keeper.Application.Common.Security
+namespace Keeper.Application.Common.Security;
+
+public enum UserCredentialsType
 {
-    public class AuthorizedRequestAttribute : Attribute
-    {
-    }
+    DefaultUser,
+    RepositoryMember
 }

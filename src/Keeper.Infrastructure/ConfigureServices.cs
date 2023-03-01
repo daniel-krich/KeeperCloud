@@ -1,8 +1,7 @@
 ﻿using Keeper.Application.Common.Interfaces;
-using Keeper.Application.Common.Models;
+using Keeper.Application.Common.Security;
 using Keeper.Infrastructure.Data;
 using Keeper.Infrastructure.Data.Factories;
-using Keeper.Infrastructure.Data.Interceptors;
 using Keeper.Infrastructure.Handlers;
 using Keeper.Infrastructure.HostedServices;
 using Keeper.Infrastructure.SecurityServices;

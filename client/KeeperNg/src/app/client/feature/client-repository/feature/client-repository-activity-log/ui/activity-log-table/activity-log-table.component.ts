@@ -14,6 +14,7 @@ export class ActivityLogTableComponent {
     displayedColumns: string[] = [
         nameof<RepositoryActivityInterface>('operationName'),
         nameof<RepositoryActivityInterface>('identity'),
+        nameof<RepositoryActivityInterface>('userType'),
         nameof<RepositoryActivityInterface>('operationContext'),
         nameof<RepositoryActivityInterface>('createdDate')
     ];

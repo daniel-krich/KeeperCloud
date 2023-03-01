@@ -23,12 +23,10 @@ public class LoggingBehaviour<TRequest> : IRequestPreProcessor<TRequest> where T
 
     public Task Process(TRequest request, CancellationToken cancellationToken)
     {
-        var requestName = typeof(TRequest).Name;
-
         var user = _authenticatedUserService.User;
 
-        _logger.LogInformation("Id: {Id} | Identity: {User} | IP: {IP} | {Request}",
-            user?.Id, user?.Email, _authenticatedUserService.IP, request);
+        _logger.LogInformation("Id: {Id} | Identity: {User} | IdentityType: {Type} | IP: {IP} | {Request}",
+            user?.Id, user?.IdentityName, _authenticatedUserService.User?.UserType.ToString(), _authenticatedUserService.IP, request);
 
         return Task.CompletedTask;
     }

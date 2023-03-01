@@ -40,7 +40,7 @@ public class UpdateRepositoryMemberCommandHandler : IRequestHandler<UpdateReposi
                 repositoryApiMember.PermissionFlags = request.Member.PermissionFlags;
                 context.RepositoryApiMembers.Update(repositoryApiMember);
                 await context.SaveChangesAsync();
-                await _repositoryActivitiesService.AddRepositoryActivity(request.RepositoryId, RepositoryActivity.UpdateApiMember, user.Email!, $"Updated: {repositoryApiMember.Name}");
+                await _repositoryActivitiesService.AddRepositoryActivity(request.RepositoryId, RepositoryActivity.UpdateApiMember, user.IdentityName!, user.UserType, $"Updated: {repositoryApiMember.Name}");
                 return repositoryApiMember.Id;
             }
             return default;

@@ -1,6 +1,7 @@
 ﻿using Keeper.Application.Common.Exceptions;
 using Keeper.Application.Common.Interfaces;
 using Keeper.Application.Common.Security;
+using Keeper.Application.Common.Security.Attributes;
 using Keeper.Domain.Entities;
 using Keeper.Domain.Enums;
 using Keeper.RepositoriesAccess.Enums;
@@ -12,7 +13,7 @@ using System.Security.Cryptography;
 
 namespace Keeper.Application.RepositoryFiles.Commands.UploadRepositoryFiles;
 
-[AuthorizedRequest]
+[AuthorizedUserRequest]
 public record UploadRepositoryFilesCommand : IRequest<IEnumerable<Guid>>
 {
     public Guid RepositoryId { get; set; }
@@ -79,7 +80,7 @@ public class UploadRepositoryFilesCommandHandler : IRequestHandler<UploadReposit
                     }
                     context.Files.AddRange(fileEntities);
                     await context.SaveChangesAsync();
-                    await _repositoryActivitiesService.AddRepositoryActivity(request.RepositoryId, RepositoryActivity.UploadFilesToRepository, user.Email!, $"Uploaded files: {fileEntities.Count}");
+                    await _repositoryActivitiesService.AddRepositoryActivity(request.RepositoryId, RepositoryActivity.UploadFilesToRepository, user.IdentityName!, user.UserType, $"Uploaded files: {fileEntities.Count}");
                     return fileEntities.Select(x => x.Id);
                 }
             }

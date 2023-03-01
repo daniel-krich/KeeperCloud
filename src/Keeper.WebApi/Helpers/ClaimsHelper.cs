@@ -30,14 +30,14 @@ public static class ClaimsHelper
         return default;
     }
 
-    public static RepositoryApiMemberFullModel? RetreiveFullMemberFromClaims(ClaimsPrincipal claims)
+    public static RepositoryApiMemberModel? RetreiveMemberFromClaims(ClaimsPrincipal claims)
     {
         if (claims.Identity?.IsAuthenticated == true)
         {
             var rawMember = claims.FindFirst(x => x.Type == ApiMemberClaim)?.Value;
             if (rawMember != null)
             {
-                var member = JsonConvert.DeserializeObject<RepositoryApiMemberFullModel>(rawMember);
+                var member = JsonConvert.DeserializeObject<RepositoryApiMemberModel>(rawMember);
                 return member;
             }
         }

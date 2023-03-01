@@ -1,5 +1,6 @@
 ﻿using Keeper.Application.Common.Interfaces;
 using Keeper.Application.Common.Security;
+using Keeper.Application.Common.Security.Attributes;
 using Keeper.RepositoriesAccess.Interfaces;
 using MapsterMapper;
 using MediatR;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Keeper.Application.Repositories.Commands.DeleteRepository;
 
-[AuthorizedRequest]
+[AuthorizedUserRequest]
 public record DeleteRepositoryCommand : IRequest<bool>
 {
     public Guid RepositoryId { get; set; }

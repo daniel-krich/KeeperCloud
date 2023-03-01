@@ -1,6 +1,7 @@
 ﻿using Keeper.Application.Common.Exceptions;
 using Keeper.Application.Common.Interfaces;
 using Keeper.Application.Common.Security;
+using Keeper.Application.Common.Security.Attributes;
 using Keeper.Domain.Models;
 using MapsterMapper;
 using MediatR;
@@ -8,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Keeper.Application.Repositories.Queries.GetRepository;
 
-[AuthorizedRequest]
+[AuthorizedUserRequest]
 public record GetRepositoryQuery: IRequest<RepositoryModel>
 {
     public Guid RepositoryId { get; set; }

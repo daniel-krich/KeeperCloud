@@ -1,6 +1,7 @@
 ﻿using Keeper.Application.Common.DTOs;
 using Keeper.Application.Common.Interfaces;
 using Keeper.Application.Common.Models;
+using Keeper.Application.Common.Security;
 using Keeper.Domain.Entities;
 using Keeper.Domain.Enums;
 using Keeper.Domain.Models;
@@ -23,19 +24,20 @@ public class RepositoryActivitiesService : IRepositoryActivitiesService
         _mapper = mapper;
     }
 
-    public async Task AddRepositoryActivity(Guid repositoryId, RepositoryActivity operationId, string identity, string operationContext = "")
+    public async Task AddRepositoryActivity(Guid repositoryId, RepositoryActivity operationId, string identity, UserCredentialsType userCredentialsType, string operationContext = "")
     {
         using (var context = _keeperFactory.CreateDbContext())
         {
             var repository = await context.Repositories.FindAsync(repositoryId);
-            if(repository != null)
+            if (repository != null)
             {
                 context.RepositoryActivities.Add(new RepositoryActivityEntity
                 {
                     RepositoryId = repositoryId,
                     OperationId = operationId,
                     Identity = identity,
-                    OperationContext = operationContext
+                    OperationContext = operationContext,
+                    UserType = userCredentialsType.ToString()
                 });
                 await context.SaveChangesAsync();
             }

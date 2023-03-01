@@ -1,19 +1,15 @@
 ﻿using Keeper.Application.Common.Interfaces;
 using Keeper.Application.Common.Security;
+using Keeper.Application.Common.Security.Attributes;
 using Keeper.Domain.Enums;
 using Keeper.RepositoriesAccess.Interfaces;
 using MapsterMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Keeper.Application.RepositoryFiles.Commands.DeleteRepositoryFiles;
 
-[AuthorizedRequest]
+[AuthorizedUserRequest]
 public record DeleteRepositoryFilesCommand : IRequest<int>
 {
     public Guid RepositoryId { get; set; }
@@ -62,7 +58,7 @@ public class DeleteRepositoryFilesCommandHandler : IRequestHandler<DeleteReposit
 
                     context.Files.RemoveRange(fileEntities);
                     var resultsCount = await context.SaveChangesAsync();
-                    await _repositoryActivitiesService.AddRepositoryActivity(request.RepositoryId, RepositoryActivity.DeleteFilesFromRepository, user.Email!, $"Deleted files: {resultsCount}");
+                    await _repositoryActivitiesService.AddRepositoryActivity(request.RepositoryId, RepositoryActivity.DeleteFilesFromRepository, user.IdentityName!, user.UserType, $"Deleted files: {resultsCount}");
                     return resultsCount;
                 }
             }

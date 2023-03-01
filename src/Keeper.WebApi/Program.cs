@@ -1,3 +1,5 @@
+using Keeper.WebApi.Middlewares;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.ConfigureLogger();
@@ -7,6 +9,7 @@ builder.Services.AddWebApiServices();
 
 var app = builder.Build();
 
+app.UseMiddleware<UnhandledExceptionMiddleware>();
 app.UseCors("AllowAllOrigins");
 app.UseStaticFiles();
 app.UseAuthentication();

@@ -1,5 +1,5 @@
 ﻿using Keeper.Application.Common.Interfaces;
-using Keeper.Application.Common.Models;
+using Keeper.Application.Common.Security;
 using Keeper.Domain.Entities;
 using Keeper.Domain.Models;
 using MapsterMapper;
@@ -46,14 +46,14 @@ public class MemberKeyAuthenticationHandler : AuthenticationHandler<MemberKeyAut
                         string base64Key = header.Substring(headerPrefix.Length);
                         string[] sections = Encoding.UTF8.GetString(Convert.FromBase64String(base64Key)).Split('.', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
-                        if (sections.Length == 3)
+                        if (sections.Length == 2)
                         {
                             using (var context = _keeperContextFactory.CreateDbContext())
                             {
-                                var repositoryMemberLookup = await context.RepositoryApiMembers.Where(x => x.Id.ToString() == sections[0] && x.RepositoryId.ToString() == sections[1] && x.Key == sections[2]).FirstOrDefaultAsync();
+                                var repositoryMemberLookup = await context.RepositoryApiMembers.Where(x => x.Id.ToString() == sections[0] && x.Key == sections[1]).FirstOrDefaultAsync();
                                 if (repositoryMemberLookup is RepositoryApiMemberEntity repositoryMember)
                                 {
-                                    var memberModel = _mapper.Map<RepositoryApiMemberFullModel>(repositoryMember);
+                                    var memberModel = _mapper.Map<RepositoryApiMemberModel>(repositoryMember);
                                     var identity = new ClaimsIdentity(Options.AuthenticationType);
                                     identity.AddClaim(new Claim("member", JsonConvert.SerializeObject(memberModel)));
                                     var principal = new ClaimsPrincipal(identity);

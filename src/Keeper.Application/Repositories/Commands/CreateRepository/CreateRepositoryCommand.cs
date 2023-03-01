@@ -1,6 +1,7 @@
 ﻿using Keeper.Application.Common.Exceptions;
 using Keeper.Application.Common.Interfaces;
 using Keeper.Application.Common.Security;
+using Keeper.Application.Common.Security.Attributes;
 using Keeper.Application.Repositories.Exceptions;
 using Keeper.Domain.Entities;
 using Keeper.Domain.Enums;
@@ -11,7 +12,7 @@ using MediatR;
 
 namespace Keeper.Application.Repositories.Commands.CreateRepository;
 
-[AuthorizedRequest]
+[AuthorizedUserRequest]
 public record CreateRepositoryCommand : IRequest<Guid>
 {
     public string? Name { get; set; }
@@ -50,7 +51,7 @@ public class CreateRepositoryCommandHandler : IRequestHandler<CreateRepositoryCo
                 };
                 context.Repositories.Add(repoEntity);
                 await context.SaveChangesAsync();
-                await _repositoryActivitiesService.AddRepositoryActivity(repoEntity.Id, RepositoryActivity.CreateRepository, user.Email!, $"Created repository");
+                await _repositoryActivitiesService.AddRepositoryActivity(repoEntity.Id, RepositoryActivity.CreateRepository, user.IdentityName!, user.UserType, $"Created repository");
                 return repoEntity.Id;
             }
             throw new CreateRepositoryException();

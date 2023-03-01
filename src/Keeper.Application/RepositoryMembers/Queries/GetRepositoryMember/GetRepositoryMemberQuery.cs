@@ -1,19 +1,15 @@
 ﻿using Keeper.Application.Common.Interfaces;
 using Keeper.Application.Common.Security;
+using Keeper.Application.Common.Security.Attributes;
 using Keeper.Application.RepositoryMembers.Exceptions;
 using Keeper.Domain.Models;
 using MapsterMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Keeper.Application.RepositoryMembers.Queries.GetRepositoryMember;
 
-[AuthorizedRequest]
+[AuthorizedUserRequest]
 public record GetRepositoryMemberQuery : IRequest<RepositoryApiMemberModel>
 {
     public Guid RepositoryId { get; set; }

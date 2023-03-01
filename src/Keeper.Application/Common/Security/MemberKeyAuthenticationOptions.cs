@@ -1,11 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Keeper.Application.Common.Models;
+namespace Keeper.Application.Common.Security;
 
 public class MemberKeyAuthenticationOptions: AuthenticationSchemeOptions
 {

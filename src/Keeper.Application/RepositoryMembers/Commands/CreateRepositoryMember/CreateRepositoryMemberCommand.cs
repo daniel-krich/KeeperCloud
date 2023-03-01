@@ -53,7 +53,7 @@ public class CreateRepositoryMemberHandler : IRequestHandler<CreateRepositoryMem
                 };
                 context.RepositoryApiMembers.Add(member);
                 await context.SaveChangesAsync();
-                await _repositoryActivitiesService.AddRepositoryActivity(request.RepositoryId, RepositoryActivity.AddApiMember, user.Email!, $"Initial name: {member.Name}");
+                await _repositoryActivitiesService.AddRepositoryActivity(request.RepositoryId, RepositoryActivity.AddApiMember, user.IdentityName!, user.UserType, $"Initial name: {member.Name}");
                 return member.Id;
             }
             return default;

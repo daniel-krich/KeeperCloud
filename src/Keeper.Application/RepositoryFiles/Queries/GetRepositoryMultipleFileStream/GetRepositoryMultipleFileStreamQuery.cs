@@ -1,6 +1,7 @@
 ﻿using Keeper.Application.Common.Interfaces;
 using Keeper.Application.Common.Models;
 using Keeper.Application.Common.Security;
+using Keeper.Application.Common.Security.Attributes;
 using Keeper.Application.RepositoryFiles.Exceptions;
 using Keeper.Domain.Models;
 using Keeper.RepositoriesAccess.Enums;
@@ -16,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace Keeper.Application.RepositoryFiles.Queries.GetRepositoryMultipleFileStream;
 
-[AuthorizedRequest]
+[AuthorizedUserRequest]
 public record GetRepositoryMultipleFileStreamQuery : IRequest<IAsyncEnumerable<RepositoryFileWithStream>>
 {
     public Guid RepositoryId { get; set; }

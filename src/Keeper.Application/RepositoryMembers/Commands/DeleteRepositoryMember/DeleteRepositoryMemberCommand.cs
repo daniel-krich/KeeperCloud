@@ -39,7 +39,7 @@ public class DeleteRepositoryMemberCommandHandler : IRequestHandler<DeleteReposi
             {
                 context.RepositoryApiMembers.Remove(repositoryApiMember);
                 await context.SaveChangesAsync();
-                await _repositoryActivitiesService.AddRepositoryActivity(request.RepositoryId, RepositoryActivity.RemoveApiMember, user.Email!, $"Removed: {repositoryApiMember.Name}");
+                await _repositoryActivitiesService.AddRepositoryActivity(request.RepositoryId, RepositoryActivity.RemoveApiMember, user.IdentityName!, user.UserType, $"Removed: {repositoryApiMember.Name}");
                 return true;
             }
             return false;

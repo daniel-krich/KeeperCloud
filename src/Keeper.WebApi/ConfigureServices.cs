@@ -1,6 +1,7 @@
 ﻿using Keeper.Application.Common.Interfaces;
 using Keeper.Infrastructure.Common;
 using Keeper.WebApi.Binders;
+using Keeper.WebApi.Middlewares;
 using Keeper.WebApi.Services;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
@@ -54,6 +55,8 @@ public static class ConfigureServices
         services.AddHttpContextAccessor();
 
         services.AddScoped<IAuthenticatedUserService, AuthenticatedUserService>();
+
+        services.AddSingleton<UnhandledExceptionMiddleware>();
 
         return services;
     }

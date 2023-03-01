@@ -1,12 +1,13 @@
 ﻿using Keeper.Application.Common.Interfaces;
 using Keeper.Application.Common.Security;
+using Keeper.Application.Common.Security.Attributes;
 using Keeper.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Keeper.Application.Repositories.Commands.UpdateRepository;
 
-[AuthorizedRequest]
+[AuthorizedUserRequest]
 public record UpdateRepositoryCommand : IRequest<bool>
 {
     public Guid RepositoryId { get; set; }
@@ -57,7 +58,7 @@ public class UpdateRepositoryCommandHandler : IRequestHandler<UpdateRepositoryCo
 
                 context.Repositories.Update(repo);
                 await context.SaveChangesAsync();
-                await _repositoryActivitiesService.AddRepositoryActivity(repo.Id, RepositoryActivity.UpdateRepository, user.Email!, $"Updated fields: {string.Join(", ", updated)}");
+                await _repositoryActivitiesService.AddRepositoryActivity(repo.Id, RepositoryActivity.UpdateRepository, user.IdentityName!, user.UserType, $"Updated fields: {string.Join(", ", updated)}");
                 return true;
             }
             return false;

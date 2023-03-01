@@ -1,5 +1,6 @@
 ﻿using Keeper.Application.Common.DTOs;
 using Keeper.Application.Common.Models;
+using Keeper.Application.Common.Security;
 using Keeper.Domain.Entities;
 using Keeper.Domain.Enums;
 using Keeper.Domain.Models;
@@ -10,5 +11,5 @@ namespace Keeper.Application.Common.Interfaces;
 
 public interface IRepositoryActivitiesService
 {
-    Task AddRepositoryActivity(Guid repositoryId, RepositoryActivity operationId, string identity, string operationContext = "");
+    Task AddRepositoryActivity(Guid repositoryId, RepositoryActivity operationId, string identity, UserCredentialsType userCredentialsType, string operationContext = "");
 }
