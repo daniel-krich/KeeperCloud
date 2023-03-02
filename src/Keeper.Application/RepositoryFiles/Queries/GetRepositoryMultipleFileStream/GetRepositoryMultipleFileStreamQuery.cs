@@ -61,14 +61,7 @@ public class GetRepositoryMultipleFileStreamQueryHandler : IRequestHandler<GetRe
                         var file = repoAccess?.OpenRepoFileAccessor(fileEntity.Id);
                         if (repo != null && file != null)
                         {
-                            Stream fileStream = await file.OpenStreamAsync(options =>
-                            {
-                                options.Mode = RepositoryFileStreamMode.Read;
-                                options.Key = fileEntity.EncKey;
-                                options.IV = fileEntity.EncIV;
-                                options.Encryption = true;
-                                options.Compression = true;
-                            }, default);
+                            Stream fileStream = await file.OpenReadStreamAsync(fileEntity.EncKey, fileEntity.EncIV, true);
 
                             yield return new RepositoryFileWithStream(_mapper.Map<FileModel>(fileEntity), fileStream);
                         }

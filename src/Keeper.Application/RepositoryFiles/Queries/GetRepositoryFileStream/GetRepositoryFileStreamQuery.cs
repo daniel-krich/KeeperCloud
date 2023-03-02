@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 
 namespace Keeper.Application.RepositoryFiles.Queries.GetRepositoryFileStream;
 
+[AllowAnon]
 public record GetRepositoryFileStreamQuery : IRequest<RepositoryFileWithStream>
 {
     public Guid RepositoryId { get; set; }
@@ -45,21 +46,14 @@ public class GetRepositoryFileStreamQueryHandler : IRequestHandler<GetRepository
         using (var context = _keeperFactory.CreateDbContext())
         {
             var user = _authenticatedUserService.User;
-            var fileEntity = await context.Files.Include(x => x.Repository).Where(FindFileByUser(user)).FirstOrDefaultAsync(x => x.Id == request.FileId && x.Repository.Id == request.RepositoryId);
+            var fileEntity = await context.Files.Include(x => x.Repository).Where(FindRepositoryByCredentials(user)).FirstOrDefaultAsync(x => x.Id == request.FileId && x.Repository.Id == request.RepositoryId);
             if (fileEntity != null)
             {
                 var repo = _repositoriesAccessor.OpenRepository(fileEntity.Repository.OwnerId, request.RepositoryId);
                 var file = repo?.OpenRepoFileAccessor(fileEntity.Id);
                 if (repo != null && file != null)
                 {
-                    Stream fileStream = await file.OpenStreamAsync(options =>
-                    {
-                        options.Mode = RepositoryFileStreamMode.Read;
-                        options.Key = fileEntity.EncKey;
-                        options.IV = fileEntity.EncIV;
-                        options.Encryption = true;
-                        options.Compression = true;
-                    }, default);
+                    Stream fileStream = await file.OpenReadStreamAsync(fileEntity.EncKey, fileEntity.EncIV, true, cancellationToken);
                     return new RepositoryFileWithStream(_mapper.Map<FileModel>(fileEntity), fileStream);
                 }
             }
@@ -67,7 +61,7 @@ public class GetRepositoryFileStreamQueryHandler : IRequestHandler<GetRepository
         }
     }
 
-    private Expression<Func<FileEntity, bool>> FindFileByUser(UserCredentials? user)
+    private Expression<Func<FileEntity, bool>> FindRepositoryByCredentials(UserCredentials? user)
     {
         if (user?.UserType == UserCredentialsType.DefaultUser) return (file) => file.Repository.OwnerId == user.Id;
         else if (user?.UserType == UserCredentialsType.RepositoryMember) return (file) => file.Repository.ApiMembers.Any(x => x.Id == user.Id && x.PermissionFlags.HasFlag(RepositoryPermissionFlags.CanRead));

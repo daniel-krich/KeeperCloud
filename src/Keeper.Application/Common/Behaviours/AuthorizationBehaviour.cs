@@ -19,8 +19,9 @@ public class AuthorizationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRe
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         var authorizeAttributes = request.GetType().GetCustomAttributes<AuthorizedRequestAttribute>();
+        var anonymousAttributes = request.GetType().GetCustomAttributes<AllowAnonAttribute>();
 
-        if (authorizeAttributes.Any())
+        if (!anonymousAttributes.Any() && authorizeAttributes.Any())
         {
             if (!_authenticatedUserService.IsAuthenticated || _authenticatedUserService.User == null)
             {

@@ -9,11 +9,13 @@ using Keeper.RepositoriesAccess.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using System.Security.Cryptography;
 
 namespace Keeper.Application.RepositoryFiles.Commands.UploadRepositoryFiles;
 
 [AuthorizedUserRequest]
+[AuthorizedRepositoryMemberRequest]
 public record UploadRepositoryFilesCommand : IRequest<IEnumerable<Guid>>
 {
     public Guid RepositoryId { get; set; }
@@ -41,10 +43,10 @@ public class UploadRepositoryFilesCommandHandler : IRequestHandler<UploadReposit
         using (var context = _keeperFactory.CreateDbContext())
         {
             var user = _authenticatedUserService.User!;
-            var repoEntity = await context.Repositories.FirstOrDefaultAsync(x => x.Id == request.RepositoryId && x.OwnerId == user.Id);
+            var repoEntity = await context.Repositories.Where(FindRepositoryByCredentials(user)).FirstOrDefaultAsync(x => x.Id == request.RepositoryId);
             if (repoEntity != null)
             {
-                if (_repositoriesAccessor.OpenRepository(user.Id, repoEntity.Id) is IRepository repo)
+                if (_repositoriesAccessor.OpenRepository(repoEntity.OwnerId, repoEntity.Id) is IRepository repo)
                 {
                     var fileEntities = new List<FileEntity>();
                     foreach (var file in request.Files)
@@ -54,14 +56,7 @@ public class UploadRepositoryFilesCommandHandler : IRequestHandler<UploadReposit
                             if (repo.CreateRepoFileAccessor() is IRepositoryFile repoFile)
                             {
                                 using Aes aes = Aes.Create();
-                                using (Stream repoFileStream = await repoFile.OpenStreamAsync(o =>
-                                {
-                                    o.Mode = RepositoryFileStreamMode.Write;
-                                    o.Key = aes.Key;
-                                    o.IV = aes.IV;
-                                    o.Encryption = true;
-                                    o.Compression = true;
-                                }))
+                                using (Stream repoFileStream = await repoFile.OpenWriteStreamAsync(aes.Key, aes.IV, true, cancellationToken))
                                 {
                                     await fileStream.CopyToAsync(repoFileStream);
                                 }
@@ -86,5 +81,12 @@ public class UploadRepositoryFilesCommandHandler : IRequestHandler<UploadReposit
             }
             throw new RepositoryNotFoundException();
         }
+    }
+
+    private Expression<Func<RepositoryEntity, bool>> FindRepositoryByCredentials(UserCredentials user)
+    {
+        if (user.UserType == UserCredentialsType.DefaultUser) return (repository) => repository.OwnerId == user.Id;
+        else if (user.UserType == UserCredentialsType.RepositoryMember) return (repository) => repository.ApiMembers.Any(x => x.Id == user.Id && x.PermissionFlags.HasFlag(RepositoryPermissionFlags.CanWrite));
+        else return _ => false;
     }
 }
