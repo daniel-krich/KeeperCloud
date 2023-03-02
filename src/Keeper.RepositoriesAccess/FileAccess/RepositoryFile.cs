@@ -26,49 +26,43 @@ internal class RepositoryFile : IRepositoryFile
         FileId = fileId;
     }
 
-    public async Task<Stream> OpenStreamAsync(Action<IRepositoryFileStreamOptions> streamOptions, CancellationToken token = default)
+    public async Task<Stream> OpenWriteStreamAsync(byte[]? key = null, byte[]? iv = null, bool compression = false, CancellationToken token = default)
     {
-        IRepositoryFileStreamOptions options = new RepositoryFileStreamOptions();
-        streamOptions.Invoke(options);
+        this._deleted = false;
+        //
 
-        if (options.Mode == RepositoryFileStreamMode.Write)
+        Stream outputStream = await OpenFileWriteStreamAsync(Path.Combine(RepositoryRootPath, FileId.ToString()), token);
+        if (key != null && iv != null)
         {
-
-            this._deleted = false;
-            //
-
-            Stream outputStream = await OpenFileWriteStreamAsync(Path.Combine(RepositoryRootPath, FileId.ToString()), token);
-            if (options.Encryption && options.Key != null && options.IV != null)
-            {
-                var aes = Aes.Create();
-                var encryptor = aes.CreateEncryptor(options.Key, options.IV);
-                outputStream = new CryptoStream(outputStream, encryptor, CryptoStreamMode.Write);
-            }
-            if (options.Compression)
-            {
-                outputStream = new GZipStream(outputStream, CompressionMode.Compress);
-            }
-            return outputStream;
+            var aes = Aes.Create();
+            var encryptor = aes.CreateEncryptor(key, iv);
+            outputStream = new CryptoStream(outputStream, encryptor, CryptoStreamMode.Write);
         }
-        else
+        if (compression)
         {
-            if (this._deleted)
-                throw new FileNotFoundException();
-
-            Stream inputStream = new FileStream(Path.Combine(RepositoryRootPath, FileId.ToString()), FileMode.Open, System.IO.FileAccess.Read, FileShare.Read);
-            if (options.Encryption && options.Key != null && options.IV != null)
-            {
-                var aes = Aes.Create();
-                var decryptor = aes.CreateDecryptor(options.Key, options.IV);
-                inputStream = new CryptoStream(inputStream, decryptor, CryptoStreamMode.Read);
-            }
-            if (options.Compression)
-            {
-                inputStream = new GZipStream(inputStream, CompressionMode.Decompress);
-            }
-            
-            return inputStream;
+            outputStream = new GZipStream(outputStream, CompressionMode.Compress);
         }
+        return outputStream;
+    }
+
+    public Task<Stream> OpenReadStreamAsync(byte[]? key = null, byte[]? iv = null, bool compression = false, CancellationToken token = default)
+    {
+        if (this._deleted)
+            throw new FileNotFoundException();
+
+        Stream inputStream = new FileStream(Path.Combine(RepositoryRootPath, FileId.ToString()), FileMode.Open, System.IO.FileAccess.Read, FileShare.Read);
+        if (key != null && iv != null)
+        {
+            var aes = Aes.Create();
+            var decryptor = aes.CreateDecryptor(key, iv);
+            inputStream = new CryptoStream(inputStream, decryptor, CryptoStreamMode.Read);
+        }
+        if (compression)
+        {
+            inputStream = new GZipStream(inputStream, CompressionMode.Decompress);
+        }
+
+        return Task.FromResult(inputStream);
     }
 
     public async Task<bool> DeleteAsync(CancellationToken token = default)

@@ -2,8 +2,8 @@ import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { Action, Store } from "@ngrx/store";
 import { catchError, map, switchMap, of, throwIfEmpty, tap, throwError, defer, withLatestFrom, EMPTY } from "rxjs";
-import { RepositoryDataService } from "src/app/client/data-access/repository-data.service";
-import { RepositoryFilesDataService } from "src/app/client/data-access/repository-files-data.service";
+import { RepositoryApiService } from "src/app/client/data-access/repository-api.service";
+import { RepositoryFilesApiService } from "src/app/client/data-access/repository-files-api.service";
 import { AppStateInterface } from "../app.state";
 import { decreaseRepositoryFilesStats } from "../repository/repository.actions";
 import { deleteRepoFilesBegin, deleteRepoFilesDone, loadRepoFilesBatchError, loadRepoFilesBatchInit, loadRepoFilesBatchNext, loadRepoFilesBatchSuccess, loadRepoFilesBatchSuccessEmpty } from "./repositories-files.actions";
@@ -67,7 +67,7 @@ export class RepositoryFilesEffects {
 
     constructor(private actions$: Actions,
         private store: Store<AppStateInterface>,
-        private repoDataService: RepositoryDataService,
-        private repoFilesDataService: RepositoryFilesDataService) { }
+        private repoDataService: RepositoryApiService,
+        private repoFilesDataService: RepositoryFilesApiService) { }
 
 }

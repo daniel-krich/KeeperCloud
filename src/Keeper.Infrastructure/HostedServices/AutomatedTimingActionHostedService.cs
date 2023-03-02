@@ -1,5 +1,4 @@
-﻿using Keeper.Application.Interfaces;
-using Keeper.Application.Security.Jwt.Interfaces;
+﻿using Keeper.Application.Common.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 

@@ -1,10 +1,16 @@
-﻿using Keeper.Application.Interfaces;
-using Keeper.Application.Models;
+﻿using Keeper.Application.Common.DTOs;
+using Keeper.Application.Common.Interfaces;
+using Keeper.Application.Common.Models;
+using Keeper.Application.Common.Security;
 using Keeper.Domain.Entities;
 using Keeper.Domain.Enums;
 using Keeper.Domain.Models;
+using Keeper.RepositoriesAccess.Enums;
+using Keeper.RepositoriesAccess.Interfaces;
 using MapsterMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
 
 namespace Keeper.Infrastructure.Services;
 
@@ -12,48 +18,29 @@ public class RepositoryActivitiesService : IRepositoryActivitiesService
 {
     private readonly IKeeperDbContextFactory _keeperFactory;
     private readonly IMapper _mapper;
-    public RepositoryActivitiesService(IKeeperDbContextFactory keeperFactory, IMapper mapper)
+    public RepositoryActivitiesService(IKeeperDbContextFactory keeperFactory,  IMapper mapper)
     {
         _keeperFactory = keeperFactory;
         _mapper = mapper;
     }
 
-    public async Task<RepositoryActivityModel?> CreateActivity(Guid repositoryId, string identity, RepositoryActivity operationId, string operationContext)
+    public async Task AddRepositoryActivity(Guid repositoryId, RepositoryActivity operationId, string identity, UserCredentialsType userCredentialsType, string operationContext = "")
     {
         using (var context = _keeperFactory.CreateDbContext())
         {
-            if (await context.Repositories.FindAsync(repositoryId) is RepositoryEntity repository)
+            var repository = await context.Repositories.FindAsync(repositoryId);
+            if (repository != null)
             {
-                var activity = new RepositoryActivityEntity
+                context.RepositoryActivities.Add(new RepositoryActivityEntity
                 {
-                    RepositoryId = repository.Id,
+                    RepositoryId = repositoryId,
                     OperationId = operationId,
                     Identity = identity,
-                    OperationContext = operationContext
-                };
-                context.RepositoryActivities.Add(activity);
+                    OperationContext = operationContext,
+                    UserType = userCredentialsType.ToString()
+                });
                 await context.SaveChangesAsync();
-                return _mapper.Map<RepositoryActivityModel>(activity);
             }
-            return default;
-        }
-    }
-
-    public async Task<PaginationWrapperModel<RepositoryActivityModel>> GetActivitiesPaginated(Guid userId, Guid repositoryId, int page, int maxRecordsPerPage)
-    {
-        using (var context = _keeperFactory.CreateDbContext())
-        {
-            var repository = await context.Repositories.Include(x => x.Activities.OrderByDescending(y => y.CreatedDate)
-                                                                    .Skip((page - 1) * maxRecordsPerPage)
-                                                                    .Take(maxRecordsPerPage)
-                                     ).FirstOrDefaultAsync(x => x.Id == repositoryId && x.OwnerId == userId);
-            if(repository != null)
-            {
-                var repositoryActivitiesAllCount = await context.RepositoryActivities.Where(x => x.RepositoryId == repositoryId).CountAsync();
-                var activitiesModel = _mapper.Map<List<RepositoryActivityModel>>(repository.Activities);
-                return new PaginationWrapperModel<RepositoryActivityModel>(activitiesModel, page, Convert.ToInt32(Math.Abs(repositoryActivitiesAllCount / maxRecordsPerPage) + 1), maxRecordsPerPage, repositoryActivitiesAllCount);
-            }
-            return new PaginationWrapperModel<RepositoryActivityModel>();
         }
     }
 }

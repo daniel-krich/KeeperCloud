@@ -14,6 +14,6 @@ export class ActivityLogService {
                 @Inject(BASE_URL) private baseUrl: string) { }
 
     public getActivityLogPagination(repositoryId: string, page: number): Observable<PageWrapperInterface<RepositoryActivityInterface>> {
-        return this.httpClient.get<PageWrapperInterface<RepositoryActivityInterface>>(this.baseUrl + `/api/repository/${repositoryId}/activities`, { params: { page: page } });
+        return this.httpClient.get<PageWrapperInterface<RepositoryActivityInterface>>(this.baseUrl + `/api/repository/activities`, { params: { repositoryId: repositoryId, page: page } });
     }
 }

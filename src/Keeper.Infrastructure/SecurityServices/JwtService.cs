@@ -1,7 +1,6 @@
-﻿using Keeper.Application.DTOs;
-using Keeper.Application.Interfaces;
-using Keeper.Application.Security.Jwt.Interfaces;
-using Keeper.Application.Security.Jwt.Models;
+﻿using Keeper.Application.Common.DTOs;
+using Keeper.Application.Common.Interfaces;
+using Keeper.Application.Common.Models;
 using Keeper.Domain.Entities;
 using Keeper.Domain.Models;
 using Keeper.Infrastructure.Data;
@@ -78,7 +77,7 @@ public class JwtService: IJwtService
         using (var context = _keeperFactory.CreateDbContext())
         {
             await context.Database.ExecuteSqlRawAsync($@"DELETE FROM {nameof(KeeperDbContext.RefreshTokens)}
-                                                             WHERE {nameof(RefreshTokenEntity.Expires)} < @p0",
+                                                         WHERE {nameof(RefreshTokenEntity.Expires)} < @p0",
                                                          new SqlParameter("@p0", DateTime.Now));
         }
     }

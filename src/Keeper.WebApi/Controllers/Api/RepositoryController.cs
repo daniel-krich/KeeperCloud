@@ -1,8 +1,13 @@
-﻿using Keeper.Application.DTOs;
-using Keeper.Application.Interfaces;
+﻿using Keeper.Application.Common.DTOs;
+using Keeper.Application.Common.Interfaces;
+using Keeper.Application.Repositories.Commands.CreateRepository;
+using Keeper.Application.Repositories.Commands.DeleteRepository;
+using Keeper.Application.Repositories.Commands.UpdateRepository;
+using Keeper.Application.Repositories.Queries.GetRepository;
 using Keeper.Domain.Enums;
 using Keeper.Domain.Models;
 using Keeper.WebApi.Helpers;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,85 +18,39 @@ namespace Keeper.WebApi.Controllers.Api;
 [Authorize]
 public class RepositoryController : ControllerBase
 {
-    private readonly IRepositoryService _repoService;
-    private readonly IRepositoryActivitiesService _repositoryActivitiesService;
+    private readonly IRepositoryActivitiesService _repoService;
+    private readonly ISender _mediatR;
 
-    public RepositoryController(IRepositoryService repoService, IRepositoryActivitiesService repositoryActivitiesService)
+    public RepositoryController(IRepositoryActivitiesService repoService, ISender mediatR)
     {
         _repoService = repoService;
-        _repositoryActivitiesService = repositoryActivitiesService;
+        _mediatR = mediatR;
     }
 
-    [HttpGet("{repositoryId:guid}")]
-    public async Task<IActionResult> GetRepositoryInfo([FromRoute] Guid repositoryId)
+    [HttpGet]
+    public async Task<ActionResult<RepositoryModel>> GetRepositoryInfo([FromQuery] GetRepositoryQuery getRepositoryQuery)
     {
-        UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
-        if (user != null)
-        {
-            RepositoryModel? repositoriesBatch = await _repoService.GetRepositoryByUser(user.Id, repositoryId);
-            if (repositoriesBatch != null) return Ok(repositoriesBatch);
-            else return NotFound();
-        }
-        return BadRequest();
+        return await _mediatR.Send(getRepositoryQuery);
     }
 
-    [HttpPost("create")]
-    public async Task<IActionResult> PostNewRepository([FromBody] CreateRepositoryRequestDto createRepoRequest)
+    [HttpPost]
+    public async Task<ActionResult<RepositoryModel>> CreateRepository([FromBody] CreateRepositoryCommand createRepositoryCommand)
     {
-        UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
-        if(user != null)
-        {
-            var repo = await _repoService.CreateRepository(user.Id, createRepoRequest);
-            if(repo != null)
-            {
-                await _repositoryActivitiesService.CreateActivity(repo.Id, user.Email!, RepositoryActivity.CreateRepository, "");
-                return Ok(repo);
-            }
-        }
-        return BadRequest();
+        var repositoryId = await _mediatR.Send(createRepositoryCommand);
+        return await _mediatR.Send(new GetRepositoryQuery { RepositoryId = repositoryId });
     }
 
-    [HttpDelete("{repositoryId:guid}")]
-    public async Task<IActionResult> DeleteRepository([FromRoute] Guid repositoryId)
+    [HttpDelete]
+    public async Task<IActionResult> DeleteRepository([FromQuery] DeleteRepositoryCommand deleteRepositoryCommand)
     {
-        UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
-        if (user != null)
-        {
-            if (await _repoService.DeleteRepository(user.Id, repositoryId))
-            {
-                return Ok();
-            }
-        }
-        return BadRequest();
+        await _mediatR.Send(deleteRepositoryCommand);
+        return NoContent();
     }
 
-    [HttpPut("{repositoryId:guid}")]
-    public async Task<IActionResult> PutRepositoryUpdates([FromRoute] Guid repositoryId, [FromBody] UpdateRepositoryRequestDto updateRepositoryRequest)
+    [HttpPut]
+    public async Task<IActionResult> PutRepositoryUpdates([FromBody] UpdateRepositoryCommand updateRepositoryCommand)
     {
-        UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
-        if (user != null)
-        {
-            if(await _repoService.UpdateRepository(user.Id, repositoryId, updateRepositoryRequest))
-            {
-                await _repositoryActivitiesService.CreateActivity(repositoryId, user.Email!, RepositoryActivity.UpdateRepository, $"Name or description changed");
-                return Ok();
-            }
-        }
-        return BadRequest();
-    }
-
-    [HttpPut("{repositoryId:guid}/allow-anonymous-file-read")]
-    public async Task<IActionResult> PutRepositoryAllowAnonymousFileRead([FromRoute] Guid repositoryId, [FromQuery] bool allow)
-    {
-        UserModel? user = ClaimsHelper.RetreiveUserFromClaims(HttpContext.User);
-        if (user != null)
-        {
-            if(await _repoService.UpdateRepositoryAllowAnonymousFileRead(user.Id, repositoryId, allow))
-            {
-                await _repositoryActivitiesService.CreateActivity(repositoryId, user.Email!, RepositoryActivity.ToggleRepositoryAccess, allow ? "Opened repository" : "Closed repository");
-                return Ok();
-            }
-        }
-        return BadRequest();
+        await _mediatR.Send(updateRepositoryCommand);
+        return NoContent();
     }
 }

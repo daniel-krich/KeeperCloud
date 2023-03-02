@@ -1,9 +1,7 @@
-﻿using Keeper.Application.Interfaces;
-using Keeper.Application.Models;
-using Keeper.Application.Security.Jwt.Interfaces;
+﻿using Keeper.Application.Common.Interfaces;
+using Keeper.Application.Common.Security;
 using Keeper.Infrastructure.Data;
 using Keeper.Infrastructure.Data.Factories;
-using Keeper.Infrastructure.Data.Interceptors;
 using Keeper.Infrastructure.Handlers;
 using Keeper.Infrastructure.HostedServices;
 using Keeper.Infrastructure.SecurityServices;
@@ -42,9 +40,7 @@ public static class ConfigureServices
 
         services.AddSingleton<IJwtService, JwtService>();
         services.AddSingleton<IAuthService, AuthService>();
-        services.AddSingleton<IRepositoryService, RepositoryService>();
         services.AddSingleton<IRepositoryActivitiesService, RepositoryActivitiesService>();
-        services.AddSingleton<IRepositoryApiMembersService, RepositoryApiMembersService>();
 
         services.AddRepositoriesAccess(options =>
         {

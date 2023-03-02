@@ -11,6 +11,7 @@ import { MemberHolderDialogModule } from './ui/member-holder-dialog/member-holde
 import { ManageAccessMenuModule } from './ui/manage-access-menu/manage-access-menu.module';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { ConfirmDialogModule } from 'src/app/shared/ui/confirm-dialog/confirm-dialog.module';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 
 @NgModule({
@@ -24,6 +25,7 @@ import { ConfirmDialogModule } from 'src/app/shared/ui/confirm-dialog/confirm-di
     LoadingCenteredModule,
     ManageAccessMenuModule,
     MatSnackBarModule,
+    MatPaginatorModule,
     ConfirmDialogModule,
     MemberHolderDialogModule,
     MatDividerModule,

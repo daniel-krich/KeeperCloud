@@ -2,8 +2,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppStateInterface } from 'src/app/shared/data-access/state/app.state';
 import { selectAuthUser } from 'src/app/shared/data-access/state/authentication/authentication.selectors';
-import { selectRepos } from 'src/app/shared/data-access/state/repository/repository.selectors';
-import { RepositoryDataService } from '../../data-access/repository-data.service';
 
 @Component({
   selector: 'app-client-main-page',

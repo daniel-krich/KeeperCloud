@@ -57,7 +57,7 @@ namespace Keeper.Infrastructure.Data.Migrations
 
                     b.HasIndex("RepositoryId");
 
-                    b.ToTable("Files", (string)null);
+                    b.ToTable("Files");
                 });
 
             modelBuilder.Entity("Keeper.Domain.Entities.RefreshTokenEntity", b =>
@@ -87,7 +87,7 @@ namespace Keeper.Infrastructure.Data.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("RefreshTokens", (string)null);
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("Keeper.Domain.Entities.RepositoryActivityEntity", b =>
@@ -118,11 +118,16 @@ namespace Keeper.Infrastructure.Data.Migrations
                     b.Property<Guid>("RepositoryId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("UserType")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("RepositoryId");
 
-                    b.ToTable("RepositoryActivities", (string)null);
+                    b.ToTable("RepositoryActivities");
                 });
 
             modelBuilder.Entity("Keeper.Domain.Entities.RepositoryApiMemberEntity", b =>
@@ -162,7 +167,7 @@ namespace Keeper.Infrastructure.Data.Migrations
 
                     b.HasIndex("RepositoryId");
 
-                    b.ToTable("RepositoryApiMembers", (string)null);
+                    b.ToTable("RepositoryApiMembers");
                 });
 
             modelBuilder.Entity("Keeper.Domain.Entities.RepositoryEntity", b =>
@@ -197,7 +202,7 @@ namespace Keeper.Infrastructure.Data.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("Repositories", (string)null);
+                    b.ToTable("Repositories");
                 });
 
             modelBuilder.Entity("Keeper.Domain.Entities.UserEntity", b =>
@@ -251,7 +256,7 @@ namespace Keeper.Infrastructure.Data.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Keeper.Domain.Entities.FileEntity", b =>

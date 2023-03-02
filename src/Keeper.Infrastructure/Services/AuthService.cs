@@ -1,7 +1,6 @@
-﻿using Keeper.Application.DTOs;
-using Keeper.Application.Interfaces;
-using Keeper.Application.Security.Jwt.Interfaces;
-using Keeper.Application.Security.Jwt.Models;
+﻿using Keeper.Application.Common.DTOs;
+using Keeper.Application.Common.Interfaces;
+using Keeper.Application.Common.Models;
 using Keeper.Domain.Entities;
 using Keeper.Utilities;
 using Microsoft.EntityFrameworkCore;

@@ -9,6 +9,8 @@ public class RepositoryActivityEntity: BaseEntity
     public string Identity { get; set; }
     [Required, MaxLength(256)]
     public string OperationContext { get; set; }
+    [Required, MaxLength(64)]
+    public string UserType { get; set; }
     public Guid RepositoryId { get; set; }
     [ForeignKey(nameof(RepositoryId))]
     public virtual RepositoryEntity Repository { get; set; }
