@@ -1,0 +1,28 @@
+﻿@page
+@model IndexModel
+@inject ImagesUrlsPersistenceService _imagesUrlsPersistenceService
+@inject KeeperStorageInteractorService _keeperStorageInteractorService
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<h1>Upload An Image</h1>
+<form id="uploadForm" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" accept="image/*">
+    <br>
+    <button type="submit">Upload</button>
+</form>
+<p id="result"></p>
+
+<br />
+
+<h2>My Images from keeper cloud</h2>
+<div class="card-group" id="images-collection">
+    @foreach (var fileId in await _imagesUrlsPersistenceService.GetAllImagesIds())
+    {
+        <div class="card position-relative m-3" file-id="@fileId">
+            <button type="button" class="btn btn-danger position-absolute top-0 start-100 translate-middle rounded-circle">☓</button>
+            <img class="card-img-top" width="300" height="250" src="@($"{_keeperStorageInteractorService.KeeperSettings.Url}/storage/{_keeperStorageInteractorService.KeeperSettings.RepositoryId}/{fileId}")">
+        </div>
+    }
+</div>
