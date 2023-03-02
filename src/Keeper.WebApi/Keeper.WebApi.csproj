@@ -7,10 +7,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="Application.IntegrationTests" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<Folder Include="wwwroot\" />
 	</ItemGroup>
 
