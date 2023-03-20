@@ -1,10 +1,7 @@
 ﻿using Keeper.Application.Common.Interfaces;
-using Keeper.Infrastructure.Common;
 using Keeper.WebApi.Binders;
 using Keeper.WebApi.Middlewares;
 using Keeper.WebApi.Services;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.AspNetCore.ResponseCompression;
 using NLog;
 using NLog.Web;
