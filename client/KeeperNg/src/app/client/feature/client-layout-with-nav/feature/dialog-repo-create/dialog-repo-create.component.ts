@@ -5,6 +5,7 @@ import { CreateRepositoryModel } from '../../models/create-repository.model';
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
+        <h1 mat-dialog-title>Repository create</h1>
         <form class="d-flex flex-column p-2" #editRepoForm="ngForm" (ngSubmit)="onSave()">
             <div class="form-row">
                 <mat-form-field floatLabel="always" class="form-group col-12 p-2">

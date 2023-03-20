@@ -7,6 +7,7 @@ import { RepositoryModel } from '../../../../model/repository.model';
     selector: 'app-repository-edit-dialog',
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
+        <h1 mat-dialog-title>Repository edit</h1>
         <form class="d-flex flex-column p-2" #editRepoForm="ngForm" (ngSubmit)="onSave()">
             <div class="form-row">
                 <mat-form-field floatLabel="always" class="form-group col-12 p-2">
