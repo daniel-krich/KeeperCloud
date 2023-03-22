@@ -48,7 +48,7 @@ public class JwtService: IJwtService
                         OwnerId = user.Id,
                     });
                     await context.SaveChangesAsync();
-                    return new JwtAccessToken(jwtToken, jwtRefresh);
+                    return new JwtAccessToken(userModel, jwtToken, jwtRefresh);
                 }
             }
             return default;
@@ -66,7 +66,7 @@ public class JwtService: IJwtService
             {
                 UserModel userModel = _mapper.Map<UserModel>(refresh.Owner);
                 var jwtToken = GenerateJwt(userModel);
-                return new JwtAccessToken(jwtToken, refreshToken);
+                return new JwtAccessToken(userModel, jwtToken, refreshToken);
             }
             return default;
         }
@@ -93,11 +93,18 @@ public class JwtService: IJwtService
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSettings.Key));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var token = new JwtSecurityToken(
+        var encKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSettings.JwtContentKey));
+        var encCreds = new EncryptingCredentials(encKey, SecurityAlgorithms.Aes256KW, SecurityAlgorithms.Aes256CbcHmacSha512);
+
+        var token = new JwtSecurityTokenHandler().CreateJwtSecurityToken(
             issuer: JwtSettings.Issuer,
             audience: JwtSettings.Audience,
+            subject: null,
+            notBefore: null,
             expires: DateTime.UtcNow.AddMinutes(10),
-            signingCredentials: creds);
+            issuedAt: DateTime.UtcNow,
+            signingCredentials: creds,
+            encryptingCredentials: encCreds);
 
 
         token.Payload["user"] = _mapper.Map<IDictionary<string, object>>(user);

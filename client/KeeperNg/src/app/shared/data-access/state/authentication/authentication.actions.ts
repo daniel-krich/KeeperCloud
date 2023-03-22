@@ -11,6 +11,11 @@ export const signinSuccess = createAction(
     props<{ user: UserInterface }>()
 );
 
+export const signinRefreshed = createAction(
+    '[Auto authentication] Authentication credentials refresh',
+    props<{ user: UserInterface }>()
+);
+
 export const signinError = createAction(
     '[Auto authentication] End authentication with error'
 );

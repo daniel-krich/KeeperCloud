@@ -6,7 +6,7 @@ import { BASE_URL } from 'src/app/app.module';
 import { Router } from '@angular/router';
 import { AppStateInterface } from '../data-access/state/app.state';
 import { Store } from '@ngrx/store';
-import { signoutFinished } from '../data-access/state/authentication/authentication.actions';
+import { signinRefreshed, signoutFinished } from '../data-access/state/authentication/authentication.actions';
 
 @Injectable()
 export class AuthRefresherInterceptor implements HttpInterceptor {
@@ -23,11 +23,11 @@ export class AuthRefresherInterceptor implements HttpInterceptor {
                         console.log("[Auth] Auth token invalidated, trying to get a brand new token...");
                         let finishedWithError = false;
                         return this.authService.refreshTokens().pipe(
-                            switchMap((newToken) => {
-                                this.authService.setJwtToStorage(newToken);
+                            switchMap((user) => {
+                                this.store.dispatch(signinRefreshed({ user: user }));
                                 const newRequest = request.clone({
                                     setHeaders: {
-                                    Authorization: `Bearer ${newToken.token}`,
+                                    Authorization: `Bearer ${this.authService.getJwtFromStorage()}`,
                                     },
                                 });
                                 return next.handle(newRequest);

@@ -52,6 +52,7 @@ public static class ConfigureServices
         services.AddHttpContextAccessor();
 
         services.AddScoped<IAuthenticatedUserService, AuthenticatedUserService>();
+        services.AddScoped<ICookieService, CookieService>();
 
         services.AddSingleton<UnhandledExceptionMiddleware>();
 

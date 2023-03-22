@@ -23,9 +23,7 @@ export class SignInPageComponent {
                 ) { }
 
     public onSigninSubmit(signIn: SignInModel): void {
-        this.authService.authenticateViaCredentials(signIn).pipe(
-            map(jwt => this.authService.transformTokenToUser(jwt.token))
-        ).subscribe({
+        this.authService.authenticateViaCredentials(signIn).subscribe({
             next: (user) => {
                 if(user) {
                     this.store.dispatch(signinSuccess({ user: user }));

@@ -13,11 +13,12 @@ export class AuthBearerInterceptor implements HttpInterceptor {
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         if(request.url.startsWith(this.baseUrl) || request.url.startsWith('/')) { // check domain to prevent token leak.
 
-            let token = this.authService.getJwtFromStorage()?.token;
+            let token = this.authService.getJwtFromStorage();
             request = request.clone({
                 setHeaders: {
-                    Authorization: `Bearer ${token}`
-                }
+                    Authorization: `Bearer ${token}`,
+                },
+                withCredentials: true
             });
         }
         return next.handle(request);
