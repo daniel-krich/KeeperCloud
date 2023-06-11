@@ -28,7 +28,7 @@ const routes: Route[] = [
             },
             {
                 path: 'settings',
-                loadChildren: () => import('../client-settings-page/client-settings-page.module').then(m => m.ClientSettingsPageModule),
+                loadChildren: () => import('../client-settings/feature/client-settings-page/client-settings-page.module').then(m => m.ClientSettingsPageModule),
                 canActivate: [IsAuthenticatedGuard],
                 title: 'Client / Settings'
             }

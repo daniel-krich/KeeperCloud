@@ -2,6 +2,7 @@
 using Keeper.Application.Common.Security;
 using Keeper.Infrastructure.Data;
 using Keeper.Infrastructure.Data.Factories;
+using Keeper.Infrastructure.Data.Interceptors;
 using Keeper.Infrastructure.Handlers;
 using Keeper.Infrastructure.HostedServices;
 using Keeper.Infrastructure.SecurityServices;
@@ -25,13 +26,18 @@ public static class ConfigureServices
         if (configuration.GetValue<bool>("UseInMemoryDatabase"))
         {
             services.AddSingleton<DbContextOptions<KeeperDbContext>>(provider =>
-                new DbContextOptionsBuilder<KeeperDbContext>().UseInMemoryDatabase("KeeperDb").Options
+                new DbContextOptionsBuilder<KeeperDbContext>().UseInMemoryDatabase("KeeperDb")
+                        .AddInterceptors(new LastModifiedInterceptor())
+                        .Options
             );
         }
         else
         {
             services.AddSingleton<DbContextOptions<KeeperDbContext>>(provider =>
-                new DbContextOptionsBuilder<KeeperDbContext>().UseSqlServer(configuration.GetConnectionString("KeeperDb")!, b => b.MigrationsAssembly(typeof(KeeperDbContext).Assembly.FullName)).Options
+                new DbContextOptionsBuilder<KeeperDbContext>()
+                        .UseSqlServer(configuration.GetConnectionString("KeeperDb")!, b => b.MigrationsAssembly(typeof(KeeperDbContext).Assembly.FullName))
+                        .AddInterceptors(new LastModifiedInterceptor())
+                        .Options
             );
         }
 

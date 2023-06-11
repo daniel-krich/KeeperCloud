@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Keeper.Infrastructure.Data.Migrations
+namespace Keeper.Infrastructure.Migrations
 {
     public partial class init : Migration
     {
@@ -107,6 +107,7 @@ namespace Keeper.Infrastructure.Data.Migrations
                     OperationId = table.Column<int>(type: "int", nullable: false),
                     Identity = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     OperationContext = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    UserType = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     RepositoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastModified = table.Column<DateTime>(type: "datetime2", nullable: false)

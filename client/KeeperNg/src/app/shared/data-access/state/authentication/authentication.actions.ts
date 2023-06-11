@@ -27,3 +27,17 @@ export const signoutBegin = createAction(
 export const signoutFinished = createAction(
     '[Sign-out] Finished Sign-out'
 );
+
+export const updateNamesBegin = createAction(
+    '[Update names] Update names begin',
+    props<{ firstname: string, lastname: string }>()
+);
+
+export const updateNamesError = createAction(
+    '[Update names] Update names error'
+);
+
+export const updateNamesFinish = createAction(
+    '[Update names] Update names finish',
+    props<{ firstname: string, lastname: string }>()
+);

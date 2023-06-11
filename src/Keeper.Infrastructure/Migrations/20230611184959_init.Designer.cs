@@ -4,16 +4,18 @@ using Keeper.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Keeper.Infrastructure.Data.Migrations
+namespace Keeper.Infrastructure.Migrations
 {
     [DbContext(typeof(KeeperDbContext))]
-    partial class KeeperDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230611184959_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

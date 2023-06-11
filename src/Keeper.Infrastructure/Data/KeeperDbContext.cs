@@ -18,11 +18,6 @@ public class KeeperDbContext : DbContext, IKeeperDbContext
 
     public KeeperDbContext(DbContextOptions<KeeperDbContext> options) : base(options) { }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.AddInterceptors(new LastModifiedInterceptor());
-    }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<UserEntity>().HasIndex(x => x.Email).IsUnique();

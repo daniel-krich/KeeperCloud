@@ -1,0 +1,6 @@
+<div fadeInContent>
+  <h1 class="m-3 text-center">Settings page</h1>
+  <div>
+    <app-update-credentials-form [updateAccountNamesModel]="usernamesModel$ | async" (updateAccountNamesSubmit)="onUpdateAccountNamesSubmit($event)"></app-update-credentials-form>
+  </div>
+</div>

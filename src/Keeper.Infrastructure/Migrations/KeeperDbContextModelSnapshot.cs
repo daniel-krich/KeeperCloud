@@ -4,18 +4,16 @@ using Keeper.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Keeper.Infrastructure.Data.Migrations
+namespace Keeper.Infrastructure.Migrations
 {
     [DbContext(typeof(KeeperDbContext))]
-    [Migration("20230301141950_create_usertype_field_for_repo_activities")]
-    partial class create_usertype_field_for_repo_activities
+    partial class KeeperDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

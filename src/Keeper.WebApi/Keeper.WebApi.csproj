@@ -4,6 +4,9 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<DockerfileContext>..\..</DockerfileContext>
+		<UserSecretsId>f8729135-38b3-4b3c-bded-40a33496f012</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -16,6 +19,7 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
 		<PackageReference Include="NLog" Version="5.1.2" />
 		<PackageReference Include="NLog.Web.AspNetCore" Version="5.2.2" />
 	</ItemGroup>

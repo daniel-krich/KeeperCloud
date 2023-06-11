@@ -1,4 +1,4 @@
-import { signinBegin, signinError, signinRefreshed, signinSuccess, signoutFinished } from './authentication.actions';
+import { signinBegin, signinError, signinRefreshed, signinSuccess, signoutFinished, updateNamesBegin, updateNamesFinish } from './authentication.actions';
 import { createReducer, on } from '@ngrx/store';
 import { AuthenticationStateInterface } from '../interfaces/authentication-state.interface';
 
@@ -43,5 +43,10 @@ export const authenticationReducer = createReducer(
         isUserLoggedIn: false,
         user: null,
         stateStatus: 'pending'
+    })),
+
+    on(updateNamesFinish, (state, { firstname, lastname }) => ({
+        ...state,
+        user: { ...state.user!, firstname: firstname, lastname: lastname }
     }))
 );

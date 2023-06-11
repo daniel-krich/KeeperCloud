@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: myregistrykey
+data:
+  .dockerconfigjson: ewogICAgICAgICJhdXRocyI6IHsKICAgICAgICAgICJodHRwczovL2luZGV4LmRvY2tlci5pby92MS8iOiB7CiAgICAgICAgICAgICJhdXRoIjogIlpHRnVhV1ZzYTNKcFkyZ3hORGM2WkdOcmNsOXdZWFJmY3pCYWFUTmlhSG8wUmxKclptZGtiVFZ3U1dKMmQzVTVUbk0wIgogICAgICAgICAgfQogICAgICAgIH0KICAgICAgfQ==
+type: kubernetes.io/dockerconfigjson
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keeper
+  labels:
+    app: keeper
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: keeper
+  template:
+    metadata:
+      name: keeper
+      labels:
+        app: keeper
+    spec:
+      volumes:
+        - name: uploadsvol
+      containers:
+        - name: keeper
+          image: danielkrich147/keeperwebapi:1.0.0
+          volumeMounts:
+            - name: uploadsvol
+              mountPath: /app/uploads
+          imagePullPolicy: Always
+      imagePullSecrets:
+        - name: myregistrykey
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mssql
+spec:
+  serviceName: mssql
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mssql
+  template:
+    metadata:
+      labels:
+        app: mssql
+    spec:
+      securityContext:
+        fsGroup: 10001
+      containers:
+        - name: mssql
+          image: 'mcr.microsoft.com/mssql/server:2022-latest'
+          ports:
+            - containerPort: 1433
+              name: tcpsql
+          env:
+            - name: ACCEPT_EULA
+              value: 'Y'
+            - name: MSSQL_ENABLE_HADR
+              value: '1'
+            - name: MSSQL_AGENT_ENABLED
+              value: '1'
+            - name: MSSQL_SA_PASSWORD
+              value: '2D5wda5wRTG@wag21245awga63!'
+          volumeMounts:
+            - name: mssql
+              mountPath: /var/opt/mssql
+  volumeClaimTemplates:
+    - metadata:
+        name: mssql
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 8Gi
